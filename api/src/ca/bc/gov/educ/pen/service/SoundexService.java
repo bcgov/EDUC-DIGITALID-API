@@ -22,7 +22,7 @@ public class SoundexService {
 	@GET
 	@Produces("application/json")
 	public String soundexEncode(@PathParam("soundexString") String soundexString) {
-		logger.error("Entered soundexEncode function with value: " + soundexString);
+		logger.info("Entered soundexEncode function with value: " + soundexString);
 		if(soundexString != null) {
 			SoundexItem item = new SoundexItem(soundexString);
 			Soundex soundEnc = new Soundex();
