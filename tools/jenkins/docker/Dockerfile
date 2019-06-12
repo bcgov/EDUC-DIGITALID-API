@@ -1,4 +1,4 @@
-FROM bcgov/jenkins-basic:v2-stable
+FROM bcgov/jenkins-maven:v2-stable
 USER 0
 COPY ./contrib/jenkins/configuration $JENKINS_REF_HOME
 RUN set -x && \
