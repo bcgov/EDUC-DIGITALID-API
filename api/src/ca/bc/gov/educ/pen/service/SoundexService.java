@@ -1,6 +1,5 @@
 package ca.bc.gov.educ.pen.service;
 
-import javax.resource.spi.ConnectionManager;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -17,7 +16,7 @@ import ca.bc.gov.educ.pen.model.SoundexItem;
 @Path("/soundex")
 public class SoundexService {
 	
-	private static final Logger logger = LogManager.getLogger(ConnectionManager.class);
+	private static final Logger logger = LogManager.getLogger(SoundexService.class);
 	
 	@Path("{soundexString}")
 	@GET
