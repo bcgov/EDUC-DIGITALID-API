@@ -1,22 +1,14 @@
 pipeline {
-    agent any
-
+	agent {
+        docker {
+            image 'maven:3-alpine' 
+            args '-v /root/.m2:/root/.m2' 
+        }
+    }
     stages {
-        stage('Build') {
-            agent { label 'master' }
+        stage('Build') { 
             steps {
-                script {
-                    openshift.withCluster() {
-	                    openshift.withProject() {
-	                    def builds = openshift.selector("bc", "pen-registry-api").related('builds')
-		                    timeout(5) { 
-		                    	builds.untilEach(1) {
-		                     	 return (it.object().status.phase == "Complete")
-		                    	}
-	                    	}
-                		}
-            		}
-            	}
+                sh 'mvn -B -DskipTests clean package' 
             }
         }
         stage('Test') {
