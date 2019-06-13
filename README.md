@@ -6,7 +6,7 @@ The main function of the PEN Registry system is to process (School/PSI) requests
 ## Directory Structure
 
     .github/                   - PR and Issue templates
-    backend/                   - Backend codebase
+    api/                       - API codebase
     frontend/                  - Frontend codebase
     tools/                     - Devops utilities
     └── jenkins                - Jenkins standup

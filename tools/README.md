@@ -9,9 +9,9 @@ As part of the BCDevOps community, we have 4 OpenShift namespaces:
 
 ## Jenkins Setup Overview
 
-Uses BCDevOps CICD Jenkins Basic install. This Jenkins install includes a lot of customization, of particular note is that it will register GitHub webhooks!  [link](https://github.com/BCDevOps/openshift-components/tree/cvarjao-update-jenkins-basic/cicd/jenkins-basic)
+Uses BCDevOps CICD Jenkins Basic install. This Jenkins install includes a lot of customization, of particular note is that it will register GitHub webhooks!  [Jenkins Basic](https://github.com/BCDevOps/openshift-components/tree/cvarjao-update-jenkins-basic/cicd/jenkins-basic)
 
-The commands, labels, and naming conventions follow the Pull Request Pipeline principles of the BCDevOps pipeline-cli [link] (https://github.com/BCDevOps/pipeline-cli).
+The commands, labels, and naming conventions follow the Pull Request Pipeline principles of the BCDevOps pipeline-cli [Pipeline CLI](https://github.com/BCDevOps/pipeline-cli).
 
 The jobs that Jenkins creates and uses will also follow those principles and build out an "environment" for each pull request.
 
