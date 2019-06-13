@@ -13,11 +13,13 @@ The tools directory contains all the infrastructure-as-code that we use devops. 
 
 ## Jenkins Setup Overview
 
-Uses BCDevOps CICD Jenkins Basic install.  This Jenkins install includes a lot of customization, of particular note is that it will register GitHub webhooks!  [link](https://github.com/BCDevOps/openshift-components/tree/cvarjao-update-jenkins-basic/cicd/jenkins-basic)
+Uses BCDevOps CICD Jenkins Basic install. This Jenkins install includes a lot of customization, of particular note is that it will register GitHub webhooks!  [link](https://github.com/BCDevOps/openshift-components/tree/cvarjao-update-jenkins-basic/cicd/jenkins-basic)
 
 The commands, labels, and naming conventions follow the Pull Request Pipeline principles of the BCDevOps pipeline-cli [link] (https://github.com/BCDevOps/pipeline-cli).
 
 The jobs that Jenkins creates and uses will also follow those principles and build out an "environment" for each pull request.
+
+We've leveraged this from the [link](https://github.com/bcgov/nr-messaging-service-showcase) application; big thanks to the team there.
 
 ### Prerequisites
 
