@@ -1,15 +1,11 @@
 # Tools
 
-The Natural Resources Showcase Applications are currently hosted in [RedHat OpenShift](https://www.openshift.com) operated by [BCDevExchange](https://bcdevexchange.org).  We follow the guidelines and principles of the [BCDevOps](https://github.com/BCDevOps) team. We make every attempt to use, or build off the tooling and scripts that BCDevOps (through the [DevHub](https://developer.gov.bc.ca)) provides.    
-
 As part of the BCDevOps community, for each project, we will have 4 OpenShift namespaces:  
 
 * Dev - development "environment", will contain a deployment from the master branch and N deployments for [pull requests](https://help.github.com/en/articles/about-pull-requests).  
 * Test - test and Quality Assurance, will contain deployment from master branch. Promotions to be manually approved. 
 * Prod - production. The user ready application. Promotions to be manually approved.  
 * Tools - devops namespace.   
-
-The tools directory contains all the infrastructure-as-code that we use devops. Although there are many ways to build/test/deploy, this is the way we are doing it.  We currently rely less on OpenShift to do promotions, and more on our own Continuous Integration/Continuous Delivery ([CI/CD](https://en.wikipedia.org/wiki/CI/CD)).  This affords us more control over the workflow and add tooling as needed.  
 
 ## Jenkins Setup Overview
 
