@@ -1,11 +1,11 @@
 # Tools
 
-As part of the BCDevOps community, for each project, we will have 4 OpenShift namespaces:  
+As part of the BCDevOps community, we have 4 OpenShift namespaces:  
 
-* Dev - development "environment", will contain a deployment from the master branch and N deployments for [pull requests](https://help.github.com/en/articles/about-pull-requests).  
-* Test - test and Quality Assurance, will contain deployment from master branch. Promotions to be manually approved. 
-* Prod - production. The user ready application. Promotions to be manually approved.  
-* Tools - devops namespace.   
+* Dev - Development "environment", will contain a deployment from the master branch and N deployments for [pull requests](https://help.github.com/en/articles/about-pull-requests).  
+* Test - Test and Quality Assurance, will contain deployment from master branch. Promotions to be manually approved. 
+* Prod - Production. The user ready application. Promotions to be manually approved.  
+* Tools - DevOps namespace.   
 
 ## Jenkins Setup Overview
 
