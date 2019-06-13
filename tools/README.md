@@ -29,10 +29,10 @@ The jobs that Jenkins creates and uses will also follow those principles and bui
 
 ## Setup Jenkins
 
-The following commands setup up Jenkins and uses this repository and specific OpenShift project namespaces. The setup below was done using a Windows 10 PC. The environment variables will likely need to change format. 
+The following commands setup up Jenkins and uses this repository and specific OpenShift project namespaces. The setup below was done using a Windows 10 PC. The environment variables will likely need to change format on a MAC or Linux machine. 
 
 ### Environment variables
-For the following examples, we will be using environment variable substitutions.
+For the following examples, we will be using environment variable substitutions. Proceed by adding these values to your environment. 
 
 #### Namespaces
 ```sh
@@ -58,7 +58,7 @@ export app_domain=pathfinder.gov.bc.ca
 ```
 
 ### Login to OpenShift
-Login via web console, click your login name at top tight and click "Copy Login Command".  Go to your terminal, navigate to your project root and paste the copy command.
+Login via the web console, click your login name at top right and click "Copy Login Command". Go to your terminal, navigate to your project root and paste the copy command.
 
 ### Navigate to the Jenkins scripts.
 
@@ -67,32 +67,29 @@ cd tools/jenkins
 ```
 
 ### Create secrets
-The BCDevOps CICD Jenkins Basic install requires a template github secret and a template for the slave.  This will create the secrets named as it requires.
+The BCDevOps CICD Jenkins Basic install requires a template github secret and a template for the slave. This will create the secrets named as it requires.
 
 ```sh
 oc process -n $env:tools -f 'openshift/secrets.json' -p GH_USERNAME=$env:gh_username -p GH_PASSWORD=$env:gh_password | oc  -n $env:tools create -f -
 ```
 
-### Create config map for related namespaces
-For our custom jobs scripts and Jenkinsfiles.  
+### Create config (NS) map for related namespaces
+For our custom NS scripts and Jenkinsfiles.  
 
 ```sh
 oc process -n $env:tools -f 'openshift/ns-config.json' -p DEV=$env:dev -p TEST=$env:test -p PROD=$env:prod -p TOOLS=$env:tools | oc  -n $env:tools create -f -
 ```
 
-### Create config map for the application
+### Create config (Jobs) map for the application
 For our custom jobs scripts and Jenkinsfiles.  
 
 ```sh
 oc process -n $env:tools -f 'openshift/jobs-config.json' -p REPO_OWNER=$env:repo_owner -p REPO_NAME=$env:repo_name -p APP_NAME=$env:app_name -p APP_DOMAIN=$env:app_domain | oc -n $env:tools create -f -
 ```
 
-
 ### Process the build config templates...
 
 These build configs have no build triggers, we start them manually - we don't want OpenShift to automatically deploy on a configuration change or an image change.  
-
-The parameters and labels we are providing match up with the BCDevOps pipeline-cli.  Although we are not using the pipeline-cli, we try to align ourselves with its philosophies.  We will consider this deployment of Jenkins to be our "prod" deployment.  We are not providing all the labels pipeline-cli would, but the most important ones for identifying the app and the environment.  
 
 #### Setup master
 
