@@ -19,7 +19,7 @@ The commands, labels, and naming conventions follow the Pull Request Pipeline pr
 
 The jobs that Jenkins creates and uses will also follow those principles and build out an "environment" for each pull request.
 
-We've leveraged this from the [link](https://github.com/bcgov/nr-messaging-service-showcase) application; big thanks to the team there.
+We've leveraged this tooling functionality from the [nr-messaging-service-showcase](https://github.com/bcgov/nr-messaging-service-showcase) application; big thanks to their team.
 
 ### Prerequisites
 
