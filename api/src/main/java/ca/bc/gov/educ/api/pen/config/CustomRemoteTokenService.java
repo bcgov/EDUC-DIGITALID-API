@@ -55,7 +55,6 @@ public class CustomRemoteTokenService implements ResourceServerTokenServices {
     @Override
     public OAuth2Authentication loadAuthentication(String accessToken) throws AuthenticationException, InvalidTokenException {
         HttpHeaders headers = new HttpHeaders();
-        logger.error("OAuth server URL is: " + props.getOauthServerURL());
         Map<String, Object> map = executeGet(props.getOauthServerURL() + "/oauth/check_token?token=" + accessToken, headers);
         if (map == null || map.isEmpty() || map.get("error") != null) {
             throw new InvalidTokenException("Token not allowed");
