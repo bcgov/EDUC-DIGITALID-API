@@ -1,4 +1,4 @@
-package ca.bc.gov.educ.pen.model;
+package ca.bc.gov.educ.api.pen.model;
 
 public class SoundexItem {
 
