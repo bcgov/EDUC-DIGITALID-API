@@ -78,9 +78,9 @@ public class CustomRemoteTokenService implements ResourceServerTokenServices {
             Map<String, Object> result = map;
             return result;
         } catch (Exception ex) {
-            throw ex;
+        	logger.error("Exception occurred executing GET: " + ex.getMessage());
         }
-        //return null;
+        return null;
     }
 
 }
