@@ -3,6 +3,8 @@ package ca.bc.gov.educ.api.pen.config;
 import java.io.IOException;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -21,11 +23,20 @@ import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
+import ca.bc.gov.educ.api.pen.props.ApplicationProperties;
+
 public class CustomRemoteTokenService implements ResourceServerTokenServices {
 
+	private static final Logger logger = LoggerFactory.getLogger(CustomRemoteTokenService.class);
+	
     private RestOperations restTemplate;
+    
+    @Autowired
+    private ApplicationProperties props;
 
     private AccessTokenConverter tokenConverter = new DefaultAccessTokenConverter();
+    
+    
 
     @Autowired
     public CustomRemoteTokenService() {
@@ -44,7 +55,8 @@ public class CustomRemoteTokenService implements ResourceServerTokenServices {
     @Override
     public OAuth2Authentication loadAuthentication(String accessToken) throws AuthenticationException, InvalidTokenException {
         HttpHeaders headers = new HttpHeaders();
-        Map<String, Object> map = executeGet("http://localhost:8095/oauth/check_token?token=" + accessToken, headers);
+        logger.error("OAuth server URL is: " + props.getOauthServerURL());
+        Map<String, Object> map = executeGet(props.getOauthServerURL() + "/oauth/check_token?token=" + accessToken, headers);
         if (map == null || map.isEmpty() || map.get("error") != null) {
             throw new InvalidTokenException("Token not allowed");
         }
@@ -67,9 +79,9 @@ public class CustomRemoteTokenService implements ResourceServerTokenServices {
             Map<String, Object> result = map;
             return result;
         } catch (Exception ex) {
-            System.out.println(ex.getMessage());
+            throw ex;
         }
-        return null;
+        //return null;
     }
 
 }
