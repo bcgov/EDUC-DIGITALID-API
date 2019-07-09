@@ -20,7 +20,7 @@ public class SoundexService {
 	private static final Logger logger = LogManager.getLogger(SoundexService.class);
 	
 	@RequestMapping("/{soundexString}")
-	@PreAuthorize("#oauth2.hasAnyScope('abc')")
+	@PreAuthorize("#oauth2.hasAnyScope('read')")
 	public @ResponseBody String soundexEncode(@PathVariable String soundexString) {
 		logger.info("Entered soundexEncode function with value: " + soundexString);
 		if(soundexString != null) {
