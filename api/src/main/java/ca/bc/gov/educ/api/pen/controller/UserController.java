@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class UserController {
 
 	@RequestMapping("/profile")
-	@PreAuthorize("#oauth2.hasAnyScope('read')")
+	@PreAuthorize("#oauth2.hasAnyScope('READ')")
 	public @ResponseBody String getOauth2Principal(OAuth2Authentication auth) {
 		return "Access granted for " + auth.getPrincipal();
 	}
