@@ -23,12 +23,11 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
 	@Bean
 	public ResourceServerTokenServices tokenService() {
-		CustomRemoteTokenService tokenServices = new CustomRemoteTokenService();
-		return tokenServices;
+		return new CustomRemoteTokenService();
 	}
 	
 	@Bean
-	public AuthenticationManager authenticationManagerBean() throws Exception {
+	public AuthenticationManager authenticationManagerBean() {
 		OAuth2AuthenticationManager authenticationManager = new OAuth2AuthenticationManager();
 		authenticationManager.setTokenServices(tokenService());
 		return authenticationManager;

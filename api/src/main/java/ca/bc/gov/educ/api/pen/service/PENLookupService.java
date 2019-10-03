@@ -15,7 +15,7 @@ public class PENLookupService {
 	
 	@RequestMapping("/searches")
 	@PreAuthorize("#oauth2.hasAnyScope('READ')")
-	public @ResponseBody String soundexEncode() {
+	public @ResponseBody String search() {
 		logger.info("Called this method");
 		
 		return null;
