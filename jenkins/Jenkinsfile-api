@@ -26,8 +26,5 @@ podTemplate(
             def bcApi = openshift.process('-f', 'tools/openshift/api.bc.yaml')
             openshift.apply(bcApi).narrow('bc').startBuild('-w').logs('-f')
         }
-        stage('deploy to dev') {
-            openshift.tag("educ-pen-api:latest", "educ-pen-api:dev")
-        }
     }
 }
