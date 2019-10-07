@@ -23,10 +23,8 @@ podTemplate(
             checkout scm              
         }
         stage('build'){
-            sh '''
-                cd api
-                mvn -Dmaven.test.failure.ignore=true install
-            '''
+            def bcApi = openshift.process('-f', 'tools/openshift/api.bc.yaml')
+            openshift.apply(bcApi).narrow('bc').startBuild('-w').logs('-f')
         }
     }
 }
