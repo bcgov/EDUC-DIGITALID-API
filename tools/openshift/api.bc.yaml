@@ -1,44 +1,37 @@
-apiVersion: build.openshift.io/v1
-kind: BuildConfig
+---
+apiVersion: v1
+kind: template
+labels:
+  template: 'api-template'
 metadata:
-  labels:
-    build: educ-pen-api
-  name: educ-pen-api
-  namespace: c2mvws-tools
-spec:
-  failedBuildsHistoryLimit: 5
-  nodeSelector: 
-  output:
-    to:
-      kind: ImageStreamTag
-      name: 'educ-pen-api:latest'
-  postCommit: {}
-  resources: {}
-  runPolicy: Serial
-  source:
-    contextDir: api
-    git:
-      ref: master
-      uri: 'https://github.com/bcgov/EDUC-PEN'
-    type: Git
-  strategy:
-    sourceStrategy:
-      from:
+  name: 'api-template'
+objects:
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    labels:
+      build: educ-pen-api
+    name: educ-pen-api
+    namespace: c2mvws-tools
+  spec:
+    failedBuildsHistoryLimit: 5
+    nodeSelector: 
+    output:
+      to:
         kind: ImageStreamTag
-        name: 'openjdk-11-rhel7:latest'
-    type: Source
-  successfulBuildsHistoryLimit: 5
-  triggers:
-    - github:
-        secret: YDh-4kpHnm6iec1LY58e
-      type: GitHub
-    - generic:
-        secret: HphNfcjYNsIF_0U21G8j
-      type: Generic
-    - type: ConfigChange
-    - imageChange:
-        lastTriggeredImageID: >-
-          registry.access.redhat.com/openjdk/openjdk-11-rhel7@sha256:72167095b95fb6fa30505657297205de0e80a2dbf158cd6ca07b23ace9d750ad
-      type: ImageChange
-status:
-  lastVersion: 1
+        name: 'educ-pen-api:latest'
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      contextDir: api
+      git:
+        ref: master
+        uri: 'https://github.com/bcgov/EDUC-PEN'
+      type: Git
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: 'openjdk-11-rhel7:latest'
+      type: Source
