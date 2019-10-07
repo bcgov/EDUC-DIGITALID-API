@@ -36,7 +36,13 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying....'
-                openshift.tag("educ-pen-api:latest", "educ-pen-api:dev")
+                script{
+                    openshift.withCluster(){
+                        openshift.withProject(){
+                            openshift.tag("educ-pen-api:latest", "educ-pen-api:dev")
+                        }
+                    }
+                }
             }
         }
     }
