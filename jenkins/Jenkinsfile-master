@@ -17,7 +17,7 @@ pipeline {
                         openshift.withProject(){
                             try{
                                 def bcApi = openshift.process('-f', 'tools/openshift/api.bc.yaml');
-                                openshift.apply(bcApi).narrow('bc').startbuild('-w').logs('-f')
+                                openshift.apply(bcApi).narrow('bc').startBuild('-w').logs('-f')
                             } catch(e) {
                                 echo "Backend build failed"
                                 throw e
