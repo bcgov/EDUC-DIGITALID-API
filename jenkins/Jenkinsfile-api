@@ -1,6 +1,7 @@
+def api_label = api-image${UUID.randomUUID().toString()}
 podTemplate(
-  label: 'maven-slave', 
-  name: 'maven-slave', 
+  label: api_label, 
+  name: api_label, 
   serviceAccount: 'jenkins', 
   cloud: 'openshift', 
   containers: [
@@ -17,7 +18,7 @@ podTemplate(
     )
   ]
 ){
-    node(maven-slave){
+    node(api-label){
         stage('checkout') {
             echo "checking out source"
             checkout scm              
