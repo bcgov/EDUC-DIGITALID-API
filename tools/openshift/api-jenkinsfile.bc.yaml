@@ -16,4 +16,4 @@ objects:
         uri: "https://github.com/bcgov/EDUC-PEN-API"
     strategy:
       jenkinsPipelineStrategy:
-        jenkinsfilePath: openshift/Jenkinsfile/Jenkinsfile-master
+        jenkinsfilePath: jenkins/Jenkinsfile-api
