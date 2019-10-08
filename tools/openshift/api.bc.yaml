@@ -7,27 +7,6 @@ metadata:
   name: 'api-template'
 objects:
 - apiVersion: v1
-  kind: ImageStream
-  metadata:
-    annotations:
-      openshift.io/generated-by: OpenShiftNewBuild
-    creationTimestamp:
-    name: openjdk-8-rhel8
-  spec:
-    lookupPolicy:
-      local: false
-    tags:
-    - annotations:
-        openshift.io/imported-from: registry.redhat.io/openjdk/openjdk-8-rhel8:latest
-      from:
-        kind: DockerImage
-        name: registry.redhat.io/openjdk/openjdk-8-rhel8:latest
-      generation:
-      importPolicy: {}
-      name: latest
-      referencePolicy:
-        type: Local
-- apiVersion: v1
   kind: BuildConfig
   metadata:
     labels:
@@ -54,5 +33,5 @@ objects:
       sourceStrategy:
         from:
           kind: ImageStreamTag
-          name: 'openjdk-8-rhel8:latest'
+          name: 'openjdk-11-rhel8:latest'
       type: Source
