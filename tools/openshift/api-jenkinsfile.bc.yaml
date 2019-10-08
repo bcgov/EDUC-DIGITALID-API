@@ -8,4 +8,4 @@ spec:
       uri: "https://github.com/bcgov/EDUC-PEN-API"
   strategy:
     jenkinsPipelineStrategy:
-      jenkinsfilePath: tools/openshift/api-jenkinsfile.bc.yaml
+      jenkinsfilePath: openshift/Jenkinsfile/Jenkinsfile-master
