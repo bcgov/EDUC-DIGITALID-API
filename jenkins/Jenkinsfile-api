@@ -7,7 +7,7 @@ podTemplate(
   containers: [
     containerTemplate(
       name: 'jnlp',
-      image: 'jenkins/jnlp-slave:3.27-1-alpine',
+      image: 'jenkins/jnlp-slave:latest',
       resourceRequestCpu: '500m',
       resourceLimitCpu: '1000m',
       resourceRequestMemory: '3Gi',
