@@ -18,7 +18,7 @@ podTemplate(
     )
   ]
 ){
-    node(api-label){
+    node(api_label){
         stage('checkout') {
             echo "checking out source"
             checkout scm              
