@@ -9,7 +9,7 @@ objects:
 - apiVersion: v1
   kind: BuildConfig
   metadata: 
-    name: "pen-api-pipeline"
+    name: "pen-api-pipeline-spawn"
   spec:
     source:
       git:
