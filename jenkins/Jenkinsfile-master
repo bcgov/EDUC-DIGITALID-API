@@ -10,7 +10,7 @@ pipeline {
                 '''
             }
         }
-        stage ('Build') {
+        stage ('Start PEN API Pipline') {
             steps {
                 echo 'Building....'
                 script{
@@ -23,23 +23,6 @@ pipeline {
                                 echo "Backend build failed"
                                 throw e
                             }
-                        }
-                    }
-                }
-            }
-        }
-        stage('Test') {
-            steps {
-                echo 'Testing..'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying....'
-                script{
-                    openshift.withCluster(){
-                        openshift.withProject(){
-                            openshift.tag("educ-pen-api:latest", "educ-pen-api:dev")
                         }
                     }
                 }
