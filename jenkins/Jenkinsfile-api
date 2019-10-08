@@ -7,7 +7,7 @@ podTemplate(
   containers: [
     containerTemplate(
       name: 'jnlp',
-      image: 'docker-registry.default.svc:5000/openshift/jenkins-slave-maven-centos7',
+      image: 'jenkins/jnlp-slave:3.27-1-alpine',
       resourceRequestCpu: '500m',
       resourceLimitCpu: '1000m',
       resourceRequestMemory: '3Gi',
