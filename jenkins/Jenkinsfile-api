@@ -1,4 +1,4 @@
-def api_label = api-image${UUID.randomUUID().toString()}
+def api_label = "api-image${UUID.randomUUID().toString()}"
 podTemplate(
   label: api_label, 
   name: api_label, 
