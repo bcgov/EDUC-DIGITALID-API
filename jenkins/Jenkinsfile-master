@@ -12,6 +12,7 @@ pipeline {
         }
         stage ('Start PEN API Pipline') {
             steps {
+                echo 'Building....'
                 script{
                     openshift.withCluster(){
                         openshift.withProject(){
