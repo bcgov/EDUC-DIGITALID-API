@@ -33,5 +33,5 @@ objects:
       sourceStrategy:
         from:
           kind: ImageStreamTag
-          name: 'openjdk-11-rhel8:latest'
+          name: 'openjdk-11-rhel7:latest'
       type: Source
