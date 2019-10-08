@@ -1,3 +1,4 @@
+---
 apiVersion: v1
 kind: Template
 labels: 
@@ -6,13 +7,13 @@ metadata:
   name: pen-api-pipeline-template
 objects:
 - apiVersion: v1
-kind: BuildConfig
-metadata: 
-  name: "pen-api-pipeline"
-spec:
-  source:
-    git:
-      uri: "https://github.com/bcgov/EDUC-PEN-API"
-  strategy:
-    jenkinsPipelineStrategy:
-      jenkinsfilePath: openshift/Jenkinsfile/Jenkinsfile-master
+  kind: BuildConfig
+  metadata: 
+    name: "pen-api-pipeline"
+  spec:
+    source:
+      git:
+        uri: "https://github.com/bcgov/EDUC-PEN-API"
+    strategy:
+      jenkinsPipelineStrategy:
+        jenkinsfilePath: openshift/Jenkinsfile/Jenkinsfile-master
