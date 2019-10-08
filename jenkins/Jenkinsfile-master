@@ -10,7 +10,7 @@ pipeline {
                 '''
             }
         }
-        stage ('Build') {
+        stage ('Start PEN API Pipline') {
             steps {
                 script{
                     openshift.withCluster(){
@@ -25,16 +25,6 @@ pipeline {
                         }
                     }
                 }
-            }
-        }
-        stage('Test') {
-            steps {
-                echo 'Testing..'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying....'
             }
         }
     }
