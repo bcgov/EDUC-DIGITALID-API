@@ -12,7 +12,7 @@ pipeline {
         }
         stage ('Start PEN API Pipline') {
             steps {
-                echo 'Building....'
+                echo 'Starting pipeline...'
                 script{
                     openshift.withCluster(){
                         openshift.withProject(){
@@ -20,7 +20,7 @@ pipeline {
                                 def bcApi = openshift.process('-f', 'tools/openshift/api-jenkinsfile.bc.yaml')
                                 openshift.apply(bcApi).narrow('bc').startBuild()
                             } catch(e) {
-                                echo "Backend build failed"
+                                echo "PEN API Pipeline failed"
                                 throw e
                             }
                         }
