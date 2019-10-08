@@ -18,10 +18,10 @@ objects:
       local: false
     tags:
     - annotations:
-        openshift.io/imported-from: registry.access.redhat.com/openjdk/openjdk-8-rhel8:latest
+        openshift.io/imported-from: registry.redhat.io/openjdk/openjdk-8-rhel8:latest
       from:
         kind: DockerImage
-        name: registry.access.redhat.com/openjdk/openjdk-8-rhel8:latest
+        name: registry.redhat.io/openjdk/openjdk-8-rhel8:latest
       generation:
       importPolicy: {}
       name: latest
