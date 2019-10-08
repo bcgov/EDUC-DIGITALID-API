@@ -5,7 +5,7 @@ metadata:
 spec:
   source:
     git:
-      uri: "https://github.com/ndenny/EDUC-PEN-API"
+      uri: "https://github.com/bcgov/EDUC-PEN-API"
   strategy:
     jenkinsPipelineStrategy:
       jenkinsfilePath: openshift/Jenkinsfile/Jenkinsfile-master

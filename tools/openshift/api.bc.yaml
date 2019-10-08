@@ -27,7 +27,7 @@ objects:
       contextDir: api
       git:
         ref: master
-        uri: 'https://github.com/ndenny/EDUC-PEN'
+        uri: 'https://github.com/bcgov/EDUC-PEN'
       type: Git
     strategy:
       sourceStrategy:
