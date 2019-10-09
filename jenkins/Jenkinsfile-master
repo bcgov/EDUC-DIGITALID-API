@@ -20,7 +20,24 @@ pipeline {
                                 def bcApi = openshift.process('-f', 'tools/openshift/api-jenkinsfile.bc.yaml')
                                 openshift.apply(bcApi).narrow('bc').startBuild()
                             } catch(e) {
-                                echo "PEN API Pipeline failed"
+                                echo "PEN API Pipeline failed to start"
+                                throw e
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        stage ('Start PEN Request Pipeline'){
+            steps {
+                echo 'Starting pipeline...'
+                script{
+                    openshift.withCluster(){
+                        openshift.withProject(){
+                            try{
+
+                            } catch(e) {
+                                echo "PEN Request Pipeline failed to start"
                                 throw e
                             }
                         }
