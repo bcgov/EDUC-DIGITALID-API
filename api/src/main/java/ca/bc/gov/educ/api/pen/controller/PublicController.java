@@ -6,6 +6,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("public")
+/**
+ *
+ */
 public class PublicController {
 
 	@RequestMapping("/welcome")

@@ -12,7 +12,26 @@ import org.springframework.stereotype.Component;
 @Component
 public class ApplicationProperties {
 
-	@Value("${oauth.server.url}")
+	public static String ORDS_URL;
+	public static String ORDS_USERNAME;
+	public static String ORDS_PASSWORD;
+
+	@Value("${ords.url}")
+	public void setOrdsURL(String ordsURL) {
+		ORDS_URL = ordsURL;
+	}
+
+	@Value("${ords.username}")
+	public void setOrdsUsername(String ordsUsername) {
+		ORDS_USERNAME = ordsUsername;
+	}
+
+	@Value("${ords.password}")
+	public void setOrdsPassword(String ordsPassword) {
+		ORDS_PASSWORD = ordsPassword;
+	}
+
+    @Value("${oauth.server.url}")
 	private String oauthServerURL;
 
 	public String getOauthServerURL() {
