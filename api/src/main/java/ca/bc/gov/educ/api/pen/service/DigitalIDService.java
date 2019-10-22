@@ -1,6 +1,6 @@
 package ca.bc.gov.educ.api.pen.service;
 
-import ca.bc.gov.educ.api.pen.model.DigitalIdentity;
+import ca.bc.gov.educ.api.pen.model.DIGITAL_IDENTITY;
 import ca.bc.gov.educ.api.pen.props.ApplicationProperties;
 import ca.bc.gov.educ.ords.exception.NoOrdsResultsFoundException;
 import ca.bc.gov.educ.ords.exception.ORDSQueryException;
@@ -10,9 +10,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Component;
+import org.springframework.security.oauth2.provider.NoSuchClientException;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
@@ -20,18 +19,12 @@ import java.io.IOException;
  * @author John Cox
  */
 
-@Component
+@Service
 public class DigitalIDService {
-    private static final Log logger = LogFactory.getLog(DigitalIdentity.class);
+    private static final Log logger = LogFactory.getLog(DIGITAL_IDENTITY.class);
 
-    @Autowired
-    private ApplicationProperties props;
-    private ObjectMapper objectMapper;
-    private ORDSTargetCredential targetCredential;
+    private final String selectDigitalIdQuery = "select di.digital_identity_id, di.student_id, di.identity_type_code, di.identity_value, di.last_access_time, di.last_access_channel_code, di.create_user, di.create_date, di.update_user, di.update_date from digital_identity di left join identity_type_code itc on di.identity_type_code=itc.identity_type_code where lower(di.digital_identity_id) = lower(?) and lower(itc.description) = lower(?);";
 
-    public DigitalIDService() {
-        objectMapper = new ObjectMapper();
-    }
     /**
      * Search for Digital Identity by id and type (BCeID or BCSC)
      *
@@ -39,21 +32,25 @@ public class DigitalIDService {
      * @param type
      * @return
      */
-    @Cacheable("DigitalIdentity")
-    public DigitalIdentity loadDigitalId(String id, String type) {
-        String selectDigitalId = "select * from digital_identity;";
+    public DIGITAL_IDENTITY loadDigitalId(String id, String type) {
         String [] parameters = {id, type};
-        logger.warn("Connecting to ORDS");
         try {
-            logger.warn("Connecting to ORDS");
+            logger.debug("Connecting to ORDS");
             //could not get properties to load when initialized in constructor
-            targetCredential = new ORDSTargetCredential(ApplicationProperties.ORDS_USERNAME,
+            ORDSTargetCredential targetCredential = new ORDSTargetCredential(ApplicationProperties.ORDS_USERNAME,
                     ApplicationProperties.ORDS_PASSWORD, ApplicationProperties.ORDS_URL);
-            logger.warn("Connected to ORDS, running query");
-            JsonNode result = ORDSService.runSelectQuery(targetCredential, selectDigitalId);
-            logger.warn("Query returned: " + result);
-            if (result != null) {
-                DigitalIdentity item = objectMapper.readValue(result.get(0).toString(), DigitalIdentity.class);
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            logger.debug("----> Using URL: " + ApplicationProperties.ORDS_URL);
+            logger.debug("----> Using User: " + ApplicationProperties.ORDS_USERNAME);
+            logger.debug("----> Querying by " + type + " with id " + id);
+
+            JsonNode result = ORDSService.runSelectQuery(targetCredential, selectDigitalIdQuery, parameters);
+
+            logger.debug("Query returned: " + result);
+
+            if (result != null && result.size() != 0) {
+                DIGITAL_IDENTITY item = objectMapper.readValue(result.get(0).toString(), DIGITAL_IDENTITY.class);
                 logger.debug(item);
                 return item;
             } else {
@@ -61,8 +58,7 @@ public class DigitalIDService {
                 return null;
             }
         } catch (NoOrdsResultsFoundException | IOException e) {
-            logger.warn("No digital identity found with requested id: " + id);
-            return null;
+            throw new NoSuchClientException("There was an issue loading digital identity from ords: " + e);
         } catch (ORDSQueryException e) {
             logger.error("Error occurred loading digital identity: " + e);
             return null;

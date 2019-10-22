@@ -12,6 +12,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class ApplicationProperties {
 
+	public static final String IDENTITY_CODE_TABLE_BCSC_VALUE = "BCSC";
+	public static final String IDENTITY_CODE_TABLE_BCEID_VALUE = "BCEID";
+
+
 	public static String ORDS_URL;
 	public static String ORDS_USERNAME;
 	public static String ORDS_PASSWORD;
