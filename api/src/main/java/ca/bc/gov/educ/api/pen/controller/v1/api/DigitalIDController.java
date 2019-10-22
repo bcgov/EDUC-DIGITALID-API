@@ -1,6 +1,7 @@
 package ca.bc.gov.educ.api.pen.controller.v1.api;
 
-import ca.bc.gov.educ.api.pen.model.DigitalIdentity;
+import ca.bc.gov.educ.api.pen.model.DIGITAL_IDENTITY;
+import ca.bc.gov.educ.api.pen.props.ApplicationProperties;
 import ca.bc.gov.educ.api.pen.service.DigitalIDService;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,13 +22,12 @@ public class DigitalIDController {
     }
 
     @GetMapping("/bcsc/{id}")
-    public DigitalIdentity getDigitalIDByBCSC(@PathVariable String id){
-        return service.loadDigitalId(id, "bcsc");
+    public DIGITAL_IDENTITY getDigitalIDByBCSC(@PathVariable String id){
+        return service.loadDigitalId(id, ApplicationProperties.IDENTITY_CODE_TABLE_BCSC_VALUE);
     }
 
     @GetMapping("/bceid/{id}")
-    public String getDigitalIDByBCeID(@PathVariable String id){
-
-        return "Hello there BCeID " + id;
+    public DIGITAL_IDENTITY getDigitalIDByBCeID(@PathVariable String id){
+        return service.loadDigitalId(id, ApplicationProperties.IDENTITY_CODE_TABLE_BCEID_VALUE);
     }
 }
