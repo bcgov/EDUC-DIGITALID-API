@@ -6,6 +6,8 @@ pipeline{
             script{
               openshift.withCluster(){
                 openshift.withProject(){
+                  def bcJORDS = openshift.process('-f', 'tools/openshift/jords.bc.yaml')
+                  openshift.apply(bcJORDS).narrow('bc').startBuild('-w').logs('-f')
                   def bcApi = openshift.process('-f', 'tools/openshift/api.bc.yaml')
                   openshift.apply(bcApi).narrow('bc').startBuild('-w').logs('-f')
                 }
