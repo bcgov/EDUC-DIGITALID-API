@@ -1,6 +1,6 @@
 package ca.bc.gov.educ.api.pen.service;
 
-import ca.bc.gov.educ.api.pen.model.DIGITAL_IDENTITY;
+import ca.bc.gov.educ.api.pen.model.DigitalIdentitityDAO;
 import ca.bc.gov.educ.api.pen.props.ApplicationProperties;
 import ca.bc.gov.educ.ords.exception.NoOrdsResultsFoundException;
 import ca.bc.gov.educ.ords.exception.ORDSQueryException;
@@ -21,9 +21,9 @@ import java.io.IOException;
 
 @Service
 public class DigitalIDService {
-    private static final Log logger = LogFactory.getLog(DIGITAL_IDENTITY.class);
+    private static final Log logger = LogFactory.getLog(DigitalIdentitityDAO.class);
 
-    private final String selectDigitalIdQuery = "select di.digital_identity_id, di.student_id, di.identity_type_code, di.identity_value, di.last_access_time, di.last_access_channel_code, di.create_user, di.create_date, di.update_user, di.update_date from digital_identity di left join identity_type_code itc on di.identity_type_code=itc.identity_type_code where lower(di.digital_identity_id) = lower(?) and lower(itc.description) = lower(?);";
+    private final String selectDigitalIdQuery = "select * from digital_identity where lower(digital_identity_id) = lower(?) and lower(identity_type_code) = lower(?);";
 
     /**
      * Search for Digital Identity by id and type (BCeID or BCSC)
@@ -32,7 +32,7 @@ public class DigitalIDService {
      * @param type
      * @return
      */
-    public DIGITAL_IDENTITY loadDigitalId(String id, String type) {
+    public DigitalIdentitityDAO loadDigitalId(String id, String type) {
         String [] parameters = {id, type};
         try {
             logger.debug("Connecting to ORDS");
@@ -50,15 +50,16 @@ public class DigitalIDService {
             logger.debug("Query returned: " + result);
 
             if (result != null && result.size() != 0) {
-                DIGITAL_IDENTITY item = objectMapper.readValue(result.get(0).toString(), DIGITAL_IDENTITY.class);
+                DigitalIdentitityDAO item = objectMapper.readValue(result.get(0).toString(), DigitalIdentitityDAO.class);
                 logger.debug(item);
                 return item;
             } else {
                 logger.warn("No digital identity found with requested id: " + id);
-                return null;
+                throw new NoOrdsResultsFoundException("No digital identity found with requested id: " + id);
             }
         } catch (NoOrdsResultsFoundException | IOException e) {
-            throw new NoSuchClientException("There was an issue loading digital identity from ords: " + e);
+            logger.debug("There was an issue loading digital identity from ords: " + e);
+            throw new NoSuchClientException("Error occurred loading digital identity: " + id);
         } catch (ORDSQueryException e) {
             logger.error("Error occurred loading digital identity: " + e);
             return null;

@@ -11,7 +11,7 @@ import java.util.Date;
  */
 
 @Data
-public class DIGITAL_IDENTITY {
+public class DigitalIdentitityDAO {
     @JsonProperty("digital_identity_id")
     Integer id;
     @JsonProperty("student_id")
