@@ -1,0 +1,10 @@
+/api/target/
+/api/.settings/
+/api/.classpath
+/api/.project
+/api/.factorypath
+/api/bin/
+/api/.idea
+/api/pen-api.iml
+.project
+.classpath
