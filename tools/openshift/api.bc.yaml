@@ -32,7 +32,7 @@ objects:
       - as:
         from:
           kind: ImageStreamTag
-          name: "educ-jords"
+          name: "educ-jords:latest"
           namespace: "c2mvws-dev"
         paths:
         - destinationDir: tmp
