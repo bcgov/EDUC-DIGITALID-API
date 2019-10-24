@@ -5,3 +5,5 @@
 /api/.factorypath
 /api/bin/
 /.idea
+.project
+.classpath
