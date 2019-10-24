@@ -1,0 +1,7 @@
+/api/target/
+/api/.settings/
+/api/.classpath
+/api/.project
+/api/.factorypath
+/api/bin/
+/.idea
