@@ -33,7 +33,7 @@ objects:
         from:
           kind: ImageStreamTag
           name: "educ-jords:latest"
-          namespace: "c2mvws-dev"
+          namespace: "c2mvws-tools"
         paths:
         - destinationDir: tmp
           sourcePath: /opt/app-root/src
