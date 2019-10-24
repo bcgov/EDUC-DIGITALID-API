@@ -4,6 +4,7 @@
 /api/.project
 /api/.factorypath
 /api/bin/
-/.idea
+/api/.idea
+/api/pen-api.iml
 .project
 .classpath
