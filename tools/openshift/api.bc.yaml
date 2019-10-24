@@ -36,7 +36,7 @@ objects:
           namespace: "c2mvws-tools"
         paths:
         - destinationDir: tmp
-          sourcePath: /opt/app-root/src
+          sourcePath: /deployments
       type: Git
     strategy:
       sourceStrategy:
