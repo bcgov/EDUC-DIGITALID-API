@@ -14,15 +14,6 @@ objects:
     source:
       git:
         uri: "https://github.com/bcgov/EDUC-DIGITALID-API"
-      images:
-      - as:
-        from:
-          kind: ImageStreamTag
-          name: "educ-jords"
-          namespace: "c2mvws-dev"
-        paths:
-        - destinationDir: tmp
-          sourcePath: /opt/app-root/src
     strategy:
       jenkinsPipelineStrategy:
-        jenkinsfilePath: jenkins/Jenkinsfile-api
+        jenkinsfilePath: tools/jenkins/Jenkinsfile-api
