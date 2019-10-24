@@ -35,7 +35,7 @@ objects:
           name: "educ-jords:latest"
           namespace: "c2mvws-tools"
         paths:
-        - destinationDir: /tmp/artifacts/m2
+        - destinationDir: tmp/artifacts/m2
           sourcePath: /deployments
       type: Git
     strategy:
