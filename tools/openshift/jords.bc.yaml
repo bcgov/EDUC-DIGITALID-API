@@ -1,0 +1,49 @@
+---
+apiVersion: v1
+kind: Template
+labels:
+  template: 'jords-template'
+metadata:
+  name: 'jords-template'
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewBuild
+    creationTimestamp:
+    labels:
+      build: "educ-jords"
+    name: "educ-jords"
+  spec:
+    lookupPolicy:
+      local: false
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    labels:
+      build: educ-jords
+    name: educ-jords
+    namespace: c2mvws-tools
+  spec:
+    failedBuildsHistoryLimit: 5
+    nodeSelector: 
+    output:
+      to:
+        kind: ImageStreamTag
+        name: 'educ-jords:latest'
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      contextDir: 
+      git:
+        ref: master
+        uri: 'https://github.com/bcgov/EDUC-JORDS'
+      type: Git
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: 'openjdk-11-rhel7:latest'
+      type: Source
