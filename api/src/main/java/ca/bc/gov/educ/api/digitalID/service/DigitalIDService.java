@@ -1,7 +1,7 @@
-package ca.bc.gov.educ.api.pen.service;
+package ca.bc.gov.educ.api.digitalID.service;
 
-import ca.bc.gov.educ.api.pen.model.DigitalIdentitityDAO;
-import ca.bc.gov.educ.api.pen.props.ApplicationProperties;
+import ca.bc.gov.educ.api.digitalID.model.DigitalIdentitityDAO;
+import ca.bc.gov.educ.api.digitalID.props.ApplicationProperties;
 import ca.bc.gov.educ.ords.exception.NoOrdsResultsFoundException;
 import ca.bc.gov.educ.ords.exception.ORDSQueryException;
 import ca.bc.gov.educ.ords.model.ORDSTargetCredential;

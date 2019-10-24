@@ -1,9 +1,7 @@
-package ca.bc.gov.educ.api.pen.controller;
+package ca.bc.gov.educ.api.digitalID.controller;
 
-import ca.bc.gov.educ.api.pen.model.DigitalIdentitityDAO;
-import ca.bc.gov.educ.api.pen.props.ApplicationProperties;
-import ca.bc.gov.educ.api.pen.service.DigitalIDService;
-import org.springframework.security.access.prepost.PreAuthorize;
+import ca.bc.gov.educ.api.digitalID.model.DigitalIdentitityDAO;
+import ca.bc.gov.educ.api.digitalID.service.DigitalIDService;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -25,13 +23,11 @@ public class DigitalIDController {
     }
 
     @GetMapping("/bcsc/{id}")
-    @PreAuthorize("#oauth2.hasAnyScope('READ')")
     public DigitalIdentitityDAO getDigitalIDByBCSC(@PathVariable String id){
         return service.loadDigitalId(id, IDENTITY_CODE_TABLE_BCSC_VALUE);
     }
 
     @GetMapping("/bceid/{id}")
-    @PreAuthorize("#oauth2.hasAnyScope('READ')")
     public DigitalIdentitityDAO getDigitalIDByBCeID(@PathVariable String id){
         return service.loadDigitalId(id, IDENTITY_CODE_TABLE_BCEID_VALUE);
     }

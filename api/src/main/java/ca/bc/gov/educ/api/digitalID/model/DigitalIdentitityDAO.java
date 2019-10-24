@@ -1,4 +1,4 @@
-package ca.bc.gov.educ.api.pen.model;
+package ca.bc.gov.educ.api.digitalID.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

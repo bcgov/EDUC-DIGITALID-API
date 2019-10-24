@@ -1,4 +1,4 @@
-package ca.bc.gov.educ.api.pen.controller;
+package ca.bc.gov.educ.api.digitalID.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

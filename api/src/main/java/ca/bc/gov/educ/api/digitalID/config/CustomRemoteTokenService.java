@@ -1,4 +1,4 @@
-package ca.bc.gov.educ.api.pen.config;
+package ca.bc.gov.educ.api.digitalID.config;
 
 import java.io.IOException;
 import java.util.Map;
@@ -22,7 +22,7 @@ import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
-import ca.bc.gov.educ.api.pen.props.ApplicationProperties;
+import ca.bc.gov.educ.api.digitalID.props.ApplicationProperties;
 
 public class CustomRemoteTokenService implements ResourceServerTokenServices {
 
