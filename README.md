@@ -16,6 +16,7 @@ The main function of the PEN Registry system is to process (School/PSI) requests
 
 ## Documentation
 
+* [Online DigitalID API Spec](https://digitalid1.docs.apiary.io/#)
 * [Openshift Readme](openshift/README.md)
 * [PEN Registry Wiki](https://github.com/bcgov/EDUC-PEN/wiki)
 
