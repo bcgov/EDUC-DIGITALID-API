@@ -28,15 +28,6 @@ objects:
       git:
         ref: master
         uri: 'https://github.com/bcgov/EDUC-PEN-API'
-      images:
-      - as:
-        from:
-          kind: ImageStreamTag
-          name: "educ-jords:latest"
-          namespace: "c2mvws-tools"
-        paths:
-        - destinationDir: tmp/artifacts/m2
-          sourcePath: /deployments
       type: Git
     strategy:
       sourceStrategy:
