@@ -1,6 +1,6 @@
 pipeline{
   agent {
-      label 'maven'
+      label 'maven35'
   }
   stages{
         stage('build'){
