@@ -5,21 +5,21 @@ pipeline {
   stages {
     stage('Build App') {
       steps {
-        sh "mvn -f ./api/pom.xml install -Dspring.profiles.active=dev"
+        sh "mvn -f ./api/pom.xml install"
       }
     }
     stage('Create Image Builder') {
       when {
         expression {
           openshift.withCluster() {
-            return !openshift.selector("bc", "digitalID").exists();
+            return !openshift.selector("bc", "digitalid").exists();
           }
         }
       }
       steps {
         script {
           openshift.withCluster() {
-            openshift.newBuild("--name=digitalID", "--image-stream=redhat-openjdk18-openshift:1.1", "--binary")
+            openshift.newBuild("--name=digitalid", "--image-stream=redhat-openjdk18-openshift:1.1", "--binary")
           }
         }
       }
@@ -28,7 +28,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.selector("bc", "digitalID").startBuild("--from-file=deployments/pen-api-0.0.1-SNAPSHOT.jar", "--wait")
+            openshift.selector("bc", "digitalid").startBuild("--from-file=deployments/pen-api-0.0.1-SNAPSHOT.jar", "--wait")
           }
         }
       }
@@ -37,7 +37,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.tag("digitalID:latest", "digitalID:dev")
+            openshift.tag("digitalid:latest", "digitalid:dev")
           }
         }
       }
@@ -46,14 +46,14 @@ pipeline {
       when {
         expression {
           openshift.withCluster() {
-            return !openshift.selector('dc', 'digitalID-dev').exists()
+            return !openshift.selector('dc', 'digitalid-dev').exists()
           }
         }
       }
       steps {
         script {
           openshift.withCluster() {
-            openshift.newApp("digitalID:latest", "--name=digitalID-dev").narrow('svc').expose()
+            openshift.newApp("digitalid:latest", "--name=digitalid-dev").narrow('svc').expose()
           }
         }
       }
