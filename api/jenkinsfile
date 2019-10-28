@@ -6,6 +6,7 @@ pipeline {
     stage('Build App') {
       steps {
         sh "cd api"
+        sh "ls"
         sh "mvn install"
       }
     }
