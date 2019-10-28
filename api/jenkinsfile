@@ -5,7 +5,7 @@ pipeline {
   stages {
     stage('Build App') {
       steps {
-        sh "mvn -f ./api/pom.xml install -DskipTests"
+        sh "mvn -f ./api/pom.xml install -Dspring.profiles.active=dev"
       }
     }
     stage('Create Image Builder') {
