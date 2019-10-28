@@ -5,7 +5,7 @@ pipeline {
   stages {
     stage('Build App') {
       steps {
-        sh "mvn -f ./api/pom.xml install"
+        sh "mvn -f ./api/pom.xml package"
       }
     }
     stage('Create Image Builder') {
