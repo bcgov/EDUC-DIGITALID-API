@@ -28,7 +28,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.selector("bc", "digitalid").startBuild("--from-file=deployments/pen-api-0.0.1-SNAPSHOT.jar", "--wait")
+            openshift.selector("bc", "digitalid").startBuild("--from-file=./api/target/pen-api-0.0.1.SNAPSHOT.jar", "--wait")
           }
         }
       }
