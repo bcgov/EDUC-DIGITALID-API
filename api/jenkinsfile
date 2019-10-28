@@ -5,6 +5,7 @@ pipeline {
   stages {
     stage('Build App') {
       steps {
+        sh "pwd"
         sh "mvn install"
       }
     }
