@@ -13,6 +13,7 @@ objects:
   spec:
     source:
       git:
+        ref: feature/buildChaining
         uri: "https://github.com/bcgov/EDUC-DIGITALID-API"
     strategy:
       jenkinsPipelineStrategy:
