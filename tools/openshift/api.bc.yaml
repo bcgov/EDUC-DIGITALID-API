@@ -15,7 +15,6 @@ objects:
     namespace: c2mvws-tools
   spec:
     source:
-      contextDir: api
       git:
         ref: feature/buildChaining
         uri: 'https://github.com/bcgov/EDUC-PEN-API'
