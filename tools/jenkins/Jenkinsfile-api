@@ -1,7 +1,5 @@
 pipeline{
-  agent {
-      label 'maven35'
-  }
+  agent any
   stages{
         stage('build'){
           steps{
