@@ -22,4 +22,4 @@ objects:
       type: Git
     strategy:
       jenkinsPipelineStrategy:
-        jenkinsfilePath: ../tools/jenkins/Jenkinsfile-digitalID
+        jenkinsfilePath: jenkinsfile
