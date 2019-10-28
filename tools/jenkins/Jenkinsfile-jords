@@ -1,0 +1,13 @@
+pipeline{
+    agent {
+        label 'maven35'
+    }
+    stages{
+        stage('build jords'){
+            steps{
+                sh "mvn install"
+            }
+        }
+    }
+}
+
