@@ -18,7 +18,7 @@ objects:
       contextDir: api
       git:
         ref: feature/buildChaining
-        uri: 'https://github.com/bcgov/EDUC-PEN-API'
+        uri: 'https://github.com/bcgov/EDUC-DIGITALID-API'
       type: Git
     strategy:
       jenkinsPipelineStrategy:
