@@ -28,35 +28,11 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.selector("bc", "digitalid").startBuild("--from-file=./api/target/pen-api-0.0.1.SNAPSHOT.jar", "--wait")
+            openshift.selector("bc", "educ-digitalid-api").startBuild("--from-file=./api/target/pen-api-0.0.1.SNAPSHOT.jar", "--wait")
           }
         }
       }
     }
-    stage('Promote to DEV') {
-      steps {
-        script {
-          openshift.withCluster() {
-            openshift.tag("digitalid:latest", "digitalid:dev")
-          }
-        }
-      }
-    }
-    stage('Create DEV') {
-      when {
-        expression {
-          openshift.withCluster() {
-            return !openshift.selector('dc', 'digitalid-dev').exists()
-          }
-        }
-      }
-      steps {
-        script {
-          openshift.withCluster() {
-            openshift.newApp("c2mvws-tools/digitalid:latest", "--name=digitalid-dev", "--namespace=c2mvws-dev").narrow('svc').expose()
-          }
-        }
-      }
-    }
+    
   }
 }
