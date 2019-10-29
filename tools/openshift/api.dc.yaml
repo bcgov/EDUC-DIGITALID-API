@@ -35,7 +35,7 @@ objects:
               path: "${HOST_PATH}"
               port: ${{CONTAINER_PORT}}
               scheme: HTTP
-            periodSeconds: 10
+            periodSeconds: 30
             successThreshold: 1
             timeoutSeconds: 1
           name: "${APP_NAME}-${JOB_NAME}"
@@ -48,7 +48,7 @@ objects:
               path: "${HOST_PATH}"
               port: ${{CONTAINER_PORT}}
               scheme: HTTP
-            periodSeconds: 10
+            periodSeconds: 30
             successThreshold: 1
             timeoutSeconds: 1
           resources: {}
