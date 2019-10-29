@@ -17,16 +17,5 @@ pipeline{
             }
           }
         }
-        stage('deploy'){
-         steps{
-          script{
-            openshift.withCluster(){
-              openshift.withProject(){
-                openshift.tag("educ-pen-api:latest", "educ-pen-api:dev")
-              }
-            }
-          }
-        }
-      }
     }
   }
