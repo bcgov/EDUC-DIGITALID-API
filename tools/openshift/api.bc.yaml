@@ -10,8 +10,8 @@ objects:
   kind: BuildConfig
   metadata:
     labels:
-      build: educ-digitalid-api
-    name: educ-digitalid-api
+      build: educ-digitalid-api-pipeline
+    name: educ-digitalid-api-pipeline
     namespace: c2mvws-tools
   spec:
     source:

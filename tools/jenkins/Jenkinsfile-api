@@ -26,15 +26,23 @@ pipeline{
   }
 
   stages{
-      stage('build'){
+      stage('Build JORDS'){
         steps{
           script{
             openshift.withCluster(){
               openshift.withProject(){
                 def bcJORDS = openshift.process('-f', 'tools/openshift/jords.bc.yaml')
                 openshift.apply(bcJORDS).narrow('bc').startBuild('-w').logs('-f')
-
-
+              }
+            }
+          }
+        }
+      }
+      stage('Build DigitalID API'){
+        steps{
+          script{
+            openshift.withCluster(){
+              openshift.withProject(){
                 def bcApi = openshift.process('-f', 'tools/openshift/api.bc.yaml')
                 openshift.apply(bcApi).narrow('bc').startBuild('-w').logs('-f')
               }
