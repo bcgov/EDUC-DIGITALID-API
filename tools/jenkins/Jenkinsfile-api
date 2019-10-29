@@ -54,7 +54,7 @@ pipeline{
         steps {
           script {
             openshift.withCluster() {
-              openshift.withProject(${DEV}) {
+              openshift.withProject(DEV) {
                 echo "Tagging image"
                 openshift.tag("${TOOLS}/${REPO_NAME}-${JOB_NAME}:latest", "${REPO_NAME}-${JOB_NAME}:${TAG}")
                 def dcTemplate = openshift.process('-f',
