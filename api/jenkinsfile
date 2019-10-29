@@ -12,14 +12,14 @@ pipeline {
       when {
         expression {
           openshift.withCluster() {
-            return !openshift.selector("bc", "digitalid").exists();
+            return !openshift.selector("bc", "educ-digitalid-api").exists();
           }
         }
       }
       steps {
         script {
           openshift.withCluster() {
-            openshift.newBuild("--name=digitalid", "--image-stream=redhat-openjdk18-openshift:1.1", "--binary")
+            openshift.newBuild("--name=educ-digitalid-api", "--image-stream=redhat-openjdk18-openshift:1.1", "--binary")
           }
         }
       }
