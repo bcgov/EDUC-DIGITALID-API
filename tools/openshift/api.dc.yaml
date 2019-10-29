@@ -115,7 +115,7 @@ parameters:
   required: true
 - name: CONTAINER_PORT
   description: The port on which the application will be accessible
-  value: 8080
+  value: "8080"
   required: false
 - name: TAG
   description: The identifying tag for this specific deployment
