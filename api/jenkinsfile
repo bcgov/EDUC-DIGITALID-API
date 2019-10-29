@@ -53,7 +53,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.newApp("digitalid:latest", "--name=digitalid-dev").narrow('svc').expose()
+            openshift.newApp("digitalid:latest", "--name=digitalid-dev", "--namespace=c2mvws-dev").narrow('svc').expose()
           }
         }
       }
