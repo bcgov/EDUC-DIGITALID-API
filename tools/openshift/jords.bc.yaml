@@ -2,14 +2,14 @@
 apiVersion: v1
 kind: Template
 labels: 
-  template: jords-pipeline-template
+  template: educ-jords-pipeline-template
 metadata: 
-  name: jords-pipeline-template
+  name: educ-jords-pipeline-template
 objects:
 - apiVersion: v1
   kind: BuildConfig
   metadata: 
-    name: "jords-pipeline"
+    name: "educ-jords-pipeline"
   spec:
     source:
       git:

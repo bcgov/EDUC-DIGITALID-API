@@ -2,16 +2,16 @@
 apiVersion: v1
 kind: Template
 labels:
-  template: 'api-template'
+  template: 'educ-digitalid-api-template'
 metadata:
-  name: 'api-template'
+  name: 'educ-digitalid-api-template'
 objects:
 - apiVersion: v1
   kind: BuildConfig
   metadata:
     labels:
-      build: educ-pen-api
-    name: educ-pen-api
+      build: educ-digitalid-api
+    name: educ-digitalid-api
     namespace: c2mvws-tools
   spec:
     source:
