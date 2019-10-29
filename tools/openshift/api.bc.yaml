@@ -14,12 +14,24 @@ objects:
     name: educ-pen-api
     namespace: c2mvws-tools
   spec:
+    failedBuildsHistoryLimit: 5
+    nodeSelector: 
+    output:
+      to:
+        kind: ImageStreamTag
+        name: 'educ-pen-api:latest'
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
     source:
       contextDir: api
       git:
-        ref: feature/buildChaining
+        ref: master
         uri: 'https://github.com/bcgov/EDUC-DIGITALID-API'
       type: Git
     strategy:
-      jenkinsPipelineStrategy:
-        jenkinsfilePath: jenkinsfile
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: 'openjdk-11-rhel7:latest'
+      type: Source
