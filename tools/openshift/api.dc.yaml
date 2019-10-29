@@ -33,20 +33,20 @@ objects:
             failureThreshold: 3
             httpGet:
               path: "${HOST_PATH}"
-              port: "${CONTAINER_PORT}"
+              port: ${{CONTAINER_PORT}}
               scheme: HTTP
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 1
           name: "${APP_NAME}-${JOB_NAME}"
           ports:
-          - containerPort: "${CONTAINER_PORT}"
+          - containerPort: ${{CONTAINER_PORT}}
             protocol: TCP
           readinessProbe:
             failureThreshold: 3
             httpGet:
               path: "${HOST_PATH}"
-              port: "${CONTAINER_PORT}"
+              port: ${{CONTAINER_PORT}}
               scheme: HTTP
             periodSeconds: 10
             successThreshold: 1
@@ -72,8 +72,8 @@ objects:
     name: "${APP_NAME}-${JOB_NAME}"
   spec:
     ports:
-    - name: "${CONTAINER_PORT}-tcp"
-      port: "${CONTAINER_PORT}"
+    - name: ${CONTAINER_PORT}-tcp
+      port: ${{CONTAINER_PORT}}
       protocol: TCP
     selector:
       app: "${APP_NAME}-${JOB_NAME}"
@@ -88,7 +88,7 @@ objects:
     host: "${HOST_ROUTE}"
     path: ${HOST_PATH}
     port:
-      targetPort: "${CONTAINER_PORT}-tcp"
+      targetPort: ${CONTAINER_PORT}-tcp
     tls:
       insecureEdgeTerminationPolicy: Redirect
       termination: edge
@@ -115,12 +115,12 @@ parameters:
   required: true
 - name: CONTAINER_PORT
   description: The port on which the application will be accessible
-  value: "8080"
+  value: 8080
   required: false
 - name: TAG
   description: The identifying tag for this specific deployment
   required: true
 - name: HOST_PATH
   description: The path appended to the HOST_ROUTE where the root of this project will be served
-  value: ''
+  value: "/"
   required: false
