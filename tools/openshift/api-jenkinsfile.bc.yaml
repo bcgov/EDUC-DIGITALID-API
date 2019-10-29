@@ -2,14 +2,14 @@
 apiVersion: v1
 kind: Template
 labels: 
-  template: digitalid-api-pipeline-template
+  template: digitalid-api-master-pipeline-template
 metadata: 
-  name: digitalid-api-pipeline-template
+  name: digitalid-api-master-pipeline-template
 objects:
 - apiVersion: v1
   kind: BuildConfig
   metadata: 
-    name: "digitalid-api-pipeline"
+    name: "digitalid-api-master-pipeline"
   spec:
     source:
       git:

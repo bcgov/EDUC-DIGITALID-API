@@ -60,7 +60,7 @@ pipeline{
                 'tools/openshift/api.dc.yaml',
                 "REPO_NAME=${REPO_NAME}",
                 "JOB_NAME=${JOB_NAME}",
-                "NAMESPACE=DEV",
+                "NAMESPACE=${DEV}",
                 "APP_NAME=${APP_NAME}",
                 "HOST_ROUTE=${DEV_HOST_ROUTE}",
                 "TAG=${TAG}"

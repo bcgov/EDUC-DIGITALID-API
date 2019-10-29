@@ -33,20 +33,20 @@ objects:
             failureThreshold: 3
             httpGet:
               path: "${HOST_PATH}"
-              port: ${CONTAINER_PORT}
+              port: "${CONTAINER_PORT}"
               scheme: HTTP
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 1
           name: "${APP_NAME}-${JOB_NAME}"
           ports:
-          - containerPort: ${CONTAINER_PORT}
+          - containerPort: "${CONTAINER_PORT}"
             protocol: TCP
           readinessProbe:
             failureThreshold: 3
             httpGet:
               path: "${HOST_PATH}"
-              port: ${CONTAINER_PORT}
+              port: "${CONTAINER_PORT}"
               scheme: HTTP
             periodSeconds: 10
             successThreshold: 1
@@ -73,7 +73,7 @@ objects:
   spec:
     ports:
     - name: "${CONTAINER_PORT}-tcp"
-      port: ${CONTAINER_PORT}
+      port: "${CONTAINER_PORT}"
       protocol: TCP
     selector:
       app: "${APP_NAME}-${JOB_NAME}"
@@ -83,12 +83,12 @@ objects:
   metadata:
     labels:
       app: "${APP_NAME}-${JOB_NAME}"
-    name: "${APP_NANE}-${JOB_NAME}"
+    name: "${APP_NAME}-${JOB_NAME}"
   spec:
     host: "${HOST_ROUTE}"
     path: ${HOST_PATH}
     port:
-      targetPort: ${CONTAINER_PORT}-tcp
+      targetPort: "${CONTAINER_PORT}-tcp"
     tls:
       insecureEdgeTerminationPolicy: Redirect
       termination: edge
@@ -115,7 +115,7 @@ parameters:
   required: true
 - name: CONTAINER_PORT
   description: The port on which the application will be accessible
-  value: '8080'
+  value: "8080"
   required: false
 - name: TAG
   description: The identifying tag for this specific deployment
