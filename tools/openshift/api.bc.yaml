@@ -2,36 +2,24 @@
 apiVersion: v1
 kind: Template
 labels:
-  template: 'api-template'
+  template: 'educ-digitalid-api-template'
 metadata:
-  name: 'api-template'
+  name: 'educ-digitalid-api-template'
 objects:
 - apiVersion: v1
   kind: BuildConfig
   metadata:
     labels:
-      build: educ-pen-api
-    name: educ-pen-api
+      build: educ-digitalid-api-pipeline
+    name: educ-digitalid-api-pipeline
     namespace: c2mvws-tools
   spec:
-    failedBuildsHistoryLimit: 5
-    nodeSelector: 
-    output:
-      to:
-        kind: ImageStreamTag
-        name: 'educ-pen-api:latest'
-    postCommit: {}
-    resources: {}
-    runPolicy: Serial
     source:
       contextDir: api
       git:
         ref: master
-        uri: 'https://github.com/bcgov/EDUC-PEN-API'
+        uri: 'https://github.com/bcgov/EDUC-DIGITALID-API'
       type: Git
     strategy:
-      sourceStrategy:
-        from:
-          kind: ImageStreamTag
-          name: 'openjdk-11-rhel7:latest'
-      type: Source
+      jenkinsPipelineStrategy:
+        jenkinsfilePath: jenkinsfile

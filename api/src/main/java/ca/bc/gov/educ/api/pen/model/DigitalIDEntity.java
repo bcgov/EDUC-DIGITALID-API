@@ -5,13 +5,13 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * Digital Identity DAO object
+ * Digital Identity Entity
  *
  * @author John Cox
  */
 
 @Data
-public class DigitalIdentitityDAO {
+public class DigitalIDEntity {
     @JsonProperty("digital_identity_id")
     Integer id;
     @JsonProperty("student_id")
@@ -21,7 +21,7 @@ public class DigitalIdentitityDAO {
     @JsonProperty("identity_value")
     String identityValue;
     @JsonProperty("last_access_time")
-    String lastAccessTime;
+    Date lastAccessTime;
     @JsonProperty("last_access_channel_code")
     String lastAccessChannelCode;
     @JsonProperty("create_user")
