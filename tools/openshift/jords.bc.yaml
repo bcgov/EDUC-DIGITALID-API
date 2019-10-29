@@ -13,7 +13,7 @@ objects:
   spec:
     source:
       git:
-        ref: feature/jenkinsfile
+        ref: master
         uri: "https://github.com/bcgov/EDUC-JORDS"
     strategy:
       jenkinsPipelineStrategy:
