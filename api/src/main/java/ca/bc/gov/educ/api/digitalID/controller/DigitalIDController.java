@@ -1,8 +1,14 @@
 package ca.bc.gov.educ.api.digitalID.controller;
 
-import ca.bc.gov.educ.api.digitalID.model.DigitalIdentitityDAO;
-import ca.bc.gov.educ.api.digitalID.service.DigitalIDService;
-import org.springframework.web.bind.annotation.*;
+import ca.bc.gov.educ.api.pen.model.DigitalIDEntity;
+import ca.bc.gov.educ.api.pen.service.DigitalIDService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 /**
  * Digital Identity controller
@@ -14,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("digitalid")
 public class DigitalIDController {
 
+    @Autowired
     private final DigitalIDService service;
     private final String IDENTITY_CODE_TABLE_BCSC_VALUE = "1";
     private final String IDENTITY_CODE_TABLE_BCEID_VALUE = "2";
@@ -23,12 +30,26 @@ public class DigitalIDController {
     }
 
     @GetMapping("/bcsc/{id}")
-    public DigitalIdentitityDAO getDigitalIDByBCSC(@PathVariable String id){
-        return service.loadDigitalId(id, IDENTITY_CODE_TABLE_BCSC_VALUE);
+    //@PreAuthorize("#oauth2.hasAnyScope('READ')")
+    public DigitalIDEntity searchDigitalIDByBCSC(@PathVariable String id){
+        return service.searchDigitalId(id, IDENTITY_CODE_TABLE_BCSC_VALUE);
     }
 
     @GetMapping("/bceid/{id}")
-    public DigitalIdentitityDAO getDigitalIDByBCeID(@PathVariable String id){
-        return service.loadDigitalId(id, IDENTITY_CODE_TABLE_BCEID_VALUE);
+    //@PreAuthorize("#oauth2.hasAnyScope('READ')")
+    public DigitalIDEntity searchDigitalIDByBCeID(@PathVariable String id){
+        return service.searchDigitalId(id, IDENTITY_CODE_TABLE_BCEID_VALUE);
+    }
+
+    @GetMapping("/{id}")
+    //@PreAuthorize("#oauth2.hasAnyScope('READ')")
+    public DigitalIDEntity retreiveDigitalID(@PathVariable String id){
+        return service.retrieveDigitalID(id);
+    }
+
+    @PostMapping()
+    //@PreAuthorize("#oauth2.hasAnyScope('READ')")
+    public DigitalIDEntity createDigitalID(@RequestBody DigitalIDEntity digitalID){
+        return service.createDigitalID(digitalID);
     }
 }

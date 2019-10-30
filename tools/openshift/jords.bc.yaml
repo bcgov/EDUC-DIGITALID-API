@@ -1,37 +1,20 @@
 ---
 apiVersion: v1
 kind: Template
-labels:
-  template: 'jords-template'
-metadata:
-  name: 'jords-template'
+labels: 
+  template: educ-jords-pipeline-template
+metadata: 
+  name: educ-jords-pipeline-template
 objects:
 - apiVersion: v1
   kind: BuildConfig
-  metadata:
-    labels:
-      build: educ-jords
-    name: educ-jords
-    namespace: c2mvws-tools
+  metadata: 
+    name: "educ-jords-pipeline"
   spec:
-    failedBuildsHistoryLimit: 5
-    nodeSelector: 
-    output:
-      to:
-        kind: ImageStreamTag
-        name: 'educ-jords:latest'
-    postCommit: {}
-    resources: {}
-    runPolicy: Serial
     source:
-      contextDir: 
       git:
         ref: master
-        uri: 'https://github.com/bcgov/EDUC-JORDS'
-      type: Git
+        uri: "https://github.com/bcgov/EDUC-JORDS"
     strategy:
-      sourceStrategy:
-        from:
-          kind: ImageStreamTag
-          name: 'openjdk-11-rhel7:latest'
-      type: Source
+      jenkinsPipelineStrategy:
+        jenkinsfilePath: tools/jenkins/jenkinsfile
