@@ -1,7 +1,7 @@
 package ca.bc.gov.educ.api.digitalID.controller;
 
-import ca.bc.gov.educ.api.pen.model.DigitalIDEntity;
-import ca.bc.gov.educ.api.pen.service.DigitalIDService;
+import ca.bc.gov.educ.api.digitalID.model.DigitalIDEntity;
+import ca.bc.gov.educ.api.digitalID.service.DigitalIDService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;

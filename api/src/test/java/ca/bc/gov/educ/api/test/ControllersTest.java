@@ -9,8 +9,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 
-import ca.bc.gov.educ.api.pen.controller.PublicController;
-import ca.bc.gov.educ.api.pen.controller.UserController;
+import ca.bc.gov.educ.api.digitalID.controller.PublicController;
+import ca.bc.gov.educ.api.digitalID.controller.UserController;
  
 public class ControllersTest {
 	
