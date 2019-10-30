@@ -54,23 +54,19 @@ pipeline{
               echo 'Cleanup BuildConfigs'
               script {
                   openshift.withCluster() {
-                  openshift.withProject(TOOLS) {
-                      if(DEBUG_OUTPUT.equalsIgnoreCase('true')) {
-                          echo "DEBUG - Using project: ${openshift.project()}"
-                      } else {
-                          def bcJORDS = openshift.selector('bc', "educ-jords")
-                          def bcApi = openshift.selector('bc', "${REPO_NAME}-${JOB_NAME}")
+                    openshift.withProject(TOOLS) {
+                      def bcJORDS = openshift.selector('bc', "educ-jords")
+                      def bcApi = openshift.selector('bc', "${REPO_NAME}-${JOB_NAME}")
 
-                          if(bcJORDS.exists()){
-                              echo "Removing BuildConfig ${REPO_NAME}-${JOB_NAME}"
-                              bcJORDS.delete()
-                          }
-                          if(bcApi.exists()) {
-                              echo "Removing BuildConfig ${REPO_NAME}-${JOB_NAME}"
-                              bcApi.delete()
-                          }
+                      if(bcJORDS.exists()){
+                          echo "Removing BuildConfig ${REPO_NAME}-${JOB_NAME}"
+                          bcJORDS.delete()
                       }
+                      if(bcApi.exists()) {
+                          echo "Removing BuildConfig ${REPO_NAME}-${JOB_NAME}"
+                          bcApi.delete()
                       }
+                    }
                   }
               }
           }
