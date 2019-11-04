@@ -1,4 +1,4 @@
-package ca.bc.gov.educ.api.pen;
+package ca.bc.gov.educ.api.digitalID;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -7,13 +7,13 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@EntityScan("ca.bc.gov.educ.api.pen")
-@ComponentScan("ca.bc.gov.educ.api.pen")
+@EntityScan("ca.bc.gov.educ.api.digitalID")
+@ComponentScan("ca.bc.gov.educ.api.digitalID")
 @EnableCaching
-public class PENApiResourceApplication {
+public class DigitalIDApiResourceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PENApiResourceApplication.class, args);
+		SpringApplication.run(DigitalIDApiResourceApplication.class, args);
 	}
 
 }

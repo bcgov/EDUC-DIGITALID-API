@@ -1,4 +1,4 @@
-package ca.bc.gov.educ.api.pen.controller;
+package ca.bc.gov.educ.api.digitalID.controller;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;

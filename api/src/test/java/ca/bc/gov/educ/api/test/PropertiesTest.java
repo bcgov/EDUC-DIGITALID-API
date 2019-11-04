@@ -8,8 +8,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import ca.bc.gov.educ.api.pen.controller.PublicController;
-import ca.bc.gov.educ.api.pen.props.ApplicationProperties;
+import ca.bc.gov.educ.api.digitalID.controller.PublicController;
+import ca.bc.gov.educ.api.digitalID.props.ApplicationProperties;
  
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = ApplicationProperties.class)

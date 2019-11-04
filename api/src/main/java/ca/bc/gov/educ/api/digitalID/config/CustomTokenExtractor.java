@@ -1,4 +1,4 @@
-package ca.bc.gov.educ.api.pen.config;
+package ca.bc.gov.educ.api.digitalID.config;
 
 import java.util.Enumeration;
 
