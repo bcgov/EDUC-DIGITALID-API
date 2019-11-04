@@ -1,7 +1,10 @@
 package ca.bc.gov.educ.api.digitalID.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.Data;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
 import java.util.Date;
 
 /**
@@ -12,24 +15,31 @@ import java.util.Date;
 
 @Data
 public class DigitalIDEntity {
-    @JsonProperty("digital_identity_id")
-    Integer id;
-    @JsonProperty("student_id")
-    Integer studentId;
-    @JsonProperty("identity_type_code")
+    @JsonAlias({"digital_identity_id", "digitalId"})
+    Integer digitalID;
+    @JsonAlias({"student_id", "studentId"})
+    Integer studentID;
+    @NotNull(message="identityTypeCode cannot be null")
+    @JsonAlias({"identity_type_code", "identityTypeCode"})
     String identityTypeCode;
-    @JsonProperty("identity_value")
+    @NotNull(message="identityValue cannot be null")
+    @JsonAlias({"identity_value", "identityValue"})
     String identityValue;
-    @JsonProperty("last_access_time")
-    Date lastAccessTime;
-    @JsonProperty("last_access_channel_code")
+    @NotNull(message="lastAccessTime cannot be null")
+    @JsonAlias({"last_access_time", "lastAccessTime"})
+    @PastOrPresent
+    Date lastAccessDate;
+    @NotNull(message="lastAccessChannelCode cannot be null")
+    @JsonAlias({"last_access_channel_code", "lastAccessChannelCode"})
     String lastAccessChannelCode;
-    @JsonProperty("create_user")
+    @JsonAlias({"create_user", "createUser"})
     String createUser;
-    @JsonProperty("create_date")
+    @JsonAlias({"create_date", "createDate"})
+    @PastOrPresent
     Date createDate;
-    @JsonProperty("update_user")
+    @JsonAlias({"update_user", "updateUser"})
     String updateUser;
-    @JsonProperty("update_date")
+    @JsonAlias({"update_date", "updateDate"})
+    @PastOrPresent
     Date updateDate;
 }

@@ -29,28 +29,10 @@ objects:
         containers:
         - image: docker-registry.default.svc:5000/${NAMESPACE}/${REPO_NAME}-${JOB_NAME}:${TAG}
           imagePullPolicy: IfNotPresent
-          livenessProbe:
-            failureThreshold: 3
-            httpGet:
-              path: "${HOST_PATH}"
-              port: ${{CONTAINER_PORT}}
-              scheme: HTTP
-            periodSeconds: 30
-            successThreshold: 1
-            timeoutSeconds: 1
           name: "${APP_NAME}-${JOB_NAME}"
           ports:
           - containerPort: ${{CONTAINER_PORT}}
             protocol: TCP
-          readinessProbe:
-            failureThreshold: 3
-            httpGet:
-              path: "${HOST_PATH}"
-              port: ${{CONTAINER_PORT}}
-              scheme: HTTP
-            periodSeconds: 30
-            successThreshold: 1
-            timeoutSeconds: 1
           resources: {}
     test: false
     triggers:
