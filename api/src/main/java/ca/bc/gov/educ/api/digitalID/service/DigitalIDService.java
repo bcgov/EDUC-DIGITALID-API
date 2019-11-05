@@ -42,7 +42,7 @@ public class DigitalIDService {
                 ordsPassword, ordsUrl);
     }
     /**
-     * Search for Digital Identity by id and type (BCeID or BCSC)
+     * Search for DigitalIDEntity by identity value and identity type code (BCeID or BCSC)
      *
      * @param id
      * @param type
@@ -72,7 +72,14 @@ public class DigitalIDService {
         }
     }
 
-
+    /**
+     * Search for DigitalIDEntity by digital id
+     *
+     * @param id
+     * @return
+     * @throws ORDSQueryException
+     * @throws Exception
+     */
     public DigitalIDEntity retrieveDigitalID(String id) throws ORDSQueryException, Exception {
         try {
 
@@ -95,6 +102,14 @@ public class DigitalIDService {
         }
     }
 
+    /**
+     * Creates a DigitalIDEntity
+     *
+     * @param digitalID
+     * @return
+     * @throws ORDSQueryException
+     * @throws Exception
+     */
     public DigitalIDEntity createDigitalID(DigitalIDEntity digitalID) throws ORDSQueryException, Exception {
         String [] parameters = {digitalID.getIdentityValue(), digitalID.getIdentityTypeCode()};
         try {
@@ -118,6 +133,14 @@ public class DigitalIDService {
         }
     }
 
+    /**
+     * Updates a DigitalIDEntity
+     *
+     * @param digitalID
+     * @return
+     * @throws ORDSQueryException
+     * @throws Exception
+     */
     public DigitalIDEntity updateDigitalID(DigitalIDEntity digitalID) throws ORDSQueryException, Exception {
         try {
             ORDSService.runUpdateQuery(targetCredential, UPDATE_DIGITALID_QUERY, getFieldsForUpdate(digitalID));
