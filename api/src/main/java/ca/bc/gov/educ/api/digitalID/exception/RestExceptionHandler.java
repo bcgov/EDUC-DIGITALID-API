@@ -14,15 +14,25 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import javax.persistence.EntityNotFoundException;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
+
+    /**
+     * Handles HttpMessageNotReadableException
+     *
+     * @param ex
+     * @param headers
+     * @param status
+     * @param request
+     * @return
+     */
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String error = "Malformed JSON request";
@@ -33,6 +43,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(apiError, apiError.getStatus());
     }
 
+
+    /**
+     * Handles NoOrdsResultsFoundException
+     *
+     * @param ex the NoOrdsResultsFoundException that is thrown when JORDS returns no results
+     * @return
+     */
     @ExceptionHandler(NoOrdsResultsFoundException.class)
     protected ResponseEntity<Object> handleEntityNotFound(
             NoOrdsResultsFoundException ex) {
@@ -41,17 +58,24 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(apiError);
     }
 
+
+    /**
+     * Handles ORDSQueryException
+     *
+     * @param ex the ORDSQueryException that is thrown when JORDS encounters an error
+     * @return
+     */
     @ExceptionHandler(ORDSQueryException.class)
     protected ResponseEntity<Object> handleORDSQueryException(
             ORDSQueryException ex) {
-        ApiError apiError = new ApiError(NOT_FOUND);
+        ApiError apiError = new ApiError(INTERNAL_SERVER_ERROR);
         apiError.setMessage(ex.getMessage());
         apiError.setDebugMessage(ex.getCause().getMessage());
         return buildResponseEntity(apiError);
     }
 
     /**
-     * Handle MethodArgumentNotValidException. Triggered when an object fails @Valid validation.
+     * Handles MethodArgumentNotValidException. Triggered when an object fails @Valid validation.
      *
      * @param ex      the MethodArgumentNotValidException that is thrown when @Valid validation fails
      * @param headers HttpHeaders
