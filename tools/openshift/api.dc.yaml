@@ -34,6 +34,17 @@ objects:
           - containerPort: ${{CONTAINER_PORT}}
             protocol: TCP
           resources: {}
+          command: ['sh', '-c', 'keytool -import -trustcacerts -alias trinity-websbx1.educ.gov.bc.ca -file /mnt/secrets/trinity.cer -keystore /usr/lib/jvm/java-1.8.0/jre/lib/security/cacerts']
+          volumeMounts:
+            - name: secrets
+              mountPath: /mnt/secrets
+        volumes:
+        - name: secrets
+          secret:
+            secretName: "${CERT_SECRET}"
+            items:
+              - key: ${CERT_NAME}
+                path: ${CERT_NAME}
     test: false
     triggers:
     - type: ConfigChange
@@ -106,3 +117,9 @@ parameters:
   description: The path appended to the HOST_ROUTE where the root of this project will be served
   value: "/"
   required: false
+- name: CERT_SECRET
+  description: the name of the openshift secret that contains the cer file
+  required: true
+- name: CERT_NAME
+  description: the name of the cer file
+  required: true
