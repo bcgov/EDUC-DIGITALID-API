@@ -17,7 +17,7 @@ objects:
     source:
       contextDir: api
       git:
-        ref: master
+        ref: feature/pen-87
         uri: 'https://github.com/bcgov/EDUC-DIGITALID-API'
       type: Git
     strategy:
