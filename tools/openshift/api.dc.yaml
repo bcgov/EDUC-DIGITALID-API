@@ -26,8 +26,8 @@ objects:
           app: "${APP_NAME}-${JOB_NAME}"
           deploymentConfig: "${APP_NAME}-${JOB_NAME}"
       spec:
-        containers:          
-          image: docker-registry.default.svc:5000/${NAMESPACE}/${REPO_NAME}-${JOB_NAME}:${TAG}
+        containers:
+        - image: docker-registry.default.svc:5000/${NAMESPACE}/${REPO_NAME}-${JOB_NAME}:${TAG}
           imagePullPolicy: IfNotPresent
           name: "${APP_NAME}-${JOB_NAME}"
           ports:
