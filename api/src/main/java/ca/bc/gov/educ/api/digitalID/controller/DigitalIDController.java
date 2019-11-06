@@ -52,7 +52,7 @@ public class DigitalIDController {
 
     @PutMapping()
     //@PreAuthorize("#oauth2.hasAnyScope('WRITE_DIGITALID')")
-    public DigitalIDEntity updateDigitalID(@RequestBody DigitalIDEntity digitalID) throws Exception {
+    public DigitalIDEntity updateDigitalID(@Validated @RequestBody DigitalIDEntity digitalID) throws Exception {
         return service.updateDigitalID(digitalID);
     }
 }
