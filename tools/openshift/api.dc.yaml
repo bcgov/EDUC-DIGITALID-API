@@ -34,7 +34,6 @@ objects:
           - containerPort: ${{CONTAINER_PORT}}
             protocol: TCP
           resources: {}
-          command: ['sh', '-c', 'keytool -import -trustcacerts -alias trinity-websbx1.educ.gov.bc.ca -file /mnt/secrets/trinity.cer -keystore /usr/lib/jvm/java-1.8.0/jre/lib/security/cacerts']
           volumeMounts:
             - name: secrets
               mountPath: /mnt/secrets
