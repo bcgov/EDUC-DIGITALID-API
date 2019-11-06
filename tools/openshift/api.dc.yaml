@@ -118,7 +118,7 @@ parameters:
   required: false
 - name: CERT_SECRET
   description: the name of the openshift secret that contains the cer file
-  value: "trinity-cer-secret"
+  value: "trinity-cert-secret"
   required: true
 - name: CERT_NAME
   description: the name of the cer file
