@@ -13,7 +13,7 @@ objects:
   spec:
     source:
       git:
-        ref: feature/pen-87
+        ref: master
         uri: "https://github.com/bcgov/EDUC-DIGITALID-API"
     strategy:
       jenkinsPipelineStrategy:
