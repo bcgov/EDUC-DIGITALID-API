@@ -26,16 +26,7 @@ objects:
           app: "${APP_NAME}-${JOB_NAME}"
           deploymentConfig: "${APP_NAME}-${JOB_NAME}"
       spec:
-        containers:
-        - env:
-          - name: TRUSTSTORE_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                key: truststore-password
-                name: truststore-password
-          - name: JAVA_OPTIONS
-            value: -Djavax.net.ssl.trustStore=/mnt/secrets/${TRUSTSTORE_NAME} -Djavax.net.ssl.trustStorePassword=password
-          
+        containers:          
           image: docker-registry.default.svc:5000/${NAMESPACE}/${REPO_NAME}-${JOB_NAME}:${TAG}
           imagePullPolicy: IfNotPresent
           name: "${APP_NAME}-${JOB_NAME}"
