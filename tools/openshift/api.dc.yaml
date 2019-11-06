@@ -131,5 +131,5 @@ parameters:
   required: true
 - name: TRUSTSTORE_NAME
   description: the name of the truststore file
-  value: "truststore"
+  value: "truststore.p12"
   required: true
