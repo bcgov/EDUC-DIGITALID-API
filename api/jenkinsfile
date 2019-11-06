@@ -5,7 +5,7 @@ pipeline {
   stages {
     stage('Build App') {
       steps {
-        sh "mvn -f ./api/pom.xml package"
+        sh "mvn -f ./api/pom.xml  -Djavax.net.ssl.trustStore=/mnt/secrets/myTrustStore -Djavax.net.ssl.trustStorePassword=password package"
       }
     }
     stage('Create Image Builder') {
