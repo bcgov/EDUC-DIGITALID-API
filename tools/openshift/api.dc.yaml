@@ -34,7 +34,7 @@ objects:
                 key: truststore-password
                 name: truststore-password
           - name: JAVA_OPTIONS
-            value: -Djavax.net.ssl.trustStore=/var/run/secrets/${TRUSTSTORE_NAME} -Djavax.net.ssl.trustStorePassword=$TRUSTSTORE_PASSWORD
+            value: -Djavax.net.ssl.trustStore=/var/run/secrets/${TRUSTSTORE_NAME} -Djavax.net.ssl.trustStorePassword=changeit
           
           image: docker-registry.default.svc:5000/${NAMESPACE}/${REPO_NAME}-${JOB_NAME}:${TAG}
           imagePullPolicy: IfNotPresent
