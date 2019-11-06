@@ -27,7 +27,16 @@ objects:
           deploymentConfig: "${APP_NAME}-${JOB_NAME}"
       spec:
         containers:
-        - image: docker-registry.default.svc:5000/${NAMESPACE}/${REPO_NAME}-${JOB_NAME}:${TAG}
+        - env:
+          - name: TRUSTSTORE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: truststore-password
+                name: truststore-password
+          - name: JAVA_OPTIONS
+            value: -Djavax.net.ssl.trustStore=/var/run/secrets/${TRUSTSTORE_NAME} -Djavax.net.ssl.trustStorePassword=$TRUSTSTORE_PASSWORD
+          
+          image: docker-registry.default.svc:5000/${NAMESPACE}/${REPO_NAME}-${JOB_NAME}:${TAG}
           imagePullPolicy: IfNotPresent
           name: "${APP_NAME}-${JOB_NAME}"
           ports:
@@ -40,10 +49,10 @@ objects:
         volumes:
         - name: secrets
           secret:
-            secretName: "${CERT_SECRET}"
+            secretName: "${TRUSTSTORE_SECRET}"
             items:
-              - key: ${CERT_NAME}
-                path: ${CERT_NAME}
+              - key: ${TRUSTSTORE_NAME}
+                path: ${TRUSTSTORE_NAME}
     test: false
     triggers:
     - type: ConfigChange
@@ -116,11 +125,11 @@ parameters:
   description: The path appended to the HOST_ROUTE where the root of this project will be served
   value: "/"
   required: false
-- name: CERT_SECRET
-  description: the name of the openshift secret that contains the cer file
+- name: TRUSTSTORE_SECRET
+  description: the name of the openshift secret that contains the truststore file
   value: "dev-truststore"
   required: true
-- name: CERT_NAME
-  description: the name of the cer file
+- name: TRUSTSTORE_NAME
+  description: the name of the truststore file
   value: "truststore"
   required: true
