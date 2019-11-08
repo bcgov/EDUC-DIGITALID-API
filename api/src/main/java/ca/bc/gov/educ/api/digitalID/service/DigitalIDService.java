@@ -22,7 +22,7 @@ import java.util.Date;
 
 @Service
 public class DigitalIDService {
-    private static final Log logger = LogFactory.getLog(DigitalIDEntity.class);
+    private static final Log logger = LogFactory.getLog(DigitalIDService.class);
 
     private final String UPDATE_FIELDS = "student_id, identity_type_code, identity_value, last_access_time, last_access_channel_code, update_user, update_date";
     private final String CREATE_FIELDS = UPDATE_FIELDS + ", create_user, create_date";
