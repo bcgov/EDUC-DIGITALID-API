@@ -1,4 +1,4 @@
-# EDUC-PEN-API
+# EDUC-DIGITALID-API
 
 ## Build Setup
 
