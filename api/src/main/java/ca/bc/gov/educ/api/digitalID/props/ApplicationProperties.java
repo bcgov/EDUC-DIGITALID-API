@@ -14,19 +14,4 @@ public class ApplicationProperties {
 
 	public static final String CLIENT_ID = "DIGITAL-ID-API";
 
-
-    @Value("${oauth.server.url}")
-	private String oauthServerURL;
-
-	public String getOauthServerURL() {
-		return oauthServerURL;
-	}
-
-	@Value("${oauth.server.checktoken.endpoint}")
-	private String checkTokenURL;
-
-	public String getCheckTokenEndpoint() {
-		return checkTokenURL;
-	}
-
 }
