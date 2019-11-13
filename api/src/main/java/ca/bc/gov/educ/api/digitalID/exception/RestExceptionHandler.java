@@ -1,8 +1,6 @@
 package ca.bc.gov.educ.api.digitalID.exception;
 
 import ca.bc.gov.educ.api.digitalID.exception.errors.ApiError;
-import ca.bc.gov.educ.ords.exception.NoOrdsResultsFoundException;
-import ca.bc.gov.educ.ords.exception.ORDSQueryException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -17,7 +15,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
@@ -36,41 +33,37 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String error = "Malformed JSON request";
-        return buildResponseEntity(new ApiError(HttpStatus.BAD_REQUEST, error, ex));
+        return buildResponseEntity(new ApiError(BAD_REQUEST, error, ex));
     }
 
     private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {
         return new ResponseEntity<>(apiError, apiError.getStatus());
     }
 
-
     /**
-     * Handles NoOrdsResultsFoundException
+     * Handles EntityNotFoundException. Created to encapsulate errors with more detail than javax.persistence.EntityNotFoundException.
      *
-     * @param ex the NoOrdsResultsFoundException that is thrown when JORDS returns no results
-     * @return
+     * @param ex the EntityNotFoundException
+     * @return the ApiError object
      */
-    @ExceptionHandler(NoOrdsResultsFoundException.class)
+    @ExceptionHandler(EntityNotFoundException.class)
     protected ResponseEntity<Object> handleEntityNotFound(
-            NoOrdsResultsFoundException ex) {
+            EntityNotFoundException ex) {
         ApiError apiError = new ApiError(NOT_FOUND);
         apiError.setMessage(ex.getMessage());
         return buildResponseEntity(apiError);
     }
 
-
     /**
-     * Handles ORDSQueryException
+     * Handles InvalidParameterException
      *
-     * @param ex the ORDSQueryException that is thrown when JORDS encounters an error
-     * @return
+     * @param ex the InvalidParameterException
+     * @return the ApiError object
      */
-    @ExceptionHandler(ORDSQueryException.class)
-    protected ResponseEntity<Object> handleORDSQueryException(
-            ORDSQueryException ex) {
-        ApiError apiError = new ApiError(INTERNAL_SERVER_ERROR);
+    @ExceptionHandler(InvalidParameterException.class)
+    protected ResponseEntity<Object> handleInvalidParameter(InvalidParameterException ex) {
+        ApiError apiError = new ApiError(BAD_REQUEST);
         apiError.setMessage(ex.getMessage());
-        apiError.setDebugMessage(ex.getCause().getMessage());
         return buildResponseEntity(apiError);
     }
 

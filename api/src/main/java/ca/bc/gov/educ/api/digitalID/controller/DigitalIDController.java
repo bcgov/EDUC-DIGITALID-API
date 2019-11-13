@@ -7,7 +7,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * Digital Identity controller
@@ -23,23 +29,15 @@ public class DigitalIDController {
 
     @Autowired
     private final DigitalIDService service;
-    private final String IDENTITY_CODE_TABLE_BCSC_VALUE = "1";
-    private final String IDENTITY_CODE_TABLE_BCEID_VALUE = "2";
 
     DigitalIDController(DigitalIDService digitalIdentity){
         this.service = digitalIdentity;
     }
 
-    @GetMapping("/bcsc/{id}")
+    @GetMapping("/{typeCode}/{typeValue}")
     @PreAuthorize("#oauth2.hasScope('READ_DIGITALID')")
-    public DigitalIDEntity searchDigitalIDByBCSC(@PathVariable String id) throws Exception {
-        return service.searchDigitalId(id, IDENTITY_CODE_TABLE_BCSC_VALUE);
-    }
-
-    @GetMapping("/bceid/{id}")
-   @PreAuthorize("#oauth2.hasScope('READ_DIGITALID')")
-    public DigitalIDEntity searchDigitalIDByBCeID(@PathVariable String id) throws Exception {
-        return service.searchDigitalId(id, IDENTITY_CODE_TABLE_BCEID_VALUE);
+    public DigitalIDEntity searchDigitalID(@PathVariable String typeCode, @PathVariable String typeValue) throws Exception {
+        return service.searchDigitalId(typeCode, typeValue);
     }
 
     @GetMapping("/{id}")
@@ -56,7 +54,7 @@ public class DigitalIDController {
 
     @PutMapping()
     @PreAuthorize("#oauth2.hasScope('WRITE_DIGITALID')")
-    public DigitalIDEntity updateDigitalID(@RequestBody DigitalIDEntity digitalID) throws Exception {
+    public DigitalIDEntity updateDigitalID(@Validated @RequestBody DigitalIDEntity digitalID) throws Exception {
         return service.updateDigitalID(digitalID);
     }
 }

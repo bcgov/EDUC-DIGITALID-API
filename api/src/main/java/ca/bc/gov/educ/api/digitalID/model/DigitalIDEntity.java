@@ -1,8 +1,13 @@
 package ca.bc.gov.educ.api.digitalID.model;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.Data;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import java.util.Date;
@@ -14,32 +19,46 @@ import java.util.Date;
  */
 
 @Data
+@Entity
+@Table(name = "digital_identity")
 public class DigitalIDEntity {
-    @JsonAlias({"digital_identity_id", "digitalId"})
-    Integer digitalID;
-    @JsonAlias({"student_id", "studentId"})
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name = "digital_identity_id")
+    String digitalID;
+
+    @Column(name = "student_id")
     Integer studentID;
+
     @NotNull(message="identityTypeCode cannot be null")
-    @JsonAlias({"identity_type_code", "identityTypeCode"})
+    @Column(name = "identity_type_code")
     String identityTypeCode;
+
     @NotNull(message="identityValue cannot be null")
-    @JsonAlias({"identity_value", "identityValue"})
+    @Column(name = "identity_value")
     String identityValue;
+
+    @PastOrPresent
     @NotNull(message="lastAccessTime cannot be null")
-    @JsonAlias({"last_access_time", "lastAccessTime"})
-    @PastOrPresent
+    @Column(name = "last_access_time")
     Date lastAccessDate;
+
     @NotNull(message="lastAccessChannelCode cannot be null")
-    @JsonAlias({"last_access_channel_code", "lastAccessChannelCode"})
+    @Column(name = "last_access_channel_code")
     String lastAccessChannelCode;
-    @JsonAlias({"create_user", "createUser"})
+
+    @Column(name = "create_user", updatable = false)
     String createUser;
-    @JsonAlias({"create_date", "createDate"})
+
     @PastOrPresent
+    @Column(name = "create_date", updatable = false)
     Date createDate;
-    @JsonAlias({"update_user", "updateUser"})
+
+    @Column(name = "update_user", updatable = false)
     String updateUser;
-    @JsonAlias({"update_date", "updateDate"})
+
     @PastOrPresent
+    @Column(name = "update_date", updatable = false)
     Date updateDate;
 }
