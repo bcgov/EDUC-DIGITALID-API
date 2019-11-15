@@ -25,8 +25,8 @@ public class DigitalIDEntity {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name = "digital_identity_id")
-    String digitalID;
+    @Column(name = "digital_identity_id", unique = true, updatable = false)
+    Long digitalID;
 
     @Column(name = "student_id")
     Integer studentID;
@@ -40,8 +40,9 @@ public class DigitalIDEntity {
     String identityValue;
 
     @PastOrPresent
-    @NotNull(message="lastAccessTime cannot be null")
-    @Column(name = "last_access_time")
+
+    @NotNull(message="lastAccessDate cannot be null")
+    @Column(name = "last_access_date")
     Date lastAccessDate;
 
     @NotNull(message="lastAccessChannelCode cannot be null")

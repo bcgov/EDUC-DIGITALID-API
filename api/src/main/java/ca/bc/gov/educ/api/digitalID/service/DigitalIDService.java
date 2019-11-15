@@ -24,7 +24,7 @@ public class DigitalIDService {
     private static final Log logger = LogFactory.getLog(DigitalIDService.class);
 
     @Autowired
-    private DigitalIDRepository repository;
+    private DigitalIDRepository digitalIDRepository;
 
     /**
      * Search for DigitalIDEntity by identity value and identity type code (BCeID or BCSC)
@@ -35,7 +35,8 @@ public class DigitalIDService {
      * @return
      */
     public DigitalIDEntity searchDigitalId(String typeCode, String typeValue) throws EntityNotFoundException{
-        Optional<DigitalIDEntity> result =  repository.findByIdentityTypeCodeAndIdentityValue(typeCode, typeValue);
+
+        Optional<DigitalIDEntity> result =  digitalIDRepository.findByIdentityTypeCodeAndIdentityValue(typeCode.toUpperCase(), typeValue);
         if(result.isPresent()) {
             return result.get();
         } else {
@@ -50,12 +51,12 @@ public class DigitalIDService {
      * @return
      * @throws EntityNotFoundException
      */
-    public DigitalIDEntity retrieveDigitalID(String id) throws EntityNotFoundException {
-        Optional<DigitalIDEntity> result =  repository.findById(id);
+    public DigitalIDEntity retrieveDigitalID(Long id) throws EntityNotFoundException {
+        Optional<DigitalIDEntity> result =  digitalIDRepository.findById(id);
         if(result.isPresent()) {
             return result.get();
         } else {
-            throw new EntityNotFoundException(DigitalIDEntity.class, "digitalID", id);
+            throw new EntityNotFoundException(DigitalIDEntity.class, "digitalID", id.toString());
         }
     }
 
@@ -79,9 +80,7 @@ public class DigitalIDService {
         digitalID.setCreateUser(ApplicationProperties.CLIENT_ID);
         digitalID.setCreateDate(new Date());
 
-        repository.save(digitalID);
-
-        return searchDigitalId(digitalID.getIdentityTypeCode(), digitalID.getIdentityValue());
+        return digitalIDRepository.save(digitalID);
     }
 
     /**
@@ -95,7 +94,8 @@ public class DigitalIDService {
 
         validateParameters(digitalID);
 
-        Optional<DigitalIDEntity> curDigitalID = repository.findById(digitalID.getDigitalID());
+
+        Optional<DigitalIDEntity> curDigitalID = digitalIDRepository.findById(digitalID.getDigitalID());
 
         if(curDigitalID.isPresent())
         {
@@ -108,11 +108,11 @@ public class DigitalIDService {
             newDigitalID.setLastAccessChannelCode(digitalID.getLastAccessChannelCode());
             newDigitalID.setUpdateUser(ApplicationProperties.CLIENT_ID);
             newDigitalID.setUpdateDate(new Date());
-            newDigitalID = repository.save(newDigitalID);
+            newDigitalID = digitalIDRepository.save(newDigitalID);
 
             return newDigitalID;
         } else {
-            throw new EntityNotFoundException(DigitalIDEntity.class, "digitalID", digitalID.getDigitalID());
+            throw new EntityNotFoundException(DigitalIDEntity.class, "digitalID", digitalID.getDigitalID().toString());
         }
     }
 

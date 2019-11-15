@@ -13,6 +13,6 @@ import java.util.Optional;
  */
 
 @Repository
-public interface DigitalIDRepository extends CrudRepository<DigitalIDEntity, String> {
+public interface DigitalIDRepository extends CrudRepository<DigitalIDEntity, Long> {
     Optional<DigitalIDEntity> findByIdentityTypeCodeAndIdentityValue(String identityTypeCode, String identityValue);
 }
