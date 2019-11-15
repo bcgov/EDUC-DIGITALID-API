@@ -2,9 +2,13 @@ package ca.bc.gov.educ.api.digitalID.service;
 
 import ca.bc.gov.educ.api.digitalID.exception.EntityNotFoundException;
 import ca.bc.gov.educ.api.digitalID.exception.InvalidParameterException;
+import ca.bc.gov.educ.api.digitalID.model.AccessChannelCodeEntity;
 import ca.bc.gov.educ.api.digitalID.model.DigitalIDEntity;
+import ca.bc.gov.educ.api.digitalID.model.IdentityTypeCodeEntity;
 import ca.bc.gov.educ.api.digitalID.props.ApplicationProperties;
+import ca.bc.gov.educ.api.digitalID.repository.AccessChannelCodeRepository;
 import ca.bc.gov.educ.api.digitalID.repository.DigitalIDRepository;
+import ca.bc.gov.educ.api.digitalID.repository.IdentityTypeCodeRepository;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +28,13 @@ public class DigitalIDService {
     private static final Log logger = LogFactory.getLog(DigitalIDService.class);
 
     @Autowired
-    private DigitalIDRepository repository;
+    private DigitalIDRepository digitalIDRepository;
+
+    @Autowired
+    private AccessChannelCodeRepository accessChannelCodeRepository;
+
+    @Autowired
+    private IdentityTypeCodeRepository identityTypeCodeRepository;
 
     /**
      * Search for DigitalIDEntity by identity value and identity type code (BCeID or BCSC)
@@ -35,7 +45,13 @@ public class DigitalIDService {
      * @return
      */
     public DigitalIDEntity searchDigitalId(String typeCode, String typeValue) throws EntityNotFoundException{
-        Optional<DigitalIDEntity> result =  repository.findByIdentityTypeCodeAndIdentityValue(typeCode, typeValue);
+
+        Optional<IdentityTypeCodeEntity> identityTypeCode = identityTypeCodeRepository.findById(typeCode.toUpperCase());
+        if(!identityTypeCode.isPresent())
+            throw new InvalidParameterException(typeCode);
+
+
+        Optional<DigitalIDEntity> result =  digitalIDRepository.findByIdentityTypeCodeAndIdentityValue(identityTypeCode.get(), typeValue);
         if(result.isPresent()) {
             return result.get();
         } else {
@@ -50,12 +66,12 @@ public class DigitalIDService {
      * @return
      * @throws EntityNotFoundException
      */
-    public DigitalIDEntity retrieveDigitalID(String id) throws EntityNotFoundException {
-        Optional<DigitalIDEntity> result =  repository.findById(id);
+    public DigitalIDEntity retrieveDigitalID(Long id) throws EntityNotFoundException {
+        Optional<DigitalIDEntity> result =  digitalIDRepository.findById(id);
         if(result.isPresent()) {
             return result.get();
         } else {
-            throw new EntityNotFoundException(DigitalIDEntity.class, "digitalID", id);
+            throw new EntityNotFoundException(DigitalIDEntity.class, "digitalID", id.toString());
         }
     }
 
@@ -79,9 +95,7 @@ public class DigitalIDService {
         digitalID.setCreateUser(ApplicationProperties.CLIENT_ID);
         digitalID.setCreateDate(new Date());
 
-        repository.save(digitalID);
-
-        return searchDigitalId(digitalID.getIdentityTypeCode(), digitalID.getIdentityValue());
+        return digitalIDRepository.save(digitalID);
     }
 
     /**
@@ -95,7 +109,7 @@ public class DigitalIDService {
 
         validateParameters(digitalID);
 
-        Optional<DigitalIDEntity> curDigitalID = repository.findById(digitalID.getDigitalID());
+        Optional<DigitalIDEntity> curDigitalID = digitalIDRepository.findById(digitalID.getDigitalID());
 
         if(curDigitalID.isPresent())
         {
@@ -108,15 +122,29 @@ public class DigitalIDService {
             newDigitalID.setLastAccessChannelCode(digitalID.getLastAccessChannelCode());
             newDigitalID.setUpdateUser(ApplicationProperties.CLIENT_ID);
             newDigitalID.setUpdateDate(new Date());
-            newDigitalID = repository.save(newDigitalID);
+            newDigitalID = digitalIDRepository.save(newDigitalID);
 
             return newDigitalID;
         } else {
-            throw new EntityNotFoundException(DigitalIDEntity.class, "digitalID", digitalID.getDigitalID());
+            throw new EntityNotFoundException(DigitalIDEntity.class, "digitalID", digitalID.getDigitalID().toString());
         }
     }
 
     private void validateParameters(DigitalIDEntity digitalIDEntity) throws InvalidParameterException {
+
+        String typeCode = digitalIDEntity.getIdentityTypeCode().getIdentityTypeCode().toUpperCase();
+        String accessChannelCode = digitalIDEntity.getLastAccessChannelCode().getAccessChannelCode().toUpperCase();
+        Optional<IdentityTypeCodeEntity> identityTypeCodeEntity = identityTypeCodeRepository.findById(typeCode);
+        if(identityTypeCodeEntity.isPresent()){
+            digitalIDEntity.setIdentityTypeCode(identityTypeCodeEntity.get());
+        } else
+            throw new EntityNotFoundException(IdentityTypeCodeEntity.class, "identityTypeCode", typeCode);
+
+        Optional<AccessChannelCodeEntity> accessChannelCodeEntity = accessChannelCodeRepository.findById(accessChannelCode.toUpperCase());
+        if(accessChannelCodeEntity.isPresent()){
+            digitalIDEntity.setLastAccessChannelCode(accessChannelCodeEntity.get());
+        } else
+            throw new EntityNotFoundException(AccessChannelCodeEntity.class, "accessChannelCode", accessChannelCode);
 
         if(digitalIDEntity.getCreateDate()!=null)
             throw new InvalidParameterException("createDate");
