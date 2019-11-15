@@ -94,6 +94,7 @@ public class DigitalIDService {
 
         validateParameters(digitalID);
 
+
         Optional<DigitalIDEntity> curDigitalID = digitalIDRepository.findById(digitalID.getDigitalID());
 
         if(curDigitalID.isPresent())

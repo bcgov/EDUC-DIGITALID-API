@@ -2,7 +2,12 @@ package ca.bc.gov.educ.api.digitalID.model;
 
 import lombok.Data;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import java.util.Date;
@@ -35,6 +40,7 @@ public class DigitalIDEntity {
     String identityValue;
 
     @PastOrPresent
+
     @NotNull(message="lastAccessDate cannot be null")
     @Column(name = "last_access_date")
     Date lastAccessDate;
