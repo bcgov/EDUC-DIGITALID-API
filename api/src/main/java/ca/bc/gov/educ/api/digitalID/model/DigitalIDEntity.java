@@ -27,9 +27,8 @@ public class DigitalIDEntity {
     Integer studentID;
 
     @NotNull(message="identityTypeCode cannot be null")
-    @ManyToOne
-    @JoinColumn(name = "identity_type_code")
-    IdentityTypeCodeEntity identityTypeCode;
+    @Column(name = "identity_type_code")
+    String identityTypeCode;
 
     @NotNull(message="identityValue cannot be null")
     @Column(name = "identity_value")
@@ -41,9 +40,8 @@ public class DigitalIDEntity {
     Date lastAccessDate;
 
     @NotNull(message="lastAccessChannelCode cannot be null")
-    @ManyToOne
-    @JoinColumn(name = "last_access_channel_code")
-    AccessChannelCodeEntity lastAccessChannelCode;
+    @Column(name = "last_access_channel_code")
+    String lastAccessChannelCode;
 
     @Column(name = "create_user", updatable = false)
     String createUser;

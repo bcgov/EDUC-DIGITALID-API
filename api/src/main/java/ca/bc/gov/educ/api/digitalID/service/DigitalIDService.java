@@ -2,13 +2,9 @@ package ca.bc.gov.educ.api.digitalID.service;
 
 import ca.bc.gov.educ.api.digitalID.exception.EntityNotFoundException;
 import ca.bc.gov.educ.api.digitalID.exception.InvalidParameterException;
-import ca.bc.gov.educ.api.digitalID.model.AccessChannelCodeEntity;
 import ca.bc.gov.educ.api.digitalID.model.DigitalIDEntity;
-import ca.bc.gov.educ.api.digitalID.model.IdentityTypeCodeEntity;
 import ca.bc.gov.educ.api.digitalID.props.ApplicationProperties;
-import ca.bc.gov.educ.api.digitalID.repository.AccessChannelCodeRepository;
 import ca.bc.gov.educ.api.digitalID.repository.DigitalIDRepository;
-import ca.bc.gov.educ.api.digitalID.repository.IdentityTypeCodeRepository;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +26,6 @@ public class DigitalIDService {
     @Autowired
     private DigitalIDRepository digitalIDRepository;
 
-    @Autowired
-    private AccessChannelCodeRepository accessChannelCodeRepository;
-
-    @Autowired
-    private IdentityTypeCodeRepository identityTypeCodeRepository;
-
     /**
      * Search for DigitalIDEntity by identity value and identity type code (BCeID or BCSC)
      *
@@ -46,12 +36,7 @@ public class DigitalIDService {
      */
     public DigitalIDEntity searchDigitalId(String typeCode, String typeValue) throws EntityNotFoundException{
 
-        Optional<IdentityTypeCodeEntity> identityTypeCode = identityTypeCodeRepository.findById(typeCode.toUpperCase());
-        if(!identityTypeCode.isPresent())
-            throw new InvalidParameterException(typeCode);
-
-
-        Optional<DigitalIDEntity> result =  digitalIDRepository.findByIdentityTypeCodeAndIdentityValue(identityTypeCode.get(), typeValue);
+        Optional<DigitalIDEntity> result =  digitalIDRepository.findByIdentityTypeCodeAndIdentityValue(typeCode.toUpperCase(), typeValue);
         if(result.isPresent()) {
             return result.get();
         } else {
@@ -131,20 +116,6 @@ public class DigitalIDService {
     }
 
     private void validateParameters(DigitalIDEntity digitalIDEntity) throws InvalidParameterException {
-
-        String typeCode = digitalIDEntity.getIdentityTypeCode().getIdentityTypeCode().toUpperCase();
-        String accessChannelCode = digitalIDEntity.getLastAccessChannelCode().getAccessChannelCode().toUpperCase();
-        Optional<IdentityTypeCodeEntity> identityTypeCodeEntity = identityTypeCodeRepository.findById(typeCode);
-        if(identityTypeCodeEntity.isPresent()){
-            digitalIDEntity.setIdentityTypeCode(identityTypeCodeEntity.get());
-        } else
-            throw new EntityNotFoundException(IdentityTypeCodeEntity.class, "identityTypeCode", typeCode);
-
-        Optional<AccessChannelCodeEntity> accessChannelCodeEntity = accessChannelCodeRepository.findById(accessChannelCode.toUpperCase());
-        if(accessChannelCodeEntity.isPresent()){
-            digitalIDEntity.setLastAccessChannelCode(accessChannelCodeEntity.get());
-        } else
-            throw new EntityNotFoundException(AccessChannelCodeEntity.class, "accessChannelCode", accessChannelCode);
 
         if(digitalIDEntity.getCreateDate()!=null)
             throw new InvalidParameterException("createDate");
