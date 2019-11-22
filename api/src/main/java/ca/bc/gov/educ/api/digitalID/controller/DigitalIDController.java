@@ -47,7 +47,6 @@ public class DigitalIDController {
         return service.retrieveDigitalID(id);
     }
 
-    @Transactional
     @PostMapping()
     @PreAuthorize("#oauth2.hasScope('WRITE_DIGITALID')")
     public DigitalIDEntity createDigitalID(@Validated @RequestBody DigitalIDEntity digitalID) throws Exception {

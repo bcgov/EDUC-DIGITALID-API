@@ -28,7 +28,6 @@ pipeline{
   stages{
     stage('Build App') {
       steps {
-        sh "mvn install:install-file -Dfile=/tmp/ojdbc8.jar -DgroupId=com.oracle.jdbc -DartifactId=ojdbc8 -Dversion=12.2.0.1 -Dpackaging=jar"
         sh "mvn -f ./api/pom.xml package"
       }
     }

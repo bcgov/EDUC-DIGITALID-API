@@ -90,7 +90,7 @@ public class DigitalIDService {
      * @return
      * @throws Exception
      */
-    public DigitalIDEntity updateDigitalID(DigitalIDEntity digitalID) throws EntityNotFoundException {
+    public DigitalIDEntity updateDigitalID(DigitalIDEntity digitalID) throws EntityNotFoundException, InvalidParameterException {
 
         validateParameters(digitalID);
 
@@ -101,7 +101,6 @@ public class DigitalIDService {
         {
             DigitalIDEntity newDigitalID = curDigitalID.get();
             newDigitalID.setStudentID(digitalID.getStudentID());
-            newDigitalID.setIdentityTypeCode(digitalID.getIdentityTypeCode());
             newDigitalID.setIdentityTypeCode(digitalID.getIdentityTypeCode());
             newDigitalID.setIdentityValue(digitalID.getIdentityValue());
             newDigitalID.setLastAccessDate(digitalID.getLastAccessDate());

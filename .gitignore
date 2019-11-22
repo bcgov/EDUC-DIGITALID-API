@@ -5,7 +5,7 @@
 /api/.factorypath
 /api/bin/
 /api/.idea
-/api/pen-api.iml
+/api/digitalid-api.iml
 .project
 .classpath
 application-local.properties
@@ -13,3 +13,4 @@ application-devlocal.properties
 *.jks
 /api/src/main/resources/keystore/
 ojdbc8.jar
+.idea

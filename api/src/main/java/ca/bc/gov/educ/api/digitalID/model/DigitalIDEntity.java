@@ -40,7 +40,6 @@ public class DigitalIDEntity {
     String identityValue;
 
     @PastOrPresent
-
     @NotNull(message="lastAccessDate cannot be null")
     @Column(name = "last_access_date")
     Date lastAccessDate;
