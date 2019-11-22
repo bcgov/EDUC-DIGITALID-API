@@ -1,5 +1,7 @@
 pipeline{
-  agent any
+  agent {
+      label 'maven35'
+  }
 
     environment{
       TOOLS = 'c2mvws-tools'
@@ -28,7 +30,7 @@ pipeline{
   stages{
     stage('Build App') {
       steps {
-        sh "mvn -f ./api/pom.xml package"
+        sh "mvn -f ./api/pom.xml -Dmaven.test.skip=true package"
       }
     }
     stage('Create Image Builder') {
