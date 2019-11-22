@@ -81,7 +81,6 @@ CREATE TABLE STUDENT.PEN_RETRIEVAL_REQUEST (
   LEGAL_MIDDLE_NAMES VARCHAR2(255),
   LEGAL_LAST_NAME VARCHAR2(40),
   DOB DATE,
-  SEX_CODE VARCHAR2(1),
   GENDER_CODE VARCHAR2(1),
   DATA_SOURCE_CODE VARCHAR2(10),
   USUAL_FIRST_NAME VARCHAR2(40),
@@ -93,6 +92,7 @@ CREATE TABLE STUDENT.PEN_RETRIEVAL_REQUEST (
   LAST_BC_SCHOOL VARCHAR2(255),
   LAST_BC_SCHOOL_STUDENT_NUMBER VARCHAR2(12),
   CURRENT_SCHOOL VARCHAR2(255),
+  REVIEWER VARCHAR2(255),
   CREATE_USER VARCHAR2(32) NOT NULL,
   CREATE_DATE DATE DEFAULT SYSDATE NOT NULL,
   UPDATE_USER VARCHAR2(32) NOT NULL,
@@ -219,7 +219,6 @@ alter table STUDENT.PEN_RETRIEVAL_REQUEST add constraint FK_PEN_RETRIEVAL_REQUES
 alter table STUDENT.PEN_RETRIEVAL_REQUEST add constraint FK_PEN_RETRIEVAL_REQUEST_PEN_RETRIEVAL_REQUEST_STATUS_CODE foreign key (PEN_RETRIEVAL_REQUEST_STATUS_CODE) references STUDENT.PEN_RETRIEVAL_REQUEST_STATUS_CODE (PEN_RETRIEVAL_REQUEST_STATUS_CODE);
 alter table STUDENT.PEN_RETRIEVAL_REQUEST add constraint FK_PEN_RETRIEVAL_REQUEST_DATA_SOURCE_CODE foreign key (DATA_SOURCE_CODE) references STUDENT.DATA_SOURCE_CODE (DATA_SOURCE_CODE);
 alter table STUDENT.PEN_RETRIEVAL_REQUEST add constraint FK_PEN_RETRIEVAL_REQUEST_GENDER_CODE foreign key (GENDER_CODE) references STUDENT.GENDER_CODE (GENDER_CODE);
-alter table STUDENT.PEN_RETRIEVAL_REQUEST add constraint FK_PEN_RETRIEVAL_REQUEST_SEX_CODE foreign key (SEX_CODE) references STUDENT.SEX_CODE (SEX_CODE);
 
 
 -- Table Comments
@@ -277,7 +276,6 @@ COMMENT ON COLUMN STUDENT.PEN_Retrieval_Request.Legal_First_Name IS 'The legal f
 COMMENT ON COLUMN STUDENT.PEN_Retrieval_Request.Legal_Middle_Names IS 'The legal middle names of the student';
 COMMENT ON COLUMN STUDENT.PEN_Retrieval_Request.Legal_Last_Name IS 'The legal last name of the student';
 COMMENT ON COLUMN STUDENT.PEN_Retrieval_Request.DOB IS 'The date of birth of the student';
-COMMENT ON COLUMN STUDENT.PEN_Retrieval_Request.Sex_Code IS 'The sex of the student';
 COMMENT ON COLUMN STUDENT.PEN_Retrieval_Request.Gender_Code IS 'The gender of the student';
 COMMENT ON COLUMN STUDENT.PEN_Retrieval_Request.Data_Source_Code IS 'Code indicating the primary data source for the Student data';
 COMMENT ON COLUMN STUDENT.PEN_Retrieval_Request.Usual_First_Name IS 'The usual/preferred first name of the student';
@@ -289,6 +287,7 @@ COMMENT ON COLUMN STUDENT.PEN_Retrieval_Request.Past_Names IS 'Past Names of the
 COMMENT ON COLUMN STUDENT.PEN_Retrieval_Request.Last_BC_School IS 'Name of last BC school that the student attended';
 COMMENT ON COLUMN STUDENT.PEN_Retrieval_Request.Last_BC_School_Student_Number IS 'Student Number assigned to student at the last BC school attended';
 COMMENT ON COLUMN STUDENT.PEN_Retrieval_Request.Current_School IS 'Name of current BC school, if applicable';
+COMMENT ON COLUMN STUDENT.PEN_Retrieval_Request.Reviewer IS 'IDIR of the staff user who is working or did work on the PEN Retrieval Request';
 
 
 --Grants for STUDENT_PROXY
