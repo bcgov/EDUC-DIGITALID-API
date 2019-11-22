@@ -1,4 +1,5 @@
 --Users
+--Student
 CREATE USER STUDENT IDENTIFIED BY &mypassword;
 GRANT create session TO STUDENT;
 GRANT create table TO STUDENT;
@@ -9,7 +10,11 @@ GRANT create sequence TO STUDENT;
 GRANT create synonym TO STUDENT;
 
 ALTER USER STUDENT QUOTA UNLIMITED ON USERS;
-ALTER USER PROXY_STUDENT QUOTA UNLIMITED ON USERS;
+
+--STUDENT_PROXY
+CREATE USER STUDENT_PROXY IDENTIFIED BY &mypassword;
+GRANT create session TO STUDENT_PROXY;
+ALTER USER STUDENT_PROXY QUOTA UNLIMITED ON USERS;
 
 --Tables
 CREATE TABLE STUDENT.STUDENT ( 
@@ -88,12 +93,6 @@ CREATE TABLE STUDENT.PEN_RETRIEVAL_REQUEST (
   LAST_BC_SCHOOL VARCHAR2(255),
   LAST_BC_SCHOOL_STUDENT_NUMBER VARCHAR2(12),
   CURRENT_SCHOOL VARCHAR2(255),
-  ADDRESS_LINE_1 VARCHAR2(255),
-  ADDRESS_LINE_2 VARCHAR2(255),
-  CITY VARCHAR2(50),
-  PROVINCE_CODE VARCHAR2(2),
-  COUNTRY_CODE VARCHAR2(3),
-  POSTAL_CODE VARCHAR2(7),
   CREATE_USER VARCHAR2(32) NOT NULL,
   CREATE_DATE DATE DEFAULT SYSDATE NOT NULL,
   UPDATE_USER VARCHAR2(32) NOT NULL,
@@ -298,94 +297,15 @@ COMMENT ON COLUMN PEN_Retrieval_Request.Country_Code IS 'Country of address, as 
 COMMENT ON COLUMN PEN_Retrieval_Request.Postal_Code IS 'Postal Code for the address. Format: ANA NAN';
 
 
---ORDS Enabled Schema/Tables
-
-DECLARE
-  PRAGMA AUTONOMOUS_TRANSACTION;
-BEGIN
-    ORDS.ENABLE_SCHEMA(p_enabled => TRUE,
-                       p_schema => 'STUDENT',
-                       p_url_mapping_type => 'BASE_PATH',
-                       p_url_mapping_pattern => 'student',
-                       p_auto_rest_auth => FALSE);
-                       
-    ORDS.ENABLE_OBJECT(p_enabled => TRUE,
-                       p_schema => 'STUDENT',
-                       p_object => 'STUDENT',
-                       p_object_type => 'TABLE',
-                       p_object_alias => 'student',
-                       p_auto_rest_auth => FALSE);
-                       
-	ORDS.ENABLE_OBJECT(p_enabled => TRUE,
-                       p_schema => 'STUDENT',
-                       p_object => 'ADDRESS',
-                       p_object_type => 'TABLE',
-                       p_object_alias => 'address',
-                       p_auto_rest_auth => FALSE);
-
-    ORDS.ENABLE_OBJECT(p_enabled => TRUE,
-                       p_schema => 'STUDENT',
-                       p_object => 'DIGITAL_IDENTITY',
-                       p_object_type => 'TABLE',
-                       p_object_alias => 'digital_identity',
-                       p_auto_rest_auth => FALSE);
-
-    ORDS.ENABLE_OBJECT(p_enabled => TRUE,
-                       p_schema => 'STUDENT',
-                       p_object => 'PEN_RETRIEVAL_REQUEST',
-                       p_object_type => 'TABLE',
-                       p_object_alias => 'pen_retrieval_request',
-                       p_auto_rest_auth => FALSE);    
-                       
-    ORDS.ENABLE_OBJECT(p_enabled => TRUE,
-                       p_schema => 'STUDENT',
-                       p_object => 'IDENTITY_TYPE_CODE',
-                       p_object_type => 'TABLE',
-                       p_object_alias => 'identity_type_code',
-                       p_auto_rest_auth => FALSE);   
-                       
-    ORDS.ENABLE_OBJECT(p_enabled => TRUE,
-                       p_schema => 'STUDENT',
-                       p_object => 'ACCESS_CHANNEL_CODE',
-                       p_object_type => 'TABLE',
-                       p_object_alias => 'access_channel_code',
-                       p_auto_rest_auth => FALSE);   
-                       
-    ORDS.ENABLE_OBJECT(p_enabled => TRUE,
-                       p_schema => 'STUDENT',
-                       p_object => 'ADDRESS_TYPE_CODE',
-                       p_object_type => 'TABLE',
-                       p_object_alias => 'aaddress_type_code',
-                       p_auto_rest_auth => FALSE);   
-                       
-    ORDS.ENABLE_OBJECT(p_enabled => TRUE,
-                       p_schema => 'STUDENT',
-                       p_object => 'GENDER_CODE',
-                       p_object_type => 'TABLE',
-                       p_object_alias => 'gender_code',
-                       p_auto_rest_auth => FALSE);   
-                       
-    ORDS.ENABLE_OBJECT(p_enabled => TRUE,
-                       p_schema => 'STUDENT',
-                       p_object => 'SEX_CODE',
-                       p_object_type => 'TABLE',
-                       p_object_alias => 'sex_code',
-                       p_auto_rest_auth => FALSE);   
-                       
-    ORDS.ENABLE_OBJECT(p_enabled => TRUE,
-                       p_schema => 'STUDENT',
-                       p_object => 'DATA_SOURCE_CODE',
-                       p_object_type => 'TABLE',
-                       p_object_alias => 'data_source_code',
-                       p_auto_rest_auth => FALSE);   
-
-    ORDS.ENABLE_OBJECT(p_enabled => TRUE,
-                       p_schema => 'STUDENT',
-                       p_object => 'PEN_RETRIEVAL_REQUEST_STATUS_CODE',
-                       p_object_type => 'TABLE',
-                       p_object_alias => 'pen_retrieval_request_status_code',
-                       p_auto_rest_auth => FALSE);   
-                       
-    commit;
-
-END;
+--Grants for STUDENT_PROXY
+GRANT SELECT, INSERT, UPDATE ON STUDENT.STUDENT TO STUDENT_PROXY;
+GRANT SELECT, INSERT, UPDATE ON STUDENT.ADDRESS TO STUDENT_PROXY;
+GRANT SELECT, INSERT, UPDATE ON STUDENT.DIGITAL_IDENTITY TO STUDENT_PROXY;
+GRANT SELECT, INSERT, UPDATE ON STUDENT.PEN_RETRIEVAL_REQUEST TO STUDENT_PROXY;
+GRANT SELECT, INSERT, UPDATE ON STUDENT.ACCESS_CHANNEL_CODE TO STUDENT_PROXY;
+GRANT SELECT, INSERT, UPDATE ON STUDENT.ADDRESS_TYPE_CODE TO STUDENT_PROXY;
+GRANT SELECT, INSERT, UPDATE ON STUDENT.DATA_SOURCE_CODE TO STUDENT_PROXY;
+GRANT SELECT, INSERT, UPDATE ON STUDENT.GENDER_CODE TO STUDENT_PROXY;
+GRANT SELECT, INSERT, UPDATE ON STUDENT.IDENTITY_TYPE_CODE TO STUDENT_PROXY;
+GRANT SELECT, INSERT, UPDATE ON STUDENT.PEN_RETRIEVAL_REQUEST_STATUS_CODE TO STUDENT_PROXY;
+GRANT SELECT, INSERT, UPDATE ON STUDENT.SEX_CODE TO STUDENT_PROXY;
