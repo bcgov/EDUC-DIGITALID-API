@@ -1,5 +1,5 @@
 pipeline{
-  agent any
+  agent maven35
 
     environment{
       TOOLS = 'c2mvws-tools'
