@@ -61,13 +61,8 @@ pipeline{
           script {
               openshift.withCluster() {
                 openshift.withProject(TOOLS) {
-                  def bcJORDS = openshift.selector('bc', "educ-jords")
                   def bcApi = openshift.selector('bc', "${REPO_NAME}-${JOB_NAME}")
 
-                  if(bcJORDS.exists()){
-                      echo "Removing BuildConfig ${REPO_NAME}-${JOB_NAME}"
-                      bcJORDS.delete()
-                  }
                   if(bcApi.exists()) {
                       echo "Removing BuildConfig ${REPO_NAME}-${JOB_NAME}"
                       bcApi.delete()
