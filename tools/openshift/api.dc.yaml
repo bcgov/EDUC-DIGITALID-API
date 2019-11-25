@@ -34,16 +34,6 @@ objects:
           - containerPort: ${{CONTAINER_PORT}}
             protocol: TCP
           resources: {}
-          volumeMounts:
-            - name: secrets
-              mountPath: /mnt/secrets
-        volumes:
-        - name: secrets
-          secret:
-            secretName: "${TRUSTSTORE_SECRET}"
-            items:
-              - key: ${TRUSTSTORE_NAME}
-                path: ${TRUSTSTORE_NAME}
     test: false
     triggers:
     - type: ConfigChange
@@ -116,11 +106,3 @@ parameters:
   description: The path appended to the HOST_ROUTE where the root of this project will be served
   value: "/"
   required: false
-- name: TRUSTSTORE_SECRET
-  description: the name of the openshift secret that contains the truststore file
-  value: "dev-truststore"
-  required: true
-- name: TRUSTSTORE_NAME
-  description: the name of the truststore file
-  value: "truststore"
-  required: true
