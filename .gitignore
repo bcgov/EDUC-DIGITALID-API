@@ -12,5 +12,5 @@ application-local.properties
 application-devlocal.properties
 *.jks
 /api/src/main/resources/keystore/
+ojdbc8.jar
 .idea
-*.jar

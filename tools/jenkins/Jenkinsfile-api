@@ -1,5 +1,7 @@
 pipeline{
-  agent any
+  agent {
+      label 'maven35'
+  }
 
     environment{
       TOOLS = 'c2mvws-tools'
@@ -26,80 +28,80 @@ pipeline{
   }
 
   stages{
-      stage('Build JORDS'){
-        steps{
-          script{
-            openshift.withCluster(){
-              openshift.withProject(){
-                def bcJORDS = openshift.process('-f', 'tools/openshift/jords.bc.yaml')
-                openshift.apply(bcJORDS).narrow('bc').startBuild('-w').logs('-f')
-              }
-            }
+    stage('Build App') {
+      steps {
+        sh "mvn -f ./api/pom.xml -Dmaven.test.skip=true package"
+      }
+    }
+    stage('Create Image Builder') {
+      when {
+        expression {
+          openshift.withCluster() {
+            return !openshift.selector("bc", "educ-digitalid-api-master").exists();
           }
         }
       }
-      stage('Build DigitalID API'){
-        steps{
-          script{
-            openshift.withCluster(){
-              openshift.withProject(){
-                def bcApi = openshift.process('-f', 'tools/openshift/api.bc.yaml')
-                openshift.apply(bcApi).narrow('bc').startBuild('-w').logs('-f')
-              }
-            }
-          }
-        }
-        post {
-          success {
-              echo 'Cleanup BuildConfigs'
-              script {
-                  openshift.withCluster() {
-                    openshift.withProject(TOOLS) {
-                      def bcJORDS = openshift.selector('bc', "educ-jords")
-                      def bcApi = openshift.selector('bc', "${REPO_NAME}-${JOB_NAME}")
-
-                      if(bcJORDS.exists()){
-                          echo "Removing BuildConfig ${REPO_NAME}-${JOB_NAME}"
-                          bcJORDS.delete()
-                      }
-                      if(bcApi.exists()) {
-                          echo "Removing BuildConfig ${REPO_NAME}-${JOB_NAME}"
-                          bcApi.delete()
-                      }
-                    }
-                  }
-              }
-          }
-          failure {
-              echo 'Build stage failed'
+      steps {
+        script {
+          openshift.withCluster() {
+            openshift.newBuild("--name=educ-digitalid-api-master", "--image-stream=redhat-openjdk18-openshift:1.1", "--binary")
           }
         }
       }
-      stage('Promote to DEV') {
-        steps {
+    }
+    stage('Build Image') {
+      steps {
+        script {
+          openshift.withCluster() {
+            openshift.selector("bc", "educ-digitalid-api-master").startBuild("--from-file=./api/target/digitalid-api-0.0.1.SNAPSHOT.jar", "--wait")
+          }
+        }
+      }
+      post {
+        success {
+          echo 'Cleanup BuildConfigs'
           script {
-            openshift.withCluster() {
-              openshift.withProject(DEV) {
-                echo "Tagging image"
-                openshift.tag("${TOOLS}/${REPO_NAME}-${JOB_NAME}:latest", "${REPO_NAME}-${JOB_NAME}:${TAG}")
-                def dcTemplate = openshift.process('-f',
-                  'tools/openshift/api.dc.yaml',
-                  "REPO_NAME=${REPO_NAME}",
-                  "JOB_NAME=${JOB_NAME}",
-                  "NAMESPACE=${DEV}",
-                  "APP_NAME=${APP_NAME}",
-                  "HOST_ROUTE=${DEV_HOST_ROUTE}",
-                  "TAG=${TAG}"
-                )
+              openshift.withCluster() {
+                openshift.withProject(TOOLS) {
+                  def bcApi = openshift.selector('bc', "${REPO_NAME}-${JOB_NAME}")
 
-                echo "Applying Deployment ${REPO_NAME}"
-                def dc = openshift.apply(dcTemplate).narrow('dc')
-
-                echo "Waiting for deployment to roll out"
-                // Wait for deployments to roll out
-                timeout(10) {
-                  dc.rollout().status('--watch=true')
+                  if(bcApi.exists()) {
+                      echo "Removing BuildConfig ${REPO_NAME}-${JOB_NAME}"
+                      bcApi.delete()
+                  }
                 }
+              }
+            }
+        }
+        failure {
+          echo 'Build stage failed'
+        }
+      }
+    }
+    stage('Promote to DEV') {
+      steps {
+        script {
+          openshift.withCluster() {
+            openshift.withProject(DEV) {
+              echo "Tagging image"
+              openshift.tag("${TOOLS}/${REPO_NAME}-${JOB_NAME}:latest", "${REPO_NAME}-${JOB_NAME}:${TAG}")
+              def dcTemplate = openshift.process('-f',
+                'tools/openshift/api.dc.yaml',
+                "REPO_NAME=${REPO_NAME}",
+                "JOB_NAME=${JOB_NAME}",
+                "NAMESPACE=${DEV}",
+                "APP_NAME=${APP_NAME}",
+                "HOST_ROUTE=${DEV_HOST_ROUTE}",
+                "TAG=${TAG}"
+              )
+
+              echo "Applying Deployment ${REPO_NAME}"
+              def dc = openshift.apply(dcTemplate).narrow('dc')
+
+              echo "Waiting for deployment to roll out"
+              // Wait for deployments to roll out
+              timeout(10) {
+                dc.rollout().status('--watch=true')
               }
             }
           }
@@ -107,3 +109,4 @@ pipeline{
       }
     }
   }
+}
