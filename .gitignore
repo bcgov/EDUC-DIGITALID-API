@@ -8,7 +8,6 @@
 /api/digitalid-api.iml
 .project
 .classpath
-application-local.properties
 application-devlocal.properties
 *.jks
 /api/src/main/resources/keystore/
