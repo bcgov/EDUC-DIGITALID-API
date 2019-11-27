@@ -35,7 +35,7 @@ pipeline{
     }
 	stage('Add driver to m2 repo') {
 		steps {	
-	        sh "mvn install:install-file -Dfile=./api/target/digitalid-api-0.0.1.SNAPSHOT-client.jar -DgroupId=ca.bc.gov.educ.api.digitalid -DartifactId=digitalid-api-client -Dversion=12.2.0.1 -Dpackaging=jar"
+	        sh "mvn install:install-file -Dfile=./api/target/digitalid-api-0.0.1.SNAPSHOT-client.jar -DgroupId=ca.bc.gov.educ.api.digitalid -DartifactId=digitalid-api-client -Dversion=0.0.1 -Dpackaging=jar"
         }
     }
     stage('Create Image Builder') {
