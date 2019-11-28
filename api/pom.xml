@@ -73,8 +73,7 @@
 
 	<build>
 		<plugins>
-			<plugin>
-		        <groupId>org.apache.maven.plugins</groupId>
+	<!--          <groupId>org.apache.maven.plugins</groupId>
 		        <artifactId>maven-jar-plugin</artifactId>
 		        <executions>
 		          <execution>
@@ -90,7 +89,7 @@
 		            </configuration>
 		          </execution>
 		        </executions>
-		      </plugin>
+		      </plugin>-->
 			<!--<plugin>
 				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
