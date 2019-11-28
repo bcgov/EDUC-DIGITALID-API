@@ -73,47 +73,14 @@
 
 	<build>
 		<plugins>
-			<!--  <plugin>
-		        <groupId>org.apache.maven.plugins</groupId>
-		        <artifactId>maven-jar-plugin</artifactId>
-		        <executions>
-		          <execution>
-		            <phase>package</phase>
-		            <goals>
-		              <goal>jar</goal>
-		            </goals>
-		            <configuration>
-		              <classifier>client</classifier>
-		              <includes>
-		                <include>**/model/*</include>
-		              </includes>
-		            </configuration>
-		          </execution>
-		        </executions>
-		      </plugin>-->
 			<!--<plugin>
 				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
 			</plugin>-->
-<!--  			<plugin>
+			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>pre-integration-test</id>
-						<goals>
-							<goal>start</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>post-integration-test</id>
-						<goals>
-							<goal>stop</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
-			-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -122,57 +89,6 @@
 					<reuseForks>true</reuseForks>
 					<useSystemClassLoader>false</useSystemClassLoader>
 				</configuration>
-			</plugin>
-			<!--  
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>integration-tests</id>
-						<goals>
-							<goal>integration-test</goal>
-							<goal>verify</goal>
-						</goals>
-						<configuration>
-							<additionalClasspathElements>
-								<additionalClasspathElement>${project.build.directory}/classes</additionalClasspathElement>
-							</additionalClasspathElements>
-							<includes>
-								<include>**/*ItCase.java</include>
-							</includes>
-							<forkCount>1</forkCount>
-							<reuseForks>false</reuseForks>
-							<useSystemClassLoader>false</useSystemClassLoader>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			-->
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.4</version>
-				<executions>
-					<execution>
-						<id>default-prepare-agent</id>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-						<configuration>
-							<destFile>${project.build.directory}/coverage-reports/jacoco.exec</destFile>
-						</configuration>
-					</execution>
-					<execution>
-						<id>default-report</id>
-						<goals>
-							<goal>report</goal>
-						</goals>
-						<configuration>
-						<!--	<destFile>${project.build.directory}/coverage-reports/jacoco-it.exec</destFile>-->
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
