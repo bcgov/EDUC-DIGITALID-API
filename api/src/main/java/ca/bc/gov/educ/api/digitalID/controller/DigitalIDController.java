@@ -23,7 +23,7 @@ import ca.bc.gov.educ.api.digitalID.service.DigitalIDService;
  */
 
 @RestController
-@RequestMapping("digitalid")
+@RequestMapping("/")
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableResourceServer
 public class DigitalIDController {
