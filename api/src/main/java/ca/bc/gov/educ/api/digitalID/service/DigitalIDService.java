@@ -70,14 +70,12 @@ public class DigitalIDService {
      */
     public DigitalIDEntity createDigitalID(DigitalIDEntity digitalID) throws EntityNotFoundException, InvalidParameterException {
 
-        validateParameters(digitalID);
+        validateCreateParameters(digitalID);
 
         if(digitalID.getDigitalID()!=null){
             throw new InvalidParameterException("digitalID");
         }
-        digitalID.setUpdateUser(ApplicationProperties.CLIENT_ID);
         digitalID.setUpdateDate(new Date());
-        digitalID.setCreateUser(ApplicationProperties.CLIENT_ID);
         digitalID.setCreateDate(new Date());
 
         return digitalIDRepository.save(digitalID);
@@ -92,7 +90,7 @@ public class DigitalIDService {
      */
     public DigitalIDEntity updateDigitalID(DigitalIDEntity digitalID) throws EntityNotFoundException, InvalidParameterException {
 
-        validateParameters(digitalID);
+        validateCreateParameters(digitalID);
 
 
         Optional<DigitalIDEntity> curDigitalID = digitalIDRepository.findById(digitalID.getDigitalID());
@@ -105,7 +103,6 @@ public class DigitalIDService {
             newDigitalID.setIdentityValue(digitalID.getIdentityValue());
             newDigitalID.setLastAccessDate(digitalID.getLastAccessDate());
             newDigitalID.setLastAccessChannelCode(digitalID.getLastAccessChannelCode());
-            newDigitalID.setUpdateUser(ApplicationProperties.CLIENT_ID);
             newDigitalID.setUpdateDate(new Date());
             newDigitalID = digitalIDRepository.save(newDigitalID);
 
@@ -115,15 +112,10 @@ public class DigitalIDService {
         }
     }
 
-    private void validateParameters(DigitalIDEntity digitalIDEntity) throws InvalidParameterException {
-
+    private void validateCreateParameters(DigitalIDEntity digitalIDEntity) throws InvalidParameterException {
         if(digitalIDEntity.getCreateDate()!=null)
             throw new InvalidParameterException("createDate");
-        if(digitalIDEntity.getCreateUser()!=null)
-            throw new InvalidParameterException("createUser");
         if(digitalIDEntity.getUpdateDate()!=null)
             throw new InvalidParameterException("updateDate");
-        if(digitalIDEntity.getUpdateUser()!=null)
-            throw new InvalidParameterException("updateUser");
     }
 }
