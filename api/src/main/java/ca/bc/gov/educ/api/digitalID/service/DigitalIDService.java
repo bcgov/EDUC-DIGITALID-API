@@ -36,7 +36,7 @@ public class DigitalIDService {
      */
     public DigitalIDEntity searchDigitalId(String typeCode, String typeValue) throws EntityNotFoundException{
 
-        Optional<DigitalIDEntity> result =  digitalIDRepository.findByIdentityTypeCodeAndIdentityValue(typeCode.toUpperCase(), typeValue);
+        Optional<DigitalIDEntity> result =  digitalIDRepository.findByIdentityTypeCodeAndIdentityValue(typeCode.toUpperCase(), typeValue.toUpperCase());
         if(result.isPresent()) {
             return result.get();
         } else {
