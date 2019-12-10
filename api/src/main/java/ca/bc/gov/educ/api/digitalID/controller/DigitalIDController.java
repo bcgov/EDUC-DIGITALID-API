@@ -1,20 +1,22 @@
 package ca.bc.gov.educ.api.digitalID.controller;
 
-import ca.bc.gov.educ.api.digitalID.model.DigitalIDEntity;
-import ca.bc.gov.educ.api.digitalID.service.DigitalIDService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
-import javax.transaction.Transactional;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import ca.bc.gov.educ.api.digitalID.model.DigitalIDEntity;
+import ca.bc.gov.educ.api.digitalID.service.DigitalIDService;
+
+import java.util.UUID;
 
 /**
  * Digital Identity controller
@@ -23,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  */
 
 @RestController
-@RequestMapping("digitalid")
+@RequestMapping("/")
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableResourceServer
 public class DigitalIDController {
@@ -43,7 +45,7 @@ public class DigitalIDController {
 
     @GetMapping("/{id}")
     @PreAuthorize("#oauth2.hasScope('READ_DIGITALID')")
-    public DigitalIDEntity retreiveDigitalID(@PathVariable Long id) throws Exception {
+    public DigitalIDEntity retreiveDigitalID(@PathVariable UUID id) throws Exception {
         return service.retrieveDigitalID(id);
     }
 
