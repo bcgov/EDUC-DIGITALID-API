@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.UUID;
+
 /**
  * Digital Identity controller
  *
@@ -43,7 +45,7 @@ public class DigitalIDController {
 
     @GetMapping("/{id}")
     @PreAuthorize("#oauth2.hasScope('READ_DIGITALID')")
-    public DigitalIDEntity retreiveDigitalID(@PathVariable Long id) throws Exception {
+    public DigitalIDEntity retreiveDigitalID(@PathVariable UUID id) throws Exception {
         return service.retrieveDigitalID(id);
     }
 

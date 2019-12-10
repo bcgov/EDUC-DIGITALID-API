@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * DigitalIDService
@@ -51,8 +52,8 @@ public class DigitalIDService {
      * @return
      * @throws EntityNotFoundException
      */
-    public DigitalIDEntity retrieveDigitalID(Long id) throws EntityNotFoundException {
-        Optional<DigitalIDEntity> result =  digitalIDRepository.findById(id);
+    public DigitalIDEntity retrieveDigitalID(UUID id) throws EntityNotFoundException {
+        Optional<DigitalIDEntity> result =  digitalIDRepository.findByDigitalID(id);
         if(result.isPresent()) {
             return result.get();
         } else {
@@ -94,8 +95,7 @@ public class DigitalIDService {
 
         validateParameters(digitalID);
 
-
-        Optional<DigitalIDEntity> curDigitalID = digitalIDRepository.findById(digitalID.getDigitalID());
+        Optional<DigitalIDEntity> curDigitalID = digitalIDRepository.findByDigitalID(digitalID.getDigitalID());
 
         if(curDigitalID.isPresent())
         {
