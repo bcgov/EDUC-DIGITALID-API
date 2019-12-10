@@ -49,29 +49,18 @@ public class DigitalIDServiceTest {
     }
 
     @Test
-    public void createInvalidDigitalIdTest2(){
-        DigitalIDEntity digitalID = new DigitalIDEntity();
-        digitalID.setIdentityTypeCode("BCSC");
-        digitalID.setIdentityValue("realValue123");
-        digitalID.setLastAccessChannelCode("OSPR");
-        digitalID.setLastAccessDate(new Date());
-        digitalID.setCreateUser("USER");
-
-        assertThrows(InvalidParameterException.class, () -> {
-            service.createDigitalID(digitalID);
-        });
-    }
-
-    @Test
     public void createInvalidDigitalIdTest3(){
         DigitalIDEntity digitalID = new DigitalIDEntity();
         digitalID.setIdentityTypeCode("FAKECODE");
-        digitalID.setIdentityValue("realValue123");
+        digitalID.setIdentityValue("REALVALUE123");
         digitalID.setLastAccessChannelCode("OSPR");
+        digitalID.setCreateUser("UNIT-TEST");
+        digitalID.setUpdateUser("UNIT-TEST");
         digitalID.setLastAccessDate(new Date());
 
+        service.createDigitalID(digitalID);
         assertThrows(DataIntegrityViolationException.class, () -> {
-            service.createDigitalID(digitalID);
+            assertNotNull(service.searchDigitalId("FAKECODE", "REALVALUE123"));
         });
     }
 
@@ -79,8 +68,10 @@ public class DigitalIDServiceTest {
     public void searchValidDigitalIdTest(){
         DigitalIDEntity digitalID = new DigitalIDEntity();
         digitalID.setIdentityTypeCode("BCSC");
-        digitalID.setIdentityValue("realValue123");
+        digitalID.setIdentityValue("REALVALUE123");
         digitalID.setLastAccessChannelCode("OSPR");
+        digitalID.setCreateUser("UNIT-TEST");
+        digitalID.setUpdateUser("UNIT-TEST");
         digitalID.setLastAccessDate(new Date());
         service.createDigitalID(digitalID);
 

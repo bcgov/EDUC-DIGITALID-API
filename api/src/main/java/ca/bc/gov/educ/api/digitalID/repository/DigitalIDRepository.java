@@ -16,5 +16,4 @@ import java.util.UUID;
 @Repository
 public interface DigitalIDRepository extends CrudRepository<DigitalIDEntity, UUID> {
     Optional<DigitalIDEntity> findByIdentityTypeCodeAndIdentityValue(String identityTypeCode, String identityValue);
-    Optional<DigitalIDEntity> findByDigitalID(UUID id);
 }

@@ -38,6 +38,7 @@ public class DigitalIDService {
     public DigitalIDEntity searchDigitalId(String typeCode, String typeValue) throws EntityNotFoundException{
 
         Optional<DigitalIDEntity> result =  digitalIDRepository.findByIdentityTypeCodeAndIdentityValue(typeCode.toUpperCase(), typeValue.toUpperCase());
+
         if(result.isPresent()) {
             return result.get();
         } else {
@@ -53,7 +54,7 @@ public class DigitalIDService {
      * @throws EntityNotFoundException
      */
     public DigitalIDEntity retrieveDigitalID(UUID id) throws EntityNotFoundException {
-        Optional<DigitalIDEntity> result =  digitalIDRepository.findByDigitalID(id);
+        Optional<DigitalIDEntity> result =  digitalIDRepository.findById(id);
         if(result.isPresent()) {
             return result.get();
         } else {
@@ -93,7 +94,7 @@ public class DigitalIDService {
 
         validateCreateParameters(digitalID);
 
-        Optional<DigitalIDEntity> curDigitalID = digitalIDRepository.findByDigitalID(digitalID.getDigitalID());
+        Optional<DigitalIDEntity> curDigitalID = digitalIDRepository.findById(digitalID.getDigitalID());
 
         if(curDigitalID.isPresent())
         {
