@@ -7,7 +7,6 @@ import org.hibernate.annotations.Parameter;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -41,17 +40,6 @@ public class DigitalIDEntity {
     @Column(name = "digital_identity_id", unique = true, updatable = false, columnDefinition = "BINARY(16)")
     UUID digitalID;
 
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator",
-            parameters = {
-                    @Parameter(
-                            name = "uuid_gen_strategy_class",
-                            value = "org.hibernate.id.uuid.CustomVersionOneStrategy"
-                    )
-            }
-    )
     @Column(name = "student_id", unique = true, updatable = false, columnDefinition = "BINARY(16)")
     UUID studentID;
 
