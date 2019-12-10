@@ -10,6 +10,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 import javax.transaction.Transactional;
 import java.util.Date;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -36,7 +37,7 @@ public class DigitalIDServiceTest {
     @Test
     public void createInvalidDigitalIdTest1(){
         DigitalIDEntity digitalID = new DigitalIDEntity();
-        digitalID.setDigitalID(new Long(111));
+        digitalID.setDigitalID(UUID.fromString("00000000-8000-0000-000e-000000000000"));
         digitalID.setIdentityTypeCode("BCSC");
         digitalID.setIdentityValue("realValue123");
         digitalID.setLastAccessChannelCode("OSPR");
@@ -100,7 +101,7 @@ public class DigitalIDServiceTest {
         digitalID.setIdentityValue("realValue123");
         digitalID.setLastAccessChannelCode("OSPR");
         digitalID.setLastAccessDate(new Date());
-        Long id = service.createDigitalID(digitalID).getDigitalID();
+        UUID id = service.createDigitalID(digitalID).getDigitalID();
 
         assertNotNull(service.retrieveDigitalID(id));
     }
@@ -108,7 +109,7 @@ public class DigitalIDServiceTest {
     @Test
     public void retrieveInvalidDigitalIdTest(){
         assertThrows(EntityNotFoundException.class, () -> {
-            service.retrieveDigitalID(new Long(111));
+            service.retrieveDigitalID(UUID.fromString("00000000-8000-0000-000e-000000000000"));
         });
     }
 
@@ -128,6 +129,8 @@ public class DigitalIDServiceTest {
         newDigitalID.setIdentityValue("newValue123");
         newDigitalID.setLastAccessChannelCode("OSPR");
         newDigitalID.setLastAccessDate(new Date());
+
+
 
         assertNotNull(service.updateDigitalID(newDigitalID));
     }

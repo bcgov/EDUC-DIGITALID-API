@@ -1,6 +1,8 @@
 package ca.bc.gov.educ.api.digitalID.model;
 
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +13,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * Digital Identity Entity
@@ -24,12 +27,33 @@ import java.util.Date;
 public class DigitalIDEntity {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name = "digital_identity_id", unique = true, updatable = false)
-    Long digitalID;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+            name = "UUID",
+            strategy = "org.hibernate.id.UUIDGenerator",
+            parameters = {
+                    @Parameter(
+                            name = "uuid_gen_strategy_class",
+                            value = "org.hibernate.id.uuid.CustomVersionOneStrategy"
+                    )
+            }
+    )
+    @Column(name = "digital_identity_id", unique = true, updatable = false, columnDefinition = "BINARY(16)")
+    UUID digitalID;
 
-    @Column(name = "student_id")
-    Integer studentID;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+            name = "UUID",
+            strategy = "org.hibernate.id.UUIDGenerator",
+            parameters = {
+                    @Parameter(
+                            name = "uuid_gen_strategy_class",
+                            value = "org.hibernate.id.uuid.CustomVersionOneStrategy"
+                    )
+            }
+    )
+    @Column(name = "student_id", unique = true, updatable = false, columnDefinition = "BINARY(16)")
+    UUID studentID;
 
     @NotNull(message="identityTypeCode cannot be null")
     @Column(name = "identity_type_code")
