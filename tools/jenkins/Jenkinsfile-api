@@ -25,9 +25,18 @@ pipeline{
       DEV_HOST_ROUTE = "${APP_NAME}-${DEV}.${APP_DOMAIN}"
       TEST_HOST_ROUTE = "${APP_NAME}-${TEST}.${APP_DOMAIN}"
       PROD_HOST_ROUTE = "${APP_NAME}-${PROD}.${APP_DOMAIN}"
+
+      SONARQUBE_HOSTNAME = "https://sonarqube.c2mvws-tools.svc.cluster.local"
+      SONARQUBE_TOKEN = "372d1faf56b9ebbb6580ac2098d232d8a0980e9d"
+
   }
 
   stages{
+    stage('Unit Tests') {
+      steps {
+        sh "mvn -f ./api/pom.xml test"
+      }
+    }
     stage('Build App') {
       steps {
         sh "mvn -f ./api/pom.xml -Dmaven.test.skip=true package"
@@ -106,6 +115,54 @@ pipeline{
             }
           }
         }
+      }
+    }
+    stage('Report to SonarQube') {
+        steps {
+            script{
+                dir('api'){
+                    sh "mvn sonar:sonar -Dsonar.host.url=${SONARQUBE_HOSTNAME} -Dsonar.login=${SONARQUBE_TOKEN}"
+                }
+            }
+        }
+    }
+    stage('Deploy to Test'){
+      steps{
+          deployStage('Test', TEST, TEST_HOST_ROUTE)
+      } 
+      post {
+          success{
+              echo 'Deployment to Test was successful'
+          }
+          failure{
+              echo 'Deployment to Test failed'
+          }
+      }
+    }
+  }
+}
+def deployStage(String stageEnv, String projectEnv, String hostRouteEnv) {
+  openshift.withCluster() {
+    openshift.withProject(projectEnv) {
+      echo "Tagging image"
+      openshift.tag("${TOOLS}/${REPO_NAME}-${JOB_NAME}:latest", "${REPO_NAME}-${JOB_NAME}:${TAG}")
+      def dcTemplate = openshift.process('-f',
+        'tools/openshift/api.dc.yaml',
+        "REPO_NAME=${REPO_NAME}",
+        "JOB_NAME=${JOB_NAME}",
+        "NAMESPACE=${projectEnv}",
+        "APP_NAME=${APP_NAME}",
+        "HOST_ROUTE=${hostRouteEnv}",
+        "TAG=${TAG}"
+      )
+
+      echo "Applying Deployment ${REPO_NAME}"
+      def dc = openshift.apply(dcTemplate).narrow('dc')
+
+      echo "Waiting for deployment to roll out"
+      // Wait for deployments to roll out
+      timeout(10) {
+        dc.rollout().status('--watch=true')
       }
     }
   }
