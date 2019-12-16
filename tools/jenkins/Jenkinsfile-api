@@ -48,32 +48,31 @@ pipeline{
     }
   }
 
-    environment{
-      TOOLS = 'c2mvws-tools'
-      DEV = 'c2mvws-dev'
-      TEST = 'c2mvws-test'
-      PROD = 'c2mvws-prod'
+  environment{
+    TOOLS = 'c2mvws-tools'
+    DEV = 'c2mvws-dev'
+    TEST = 'c2mvws-test'
+    PROD = 'c2mvws-prod'
 
-      REPO_NAME = 'educ-digitalid-api'
-      OWNER = 'bcgov'
-      JOB_NAME = 'master'
-      TAG = 'dev'
-      
-      APP_NAME = 'digitalid-api'
-      APP_DOMAIN = 'pathfinder.gov.bc.ca'
+    REPO_NAME = 'educ-digitalid-api'
+    OWNER = 'bcgov'
+    JOB_NAME = 'master'
+    TAG = 'dev'
+    
+    APP_NAME = 'digitalid-api'
+    APP_DOMAIN = 'pathfinder.gov.bc.ca'
 
-      SOURCE_REPO_RAW = 'https://github.com/${OWNER}/${REPO_NAME}/master'
-      SOURCE_REPO_REF = 'master'
-      SOURCE_REPO_URL = 'https://github.com/${OWNER}/${REPO_NAME}.git'
+    SOURCE_REPO_RAW = 'https://github.com/${OWNER}/${REPO_NAME}/master'
+    SOURCE_REPO_REF = 'master'
+    SOURCE_REPO_URL = 'https://github.com/${OWNER}/${REPO_NAME}.git'
 
-      TOOLS_HOST_ROUTE = "${APP_NAME}-${TOOLS}.${APP_DOMAIN}"
-      DEV_HOST_ROUTE = "${APP_NAME}-${DEV}.${APP_DOMAIN}"
-      TEST_HOST_ROUTE = "${APP_NAME}-${TEST}.${APP_DOMAIN}"
-      PROD_HOST_ROUTE = "${APP_NAME}-${PROD}.${APP_DOMAIN}"
+    TOOLS_HOST_ROUTE = "${APP_NAME}-${TOOLS}.${APP_DOMAIN}"
+    DEV_HOST_ROUTE = "${APP_NAME}-${DEV}.${APP_DOMAIN}"
+    TEST_HOST_ROUTE = "${APP_NAME}-${TEST}.${APP_DOMAIN}"
+    PROD_HOST_ROUTE = "${APP_NAME}-${PROD}.${APP_DOMAIN}"
 
-      SONARQUBE_HOSTNAME = "https://sonarqube.c2mvws-tools.svc.cluster.local"
-      SONARQUBE_TOKEN = "372d1faf56b9ebbb6580ac2098d232d8a0980e9d"
-
+    SONARQUBE_HOSTNAME = "https://sonarqube.c2mvws-tools.svc.cluster.local"
+    SONARQUBE_TOKEN = "372d1faf56b9ebbb6580ac2098d232d8a0980e9d"
   }
 
   stages{
@@ -194,6 +193,7 @@ pipeline{
           failure{
               echo 'Deployment to Test failed'
           }
+        }
       }
     }
   }
