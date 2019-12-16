@@ -198,3 +198,29 @@ pipeline{
     }
   }
 }
+def deployStage(String stageEnv, String projectEnv, String hostRouteEnv) {
+  openshift.withCluster() {
+    openshift.withProject(projectEnv) {
+      echo "Tagging image"
+      openshift.tag("${TOOLS}/${REPO_NAME}-${JOB_NAME}:latest", "${REPO_NAME}-${JOB_NAME}:${TAG}")
+      def dcTemplate = openshift.process('-f',
+        'tools/openshift/api.dc.yaml',
+        "REPO_NAME=${REPO_NAME}",
+        "JOB_NAME=${JOB_NAME}",
+        "NAMESPACE=${projectEnv}",
+        "APP_NAME=${APP_NAME}",
+        "HOST_ROUTE=${hostRouteEnv}",
+        "TAG=${TAG}"
+      )
+
+      echo "Applying Deployment ${REPO_NAME}"
+      def dc = openshift.apply(dcTemplate).narrow('dc')
+
+      echo "Waiting for deployment to roll out"
+      // Wait for deployments to roll out
+      timeout(10) {
+        dc.rollout().status('--watch=true')
+      }
+    }
+  }
+}
