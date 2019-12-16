@@ -90,11 +90,11 @@
 		            </configuration>
 		          </execution>
 		        </executions>
-		      </plugin>
-			<!--<plugin>
+		    </plugin>
+			<plugin>
 				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
-			</plugin>-->
+			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
