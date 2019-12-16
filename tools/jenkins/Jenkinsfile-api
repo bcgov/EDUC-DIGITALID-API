@@ -1,6 +1,51 @@
 pipeline{
   agent {
-      label 'maven35'
+    kubernetes {
+      label 'mavenPod'
+      cloud 'openshift'
+      defaultContainer 'jnlp'
+      serviceAccount 'jenkins'
+      yaml """
+        kind: Pod
+        metadata:
+          name: jenkins-slave
+        spec:
+          containers:
+          - name: jnlp
+            image: registry.access.redhat.com/openshift3/jenkins-agent-maven-35-rhel7
+            privileged: false
+            alwaysPullImage: false
+            workingDir: /tmp
+            ttyEnabled: false
+            resourceLimitCpu: 1
+            resourceLimitMemory: 1Gi
+            resourceLimitCpu: 2
+            env:
+            - name: JDBC_URL
+              valueFrom:
+                secretKeyRef:
+                  name: 'unit-test-db'
+                  key: url
+            - name: ORACLE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: 'unit-test-db'
+                  key: username
+            - name: TMP_ORACLE_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: 'unit-test-db'
+                  key: password
+            volumeMounts:
+            - mountPath: '/home/jenkins/.m2'
+              name: pvc
+          volumes:
+          - name: pvc
+            persistentVolumeClaim:
+              claimName: 'maven-slave-pvc'
+              
+      """
+    }
   }
 
     environment{
@@ -34,14 +79,26 @@ pipeline{
   stages{
     stage('Unit Tests') {
       steps {
-        sh "mvn -f ./api/pom.xml test"
+        script {
+          def pom = readMavenPom file: 'api/pom.xml'
+          VERSION = pom.version
+
+          //Env variable is to fix issue where special characters in password were not being escaped properly
+          def command = $//bin/bash -c "mvn -f ./api/pom.xml test -DORACLE_PASSWORD=${TMP_ORACLE_PASSWORD}"/$
+          sh command
+        }
       }
     }
     stage('Build App') {
       steps {
-        sh "mvn -f ./api/pom.xml -Dmaven.test.skip=true package"
+        sh '/bin/bash -c "mvn -f ./api/pom.xml -Dmaven.test.skip=true package"'
       }
     }
+    stage('Add client jar to m2 repo') {
+		  steps {	
+        sh '/bin/bash -c "mvn install:install-file -Dfile=./api/target/digitalid-api-${VERSION}-client.jar -DgroupId=ca.bc.gov.educ.api.digitalid -DartifactId=digitalid-api-client -Dversion=${VERSION} -Dpackaging=jar"'
+      }
+    
     stage('Create Image Builder') {
       when {
         expression {
@@ -62,7 +119,7 @@ pipeline{
       steps {
         script {
           openshift.withCluster() {
-            openshift.selector("bc", "educ-digitalid-api-master").startBuild("--from-file=./api/target/digitalid-api-0.0.1.SNAPSHOT.jar", "--wait")
+            openshift.selector("bc", "educ-digitalid-api-master").startBuild("--from-file=./api/target/digitalid-api-${VERSION}.jar", "--wait")
           }
         }
       }
@@ -121,7 +178,7 @@ pipeline{
         steps {
             script{
                 dir('api'){
-                    sh "mvn sonar:sonar -Dsonar.host.url=${SONARQUBE_HOSTNAME} -Dsonar.login=${SONARQUBE_TOKEN}"
+                    sh '/bin/bash -c "mvn sonar:sonar -Dsonar.host.url=${SONARQUBE_HOSTNAME} -Dsonar.login=${SONARQUBE_TOKEN}"'
                 }
             }
         }
