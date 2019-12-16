@@ -17,9 +17,10 @@ pipeline{
             alwaysPullImage: false
             workingDir: /tmp
             ttyEnabled: false
-            resourceLimitCpu: 1
-            resourceLimitMemory: 1Gi
-            resourceLimitCpu: 2
+            resourceRequestCpu: 3
+            resourceRequestMemory: 2Gi
+            resourceLimitCpu: 3
+            resourceLimitMemory: 2Gi
             env:
             - name: JDBC_URL
               valueFrom:
