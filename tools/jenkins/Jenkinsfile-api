@@ -187,12 +187,11 @@ pipeline{
           deployStage('Test', TEST, TEST_HOST_ROUTE)
       } 
       post {
-          success{
-              echo 'Deployment to Test was successful'
-          }
-          failure{
-              echo 'Deployment to Test failed'
-          }
+        success{
+          echo 'Deployment to Test was successful'
+        }
+        failure{
+          echo 'Deployment to Test failed'
         }
       }
     }
