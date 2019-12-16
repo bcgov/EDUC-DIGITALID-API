@@ -72,7 +72,7 @@ pipeline{
     TEST_HOST_ROUTE = "${APP_NAME}-${TEST}.${APP_DOMAIN}"
     PROD_HOST_ROUTE = "${APP_NAME}-${PROD}.${APP_DOMAIN}"
 
-    SONARQUBE_HOSTNAME = "https://sonarqube.c2mvws-tools.svc.cluster.local"
+    SONARQUBE_HOSTNAME = "http://sonarqube.c2mvws-tools.svc.cluster.local"
     SONARQUBE_TOKEN = "372d1faf56b9ebbb6580ac2098d232d8a0980e9d"
   }
 
