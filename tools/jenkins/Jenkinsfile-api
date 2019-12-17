@@ -17,9 +17,10 @@ pipeline{
             alwaysPullImage: false
             workingDir: /tmp
             ttyEnabled: false
-            resourceLimitCpu: 1
-            resourceLimitMemory: 1Gi
-            resourceLimitCpu: 2
+            resourceRequestCpu: 3
+            resourceRequestMemory: 2Gi
+            resourceLimitCpu: 3
+            resourceLimitMemory: 2Gi
             env:
             - name: JDBC_URL
               valueFrom:
@@ -48,32 +49,31 @@ pipeline{
     }
   }
 
-    environment{
-      TOOLS = 'c2mvws-tools'
-      DEV = 'c2mvws-dev'
-      TEST = 'c2mvws-test'
-      PROD = 'c2mvws-prod'
+  environment{
+    TOOLS = 'c2mvws-tools'
+    DEV = 'c2mvws-dev'
+    TEST = 'c2mvws-test'
+    PROD = 'c2mvws-prod'
 
-      REPO_NAME = 'educ-digitalid-api'
-      OWNER = 'bcgov'
-      JOB_NAME = 'master'
-      TAG = 'dev'
-      
-      APP_NAME = 'digitalid-api'
-      APP_DOMAIN = 'pathfinder.gov.bc.ca'
+    REPO_NAME = 'educ-digitalid-api'
+    OWNER = 'bcgov'
+    JOB_NAME = 'master'
+    TAG = 'dev'
+    
+    APP_NAME = 'digitalid-api'
+    APP_DOMAIN = 'pathfinder.gov.bc.ca'
 
-      SOURCE_REPO_RAW = 'https://github.com/${OWNER}/${REPO_NAME}/master'
-      SOURCE_REPO_REF = 'master'
-      SOURCE_REPO_URL = 'https://github.com/${OWNER}/${REPO_NAME}.git'
+    SOURCE_REPO_RAW = 'https://github.com/${OWNER}/${REPO_NAME}/master'
+    SOURCE_REPO_REF = 'master'
+    SOURCE_REPO_URL = 'https://github.com/${OWNER}/${REPO_NAME}.git'
 
-      TOOLS_HOST_ROUTE = "${APP_NAME}-${TOOLS}.${APP_DOMAIN}"
-      DEV_HOST_ROUTE = "${APP_NAME}-${DEV}.${APP_DOMAIN}"
-      TEST_HOST_ROUTE = "${APP_NAME}-${TEST}.${APP_DOMAIN}"
-      PROD_HOST_ROUTE = "${APP_NAME}-${PROD}.${APP_DOMAIN}"
+    TOOLS_HOST_ROUTE = "${APP_NAME}-${TOOLS}.${APP_DOMAIN}"
+    DEV_HOST_ROUTE = "${APP_NAME}-${DEV}.${APP_DOMAIN}"
+    TEST_HOST_ROUTE = "${APP_NAME}-${TEST}.${APP_DOMAIN}"
+    PROD_HOST_ROUTE = "${APP_NAME}-${PROD}.${APP_DOMAIN}"
 
-      SONARQUBE_HOSTNAME = "https://sonarqube.c2mvws-tools.svc.cluster.local"
-      SONARQUBE_TOKEN = "372d1faf56b9ebbb6580ac2098d232d8a0980e9d"
-
+    SONARQUBE_HOSTNAME = "http://sonarqube.c2mvws-tools.svc.cluster.local:9000"
+    SONARQUBE_TOKEN = "372d1faf56b9ebbb6580ac2098d232d8a0980e9d"
   }
 
   stages{
@@ -96,9 +96,12 @@ pipeline{
     }
     stage('Add client jar to m2 repo') {
 		  steps {	
-        sh '/bin/bash -c "mvn install:install-file -Dfile=./api/target/digitalid-api-${VERSION}-client.jar -DgroupId=ca.bc.gov.educ.api.digitalid -DartifactId=digitalid-api-client -Dversion=${VERSION} -Dpackaging=jar"'
+        script {
+          def addJar = $//bin/bash -c "mvn install:install-file -Dfile=./api/target/digitalid-api-${VERSION}-client.jar -DgroupId=ca.bc.gov.educ.api.digitalid -DartifactId=digitalid-api-client -Dversion=${VERSION} -Dpackaging=jar"/$
+          sh addJar
+        }
       }
-    
+    }    
     stage('Create Image Builder') {
       when {
         expression {
@@ -188,12 +191,12 @@ pipeline{
           deployStage('Test', TEST, TEST_HOST_ROUTE)
       } 
       post {
-          success{
-              echo 'Deployment to Test was successful'
-          }
-          failure{
-              echo 'Deployment to Test failed'
-          }
+        success{
+          echo 'Deployment to Test was successful'
+        }
+        failure{
+          echo 'Deployment to Test failed'
+        }
       }
     }
   }
