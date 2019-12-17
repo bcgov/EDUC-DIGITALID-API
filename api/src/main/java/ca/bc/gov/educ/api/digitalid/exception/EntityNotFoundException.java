@@ -1,4 +1,4 @@
-package ca.bc.gov.educ.api.digitalID.exception;
+package ca.bc.gov.educ.api.digitalid.exception;
 
 import org.apache.commons.lang3.StringUtils;
 

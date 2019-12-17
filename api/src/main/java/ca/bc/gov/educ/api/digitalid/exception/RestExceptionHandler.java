@@ -1,6 +1,6 @@
-package ca.bc.gov.educ.api.digitalID.exception;
+package ca.bc.gov.educ.api.digitalid.exception;
 
-import ca.bc.gov.educ.api.digitalID.exception.errors.ApiError;
+import ca.bc.gov.educ.api.digitalid.exception.errors.ApiError;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;

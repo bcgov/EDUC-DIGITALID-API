@@ -1,10 +1,9 @@
-package ca.bc.gov.educ.api.digitalID.service;
+package ca.bc.gov.educ.api.digitalid.service;
 
-import ca.bc.gov.educ.api.digitalID.exception.EntityNotFoundException;
-import ca.bc.gov.educ.api.digitalID.exception.InvalidParameterException;
-import ca.bc.gov.educ.api.digitalID.model.DigitalIDEntity;
-import ca.bc.gov.educ.api.digitalID.props.ApplicationProperties;
-import ca.bc.gov.educ.api.digitalID.repository.DigitalIDRepository;
+import ca.bc.gov.educ.api.digitalid.exception.EntityNotFoundException;
+import ca.bc.gov.educ.api.digitalid.exception.InvalidParameterException;
+import ca.bc.gov.educ.api.digitalid.model.DigitalIDEntity;
+import ca.bc.gov.educ.api.digitalid.repository.DigitalIDRepository;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,7 @@ public class DigitalIDService {
      * @throws EntityNotFoundException
      * @return
      */
-    public DigitalIDEntity searchDigitalId(String typeCode, String typeValue) throws EntityNotFoundException{
+    public DigitalIDEntity searchDigitalId(String typeCode, String typeValue) {
 
         Optional<DigitalIDEntity> result =  digitalIDRepository.findByIdentityTypeCodeAndIdentityValue(typeCode.toUpperCase(), typeValue.toUpperCase());
 
@@ -53,7 +52,7 @@ public class DigitalIDService {
      * @return
      * @throws EntityNotFoundException
      */
-    public DigitalIDEntity retrieveDigitalID(UUID id) throws EntityNotFoundException {
+    public DigitalIDEntity retrieveDigitalID(UUID id) {
         Optional<DigitalIDEntity> result =  digitalIDRepository.findById(id);
         if(result.isPresent()) {
             return result.get();
@@ -70,7 +69,7 @@ public class DigitalIDService {
      * @throws EntityNotFoundException
      * @throws InvalidParameterException
      */
-    public DigitalIDEntity createDigitalID(DigitalIDEntity digitalID) throws EntityNotFoundException, InvalidParameterException {
+    public DigitalIDEntity createDigitalID(DigitalIDEntity digitalID) {
 
         validateCreateParameters(digitalID);
 
@@ -90,7 +89,7 @@ public class DigitalIDService {
      * @return
      * @throws Exception
      */
-    public DigitalIDEntity updateDigitalID(DigitalIDEntity digitalID) throws EntityNotFoundException, InvalidParameterException {
+    public DigitalIDEntity updateDigitalID(DigitalIDEntity digitalID) {
 
         validateCreateParameters(digitalID);
 
@@ -113,7 +112,7 @@ public class DigitalIDService {
         }
     }
 
-    private void validateCreateParameters(DigitalIDEntity digitalIDEntity) throws InvalidParameterException {
+    private void validateCreateParameters(DigitalIDEntity digitalIDEntity) {
         if(digitalIDEntity.getCreateDate()!=null)
             throw new InvalidParameterException("createDate");
         if(digitalIDEntity.getUpdateDate()!=null)

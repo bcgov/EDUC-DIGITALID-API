@@ -1,11 +1,9 @@
-package ca.bc.gov.educ.api.digitalID;
+package ca.bc.gov.educ.api.digitalid;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 
 @SpringBootApplication
 @EntityScan("ca.bc.gov.educ.api.digitalID")

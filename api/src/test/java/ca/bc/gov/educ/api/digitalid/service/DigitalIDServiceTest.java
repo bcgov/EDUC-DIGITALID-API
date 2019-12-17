@@ -1,8 +1,8 @@
-package ca.bc.gov.educ.api.digitalID.service;
+package ca.bc.gov.educ.api.digitalid.service;
 
-import ca.bc.gov.educ.api.digitalID.exception.EntityNotFoundException;
-import ca.bc.gov.educ.api.digitalID.exception.InvalidParameterException;
-import ca.bc.gov.educ.api.digitalID.model.DigitalIDEntity;
+import ca.bc.gov.educ.api.digitalid.exception.EntityNotFoundException;
+import ca.bc.gov.educ.api.digitalid.exception.InvalidParameterException;
+import ca.bc.gov.educ.api.digitalid.model.DigitalIDEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
