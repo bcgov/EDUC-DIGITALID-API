@@ -84,14 +84,14 @@ pipeline{
           VERSION = pom.version
 
           //Env variable is to fix issue where special characters in password were not being escaped properly
-          def command = $//bin/bash -c "mvn -f ./api/pom.xml test -DORACLE_PASSWORD=${TMP_ORACLE_PASSWORD}"/$
+          def command = $//bin/bash -c "mvn -f ./api/pom.xml clean test -DORACLE_PASSWORD=${TMP_ORACLE_PASSWORD}"/$
           sh command
         }
       }
     }
     stage('Build App') {
       steps {
-        sh '/bin/bash -c "mvn clean -f ./api/pom.xml -Dmaven.test.skip=true package"'
+        sh '/bin/bash -c "mvn -f ./api/pom.xml -Dmaven.test.skip=true package"'
       }
     }
     stage('Add client jar to m2 repo') {
@@ -148,32 +148,15 @@ pipeline{
       }
     }
     stage('Promote to DEV') {
-      steps {
-        script {
-          openshift.withCluster() {
-            openshift.withProject(DEV) {
-              echo "Tagging image"
-              openshift.tag("${TOOLS}/${REPO_NAME}-${JOB_NAME}:latest", "${REPO_NAME}-${JOB_NAME}:${TAG}")
-              def dcTemplate = openshift.process('-f',
-                'tools/openshift/api.dc.yaml',
-                "REPO_NAME=${REPO_NAME}",
-                "JOB_NAME=${JOB_NAME}",
-                "NAMESPACE=${DEV}",
-                "APP_NAME=${APP_NAME}",
-                "HOST_ROUTE=${DEV_HOST_ROUTE}",
-                "TAG=${TAG}"
-              )
-
-              echo "Applying Deployment ${REPO_NAME}"
-              def dc = openshift.apply(dcTemplate).narrow('dc')
-
-              echo "Waiting for deployment to roll out"
-              // Wait for deployments to roll out
-              timeout(10) {
-                dc.rollout().status('--watch=true')
-              }
-            }
-          }
+      steps{
+        deployStage('Dev', DEV, DEV_HOST_ROUTE)
+      }
+      post{
+        success{
+          echo 'Deployment to Dev was successful'
+        }
+        failure{
+          echo 'Deployment to Dev failed'
         }
       }
     }
@@ -202,6 +185,11 @@ pipeline{
   }
 }
 def deployStage(String stageEnv, String projectEnv, String hostRouteEnv) {
+
+  if (!stageEnv.equalsIgnoreCase('Dev')) {
+    input("Deploy to ${projectEnv}?")
+  }
+
   openshift.withCluster() {
     openshift.withProject(projectEnv) {
       echo "Tagging image"
