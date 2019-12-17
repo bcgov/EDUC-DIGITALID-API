@@ -1,4 +1,4 @@
-package ca.bc.gov.educ.api.digitalID.model;
+package ca.bc.gov.educ.api.digitalid.model;
 
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;

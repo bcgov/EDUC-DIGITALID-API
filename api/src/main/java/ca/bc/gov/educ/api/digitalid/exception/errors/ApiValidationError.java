@@ -1,4 +1,4 @@
-package ca.bc.gov.educ.api.digitalID.exception.errors;
+package ca.bc.gov.educ.api.digitalid.exception.errors;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

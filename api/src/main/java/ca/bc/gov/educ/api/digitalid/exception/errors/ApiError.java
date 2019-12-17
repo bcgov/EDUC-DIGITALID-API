@@ -1,4 +1,4 @@
-package ca.bc.gov.educ.api.digitalID.exception.errors;
+package ca.bc.gov.educ.api.digitalid.exception.errors;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;

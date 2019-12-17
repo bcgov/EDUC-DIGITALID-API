@@ -1,4 +1,4 @@
-package ca.bc.gov.educ.api.digitalID.exception;
+package ca.bc.gov.educ.api.digitalid.exception;
 
 /**
  * InvalidParameterException to provide error details when unexpected parameters are passed to endpoint
@@ -14,11 +14,13 @@ public class InvalidParameterException extends RuntimeException {
     }
 
     private static String generateMessage(String... searchParams) {
-        String message = "Unexpected request parameters provided: ";
+        StringBuilder message = new StringBuilder("Unexpected request parameters provided: ");
+        String prefix = "";
         for (String parameter:searchParams) {
-            message += parameter + ", ";
+            message.append(prefix);
+            prefix = ",";
+            message.append(parameter);
         }
-        message = message.substring(0, message.length()-2);
-        return message;
+        return message.toString();
     }
 }
