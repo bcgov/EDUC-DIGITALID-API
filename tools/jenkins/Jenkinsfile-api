@@ -91,7 +91,7 @@ pipeline{
     }
     stage('Build App') {
       steps {
-        sh '/bin/bash -c "mvn -f ./api/pom.xml -Dmaven.test.skip=true package"'
+        sh '/bin/bash -c "mvn clean -f ./api/pom.xml -Dmaven.test.skip=true package"'
       }
     }
     stage('Add client jar to m2 repo') {
