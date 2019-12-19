@@ -15,7 +15,6 @@ objects:
     namespace: c2mvws-tools
   spec:
     source:
-      contextDir: api
       git:
         ref: master
         uri: 'https://github.com/bcgov/EDUC-DIGITALID-API'
