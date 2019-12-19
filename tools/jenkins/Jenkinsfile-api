@@ -37,14 +37,23 @@ pipeline{
                 configMapKeyRef:
                   name: 'unit-test-db'
                   key: password
+            - name: SONARQUBE_HOSTNAME
+              valueFrom:
+                secretKeyRef:
+                  name: 'digitalid-api-secrets'
+                  key: sonarqube-host
+            - name: SONARQUBE_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: 'digitalid-api-secrets'
+                  key: sonarqube-token
             volumeMounts:
             - mountPath: '/home/jenkins/.m2'
               name: pvc
           volumes:
           - name: pvc
             persistentVolumeClaim:
-              claimName: 'maven-slave-pvc'
-              
+              claimName: 'maven-slave-pvc'      
       """
     }
   }
@@ -71,9 +80,6 @@ pipeline{
     DEV_HOST_ROUTE = "${APP_NAME}-${DEV}.${APP_DOMAIN}"
     TEST_HOST_ROUTE = "${APP_NAME}-${TEST}.${APP_DOMAIN}"
     PROD_HOST_ROUTE = "${APP_NAME}-${PROD}.${APP_DOMAIN}"
-
-    SONARQUBE_HOSTNAME = "http://sonarqube.c2mvws-tools.svc.cluster.local:9000"
-    SONARQUBE_TOKEN = "372d1faf56b9ebbb6580ac2098d232d8a0980e9d"
   }
 
   stages{
@@ -85,13 +91,16 @@ pipeline{
 
           //Env variable is to fix issue where special characters in password were not being escaped properly
           def command = $//bin/bash -c "mvn -f ./api/pom.xml clean test -DORACLE_PASSWORD=${TMP_ORACLE_PASSWORD}"/$
-          sh command
+          sh """
+            set +x
+            $command
+          """
         }
       }
     }
     stage('Build App') {
       steps {
-        sh '/bin/bash -c "mvn clean -f ./api/pom.xml -Dmaven.test.skip=true package"'
+        sh '/bin/bash -c "mvn -f ./api/pom.xml -Dmaven.test.skip=true package"'
       }
     }
     stage('Add client jar to m2 repo') {
