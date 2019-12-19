@@ -22,4 +22,4 @@ objects:
       type: Git
     strategy:
       jenkinsPipelineStrategy:
-        jenkinsfilePath: jenkinsfile
+        jenkinsfilePath: tools/jenkins/Jenkinsfile-api
