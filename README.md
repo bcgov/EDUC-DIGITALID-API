@@ -7,11 +7,8 @@ The main function of the PEN Registry system is to process (School/PSI) requests
 
     .github/                   - PR and Issue templates
     api/                       - API codebase
-    frontend/                  - Frontend codebase
     tools/                     - Devops utilities
     └── jenkins                - Jenkins standup
-    Jenkinsfile                - Top-level Pipeline
-    Jenkinsfile.cicd           - Pull-Request Pipeline
     LICENSE                    - License
 
 ## Documentation
