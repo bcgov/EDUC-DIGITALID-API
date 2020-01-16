@@ -1,7 +1,7 @@
 pipeline{
   agent {
     kubernetes {
-      label 'mavenPod'
+      label 'mavenPod-DigitalIdApi'
       cloud 'openshift'
       defaultContainer 'jnlp'
       serviceAccount 'jenkins'
