@@ -1,19 +1,21 @@
 package ca.bc.gov.educ.api.digitalid.service;
 
-import ca.bc.gov.educ.api.digitalid.exception.EntityNotFoundException;
-import ca.bc.gov.educ.api.digitalid.exception.InvalidParameterException;
-import ca.bc.gov.educ.api.digitalid.model.DigitalIDEntity;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.Date;
+import java.util.UUID;
+
+import javax.transaction.Transactional;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import javax.transaction.Transactional;
-import java.util.Date;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import ca.bc.gov.educ.api.digitalid.exception.EntityNotFoundException;
+import ca.bc.gov.educ.api.digitalid.exception.InvalidParameterException;
+import ca.bc.gov.educ.api.digitalid.model.DigitalIDEntity;
 
 @SpringBootTest
 @Transactional

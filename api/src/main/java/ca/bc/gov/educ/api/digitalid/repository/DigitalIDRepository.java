@@ -1,11 +1,12 @@
 package ca.bc.gov.educ.api.digitalid.repository;
 
-import ca.bc.gov.educ.api.digitalid.model.DigitalIDEntity;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-import java.util.UUID;
+import ca.bc.gov.educ.api.digitalid.model.DigitalIDEntity;
 
 /**
  * DigitalIDRepository

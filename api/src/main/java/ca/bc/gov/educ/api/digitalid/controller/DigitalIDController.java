@@ -1,5 +1,7 @@
 package ca.bc.gov.educ.api.digitalid.controller;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -13,11 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ca.bc.gov.educ.api.digitalid.exception.DigitalIDRuntimeException;
 import ca.bc.gov.educ.api.digitalid.model.DigitalIDEntity;
 import ca.bc.gov.educ.api.digitalid.service.DigitalIDService;
-
-import java.util.UUID;
 
 /**
  * Digital Identity controller

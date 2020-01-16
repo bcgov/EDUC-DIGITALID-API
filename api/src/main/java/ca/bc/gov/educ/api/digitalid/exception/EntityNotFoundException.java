@@ -1,10 +1,10 @@
 package ca.bc.gov.educ.api.digitalid.exception;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.IntStream;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * EntityNotFoundException to provide more details in error description
