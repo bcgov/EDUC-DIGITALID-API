@@ -40,25 +40,25 @@ public class DigitalIDController {
 
     @GetMapping("/{typeCode}/{typeValue}")
     @PreAuthorize("#oauth2.hasScope('READ_DIGITALID')")
-    public DigitalIDEntity searchDigitalID(@PathVariable String typeCode, @PathVariable String typeValue) throws DigitalIDRuntimeException {
+    public DigitalIDEntity searchDigitalID(@PathVariable String typeCode, @PathVariable String typeValue)  {
         return service.searchDigitalId(typeCode, typeValue);
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("#oauth2.hasScope('READ_DIGITALID')")
-    public DigitalIDEntity retreiveDigitalID(@PathVariable UUID id) throws DigitalIDRuntimeException {
+    public DigitalIDEntity retreiveDigitalID(@PathVariable UUID id)  {
         return service.retrieveDigitalID(id);
     }
 
     @PostMapping()
     @PreAuthorize("#oauth2.hasScope('WRITE_DIGITALID')")
-    public DigitalIDEntity createDigitalID(@Validated @RequestBody DigitalIDEntity digitalID) throws DigitalIDRuntimeException {
+    public DigitalIDEntity createDigitalID(@Validated @RequestBody DigitalIDEntity digitalID)  {
         return service.createDigitalID(digitalID);
     }
 
     @PutMapping()
     @PreAuthorize("#oauth2.hasScope('WRITE_DIGITALID')")
-    public DigitalIDEntity updateDigitalID(@Validated @RequestBody DigitalIDEntity digitalID) throws DigitalIDRuntimeException {
+    public DigitalIDEntity updateDigitalID(@Validated @RequestBody DigitalIDEntity digitalID)  {
         return service.updateDigitalID(digitalID);
     }
 }

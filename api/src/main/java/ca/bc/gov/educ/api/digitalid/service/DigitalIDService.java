@@ -1,17 +1,16 @@
 package ca.bc.gov.educ.api.digitalid.service;
 
+import java.util.Date;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import ca.bc.gov.educ.api.digitalid.exception.EntityNotFoundException;
 import ca.bc.gov.educ.api.digitalid.exception.InvalidParameterException;
 import ca.bc.gov.educ.api.digitalid.model.DigitalIDEntity;
 import ca.bc.gov.educ.api.digitalid.repository.DigitalIDRepository;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.Date;
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * DigitalIDService
@@ -21,7 +20,7 @@ import java.util.UUID;
 
 @Service
 public class DigitalIDService {
-    private static final Log logger = LogFactory.getLog(DigitalIDService.class);
+    private static final String DIGITAL_ID_ATTRIBUTE = "digitalID";
 
     @Autowired
     private DigitalIDRepository digitalIDRepository;
@@ -57,7 +56,7 @@ public class DigitalIDService {
         if(result.isPresent()) {
             return result.get();
         } else {
-            throw new EntityNotFoundException(DigitalIDEntity.class, "digitalID", id.toString());
+            throw new EntityNotFoundException(DigitalIDEntity.class, DIGITAL_ID_ATTRIBUTE, id.toString());
         }
     }
 
@@ -74,7 +73,7 @@ public class DigitalIDService {
         validateCreateParameters(digitalID);
 
         if(digitalID.getDigitalID()!=null){
-            throw new InvalidParameterException("digitalID");
+            throw new InvalidParameterException(DIGITAL_ID_ATTRIBUTE);
         }
         digitalID.setUpdateDate(new Date());
         digitalID.setCreateDate(new Date());
@@ -108,7 +107,7 @@ public class DigitalIDService {
 
             return newDigitalID;
         } else {
-            throw new EntityNotFoundException(DigitalIDEntity.class, "digitalID", digitalID.getDigitalID().toString());
+            throw new EntityNotFoundException(DigitalIDEntity.class, DIGITAL_ID_ATTRIBUTE, digitalID.getDigitalID().toString());
         }
     }
 
