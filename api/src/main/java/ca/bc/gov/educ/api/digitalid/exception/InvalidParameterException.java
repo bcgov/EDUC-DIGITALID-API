@@ -9,7 +9,9 @@ package ca.bc.gov.educ.api.digitalid.exception;
 
 public class InvalidParameterException extends RuntimeException {
 
-    public InvalidParameterException(String... searchParamsMap) {
+	private static final long serialVersionUID = -7369549985478453144L;
+
+	public InvalidParameterException(String... searchParamsMap) {
         super(InvalidParameterException.generateMessage(searchParamsMap));
     }
 

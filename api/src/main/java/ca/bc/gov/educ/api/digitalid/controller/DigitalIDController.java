@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import ca.bc.gov.educ.api.digitalid.exception.DigitalIDRuntimeException;
 import ca.bc.gov.educ.api.digitalid.model.DigitalIDEntity;
 import ca.bc.gov.educ.api.digitalid.service.DigitalIDService;
 
@@ -39,25 +40,25 @@ public class DigitalIDController {
 
     @GetMapping("/{typeCode}/{typeValue}")
     @PreAuthorize("#oauth2.hasScope('READ_DIGITALID')")
-    public DigitalIDEntity searchDigitalID(@PathVariable String typeCode, @PathVariable String typeValue) throws Exception {
+    public DigitalIDEntity searchDigitalID(@PathVariable String typeCode, @PathVariable String typeValue) throws DigitalIDRuntimeException {
         return service.searchDigitalId(typeCode, typeValue);
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("#oauth2.hasScope('READ_DIGITALID')")
-    public DigitalIDEntity retreiveDigitalID(@PathVariable UUID id) throws Exception {
+    public DigitalIDEntity retreiveDigitalID(@PathVariable UUID id) throws DigitalIDRuntimeException {
         return service.retrieveDigitalID(id);
     }
 
     @PostMapping()
     @PreAuthorize("#oauth2.hasScope('WRITE_DIGITALID')")
-    public DigitalIDEntity createDigitalID(@Validated @RequestBody DigitalIDEntity digitalID) throws Exception {
+    public DigitalIDEntity createDigitalID(@Validated @RequestBody DigitalIDEntity digitalID) throws DigitalIDRuntimeException {
         return service.createDigitalID(digitalID);
     }
 
     @PutMapping()
     @PreAuthorize("#oauth2.hasScope('WRITE_DIGITALID')")
-    public DigitalIDEntity updateDigitalID(@Validated @RequestBody DigitalIDEntity digitalID) throws Exception {
+    public DigitalIDEntity updateDigitalID(@Validated @RequestBody DigitalIDEntity digitalID) throws DigitalIDRuntimeException {
         return service.updateDigitalID(digitalID);
     }
 }
