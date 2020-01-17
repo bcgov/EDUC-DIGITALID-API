@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.bc.gov.educ.api.digitalid.model.DigitalIDEntity;
@@ -37,9 +38,9 @@ public class DigitalIDController {
         this.service = digitalIdentity;
     }
 
-    @GetMapping("/{typeCode}/{typeValue}")
+    @GetMapping("/")
     @PreAuthorize("#oauth2.hasScope('READ_DIGITALID')")
-    public DigitalIDEntity searchDigitalID(@PathVariable String typeCode, @PathVariable String typeValue)  {
+    public DigitalIDEntity searchDigitalID(@RequestParam("identitytype") String typeCode, @RequestParam("identityvalue") String typeValue)  {
         return service.searchDigitalId(typeCode, typeValue);
     }
 
