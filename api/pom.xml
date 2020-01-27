@@ -191,7 +191,7 @@
 					    <goal>report</goal>
 					</goals>
 					<configuration>
-					    <!--<destFile>${project.build.directory}/coverage-reports/jacoco-it.exec</destFile>-->
+					    <destFile>${project.build.directory}/coverage-reports/jacoco-it.exec</destFile>
 					</configuration>
 				    </execution>
 				</executions>
