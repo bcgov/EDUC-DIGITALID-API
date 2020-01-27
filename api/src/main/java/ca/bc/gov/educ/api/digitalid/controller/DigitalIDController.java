@@ -1,23 +1,17 @@
 package ca.bc.gov.educ.api.digitalid.controller;
 
-import java.util.UUID;
-
+import ca.bc.gov.educ.api.digitalid.endpoint.DigitalIDEndpoint;
+import ca.bc.gov.educ.api.digitalid.mappers.DigitalIDEntityMapper;
+import ca.bc.gov.educ.api.digitalid.service.DigitalIDService;
+import ca.bc.gov.educ.api.digitalid.struct.DigitalID;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import ca.bc.gov.educ.api.digitalid.model.DigitalIDEntity;
-import ca.bc.gov.educ.api.digitalid.service.DigitalIDService;
+import java.util.UUID;
 
 /**
  * Digital Identity controller
@@ -26,39 +20,26 @@ import ca.bc.gov.educ.api.digitalid.service.DigitalIDService;
  */
 
 @RestController
-@RequestMapping("/")
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-@EnableResourceServer
-public class DigitalIDController {
-
-    @Autowired
+public class DigitalIDController implements DigitalIDEndpoint {
     private final DigitalIDService service;
 
-    DigitalIDController(DigitalIDService digitalIdentity){
-        this.service = digitalIdentity;
+    DigitalIDController(@Autowired final DigitalIDService digitalIDService) {
+        this.service = digitalIDService;
     }
 
-    @GetMapping("/")
-    @PreAuthorize("#oauth2.hasScope('READ_DIGITALID')")
-    public DigitalIDEntity searchDigitalID(@RequestParam("identitytype") String typeCode, @RequestParam("identityvalue") String typeValue)  {
-        return service.searchDigitalId(typeCode, typeValue);
+    public DigitalID searchDigitalID(@RequestParam("identitytype") String typeCode, @RequestParam("identityvalue") String typeValue) {
+        return DigitalIDEntityMapper.mapper.toStructure(service.searchDigitalId(typeCode, typeValue));
     }
 
-    @GetMapping("/{id}")
-    @PreAuthorize("#oauth2.hasScope('READ_DIGITALID')")
-    public DigitalIDEntity retreiveDigitalID(@PathVariable UUID id)  {
-        return service.retrieveDigitalID(id);
+    public DigitalID retrieveDigitalID(@PathVariable String id) {
+        return DigitalIDEntityMapper.mapper.toStructure(service.retrieveDigitalID(UUID.fromString(id)));
     }
 
-    @PostMapping()
-    @PreAuthorize("#oauth2.hasScope('WRITE_DIGITALID')")
-    public DigitalIDEntity createDigitalID(@Validated @RequestBody DigitalIDEntity digitalID)  {
-        return service.createDigitalID(digitalID);
+    public DigitalID createDigitalID(@Validated @RequestBody DigitalID digitalID) {
+        return DigitalIDEntityMapper.mapper.toStructure(service.createDigitalID(DigitalIDEntityMapper.mapper.toModel(digitalID)));
     }
 
-    @PutMapping()
-    @PreAuthorize("#oauth2.hasScope('WRITE_DIGITALID')")
-    public DigitalIDEntity updateDigitalID(@Validated @RequestBody DigitalIDEntity digitalID)  {
-        return service.updateDigitalID(digitalID);
+    public DigitalID updateDigitalID(@Validated @RequestBody DigitalID digitalID) {
+        return DigitalIDEntityMapper.mapper.toStructure(service.updateDigitalID(DigitalIDEntityMapper.mapper.toModel(digitalID)));
     }
 }
