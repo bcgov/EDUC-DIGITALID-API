@@ -25,7 +25,6 @@ public class DigitalIDApiResourceApplication {
                     "/actuator/**",
                     "/swagger-ui/**");
         }
-
     }
 }
 
