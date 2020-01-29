@@ -15,25 +15,26 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/")
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-@EnableResourceServer
 @OpenAPIDefinition(info = @Info(title = "API for Digital ID.", description = "This CRUD API is for Digital ID related to a student in BC.", version = "1"), security = {@SecurityRequirement(name = "OAUTH2", scopes = {"READ_DIGITALID", "WRITE_DIGITALID"})})
 public interface DigitalIDEndpoint {
 
-    @GetMapping("/")
-    @PreAuthorize("#oauth2.hasScope('READ_DIGITALID')")
-    DigitalID searchDigitalID(@RequestParam("identitytype") String typeCode, @RequestParam("identityvalue") String typeValue);
+  @GetMapping("/")
+  @PreAuthorize("#oauth2.hasScope('READ_DIGITALID')")
+  @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "NOT FOUND.")})
+  DigitalID searchDigitalID(@RequestParam("identitytype") String typeCode, @RequestParam("identityvalue") String typeValue);
 
-    @GetMapping("/{id}")
-    @PreAuthorize("#oauth2.hasScope('READ_DIGITALID')")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "NOT FOUND.")})
-    DigitalID retrieveDigitalID(@PathVariable String id);
+  @GetMapping("/{id}")
+  @PreAuthorize("#oauth2.hasScope('READ_DIGITALID')")
+  @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "NOT FOUND.")})
+  DigitalID retrieveDigitalID(@PathVariable String id);
 
-    @PostMapping()
-    @PreAuthorize("#oauth2.hasScope('WRITE_DIGITALID')")
-    DigitalID createDigitalID(@Validated @RequestBody DigitalID digitalID);
+  @PostMapping()
+  @PreAuthorize("#oauth2.hasScope('WRITE_DIGITALID')")
+  @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "201", description = "CREATED.")})
+  DigitalID createDigitalID(@Validated @RequestBody DigitalID digitalID);
 
-    @PutMapping()
-    @PreAuthorize("#oauth2.hasScope('WRITE_DIGITALID')")
-    DigitalID updateDigitalID(@Validated @RequestBody DigitalID digitalID);
+  @PutMapping()
+  @PreAuthorize("#oauth2.hasScope('WRITE_DIGITALID')")
+  @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "NOT FOUND.")})
+  DigitalID updateDigitalID(@Validated @RequestBody DigitalID digitalID);
 }

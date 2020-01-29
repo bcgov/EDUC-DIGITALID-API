@@ -4,7 +4,11 @@ import ca.bc.gov.educ.api.digitalid.endpoint.DigitalIDEndpoint;
 import ca.bc.gov.educ.api.digitalid.mappers.DigitalIDEntityMapper;
 import ca.bc.gov.educ.api.digitalid.service.DigitalIDService;
 import ca.bc.gov.educ.api.digitalid.struct.DigitalID;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,26 +24,29 @@ import java.util.UUID;
  */
 
 @RestController
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableResourceServer
 public class DigitalIDController implements DigitalIDEndpoint {
     private final DigitalIDService service;
+    final DigitalIDEntityMapper mapper = DigitalIDEntityMapper.mapper;
 
     DigitalIDController(@Autowired final DigitalIDService digitalIDService) {
         this.service = digitalIDService;
     }
 
     public DigitalID searchDigitalID(@RequestParam("identitytype") String typeCode, @RequestParam("identityvalue") String typeValue) {
-        return DigitalIDEntityMapper.mapper.toStructure(service.searchDigitalId(typeCode, typeValue));
+        return mapper.toStructure(service.searchDigitalId(typeCode, typeValue));
     }
 
     public DigitalID retrieveDigitalID(@PathVariable String id) {
-        return DigitalIDEntityMapper.mapper.toStructure(service.retrieveDigitalID(UUID.fromString(id)));
+        return mapper.toStructure(service.retrieveDigitalID(UUID.fromString(id)));
     }
 
     public DigitalID createDigitalID(@Validated @RequestBody DigitalID digitalID) {
-        return DigitalIDEntityMapper.mapper.toStructure(service.createDigitalID(DigitalIDEntityMapper.mapper.toModel(digitalID)));
+        return mapper.toStructure(service.createDigitalID(mapper.toModel(digitalID)));
     }
 
     public DigitalID updateDigitalID(@Validated @RequestBody DigitalID digitalID) {
-        return DigitalIDEntityMapper.mapper.toStructure(service.updateDigitalID(DigitalIDEntityMapper.mapper.toModel(digitalID)));
+        return mapper.toStructure(service.updateDigitalID(mapper.toModel(digitalID)));
     }
 }

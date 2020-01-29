@@ -11,21 +11,20 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @SpringBootApplication
 public class DigitalIDApiResourceApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(DigitalIDApiResourceApplication.class, args);
+  public static void main(String[] args) {
+    SpringApplication.run(DigitalIDApiResourceApplication.class, args);
+  }
+
+  @Configuration
+  static
+  class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+    @Override
+    public void configure(WebSecurity web) {
+      web.ignoring().antMatchers("/v3/api-docs/**",
+              "/actuator/**",
+              "/swagger-ui/**");
     }
-
-    @Configuration
-    static
-    class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
-
-        @Override
-        public void configure(WebSecurity web) {
-            web.ignoring().antMatchers("/v3/api-docs/**",
-                    "/actuator/**",
-                    "/swagger-ui/**");
-        }
-
-    }
+  }
 }
 
