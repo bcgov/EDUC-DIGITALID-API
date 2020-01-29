@@ -6,6 +6,9 @@ import ca.bc.gov.educ.api.digitalid.service.DigitalIDService;
 import ca.bc.gov.educ.api.digitalid.struct.DigitalID;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +24,8 @@ import java.util.UUID;
  */
 
 @RestController
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableResourceServer
 public class DigitalIDController implements DigitalIDEndpoint {
     private final DigitalIDService service;
     final DigitalIDEntityMapper mapper = DigitalIDEntityMapper.mapper;
