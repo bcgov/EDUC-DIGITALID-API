@@ -5,10 +5,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 @SpringBootApplication
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class DigitalIDApiResourceApplication {
 
   public static void main(String[] args) {
@@ -23,7 +25,7 @@ public class DigitalIDApiResourceApplication {
     public void configure(WebSecurity web) {
       web.ignoring().antMatchers("/v3/api-docs/**",
               "/actuator/**",
-              "/swagger-ui/**");
+              "/swagger-ui/**","/health");
     }
   }
 }

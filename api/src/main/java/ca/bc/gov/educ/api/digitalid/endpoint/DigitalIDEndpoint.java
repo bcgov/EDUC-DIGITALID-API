@@ -37,4 +37,9 @@ public interface DigitalIDEndpoint {
   @PreAuthorize("#oauth2.hasScope('WRITE_DIGITALID')")
   @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "NOT FOUND.")})
   DigitalID updateDigitalID(@Validated @RequestBody DigitalID digitalID);
+
+  @GetMapping("/health")
+  @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR.")})
+  String health();
+
 }
