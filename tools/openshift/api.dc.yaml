@@ -41,7 +41,7 @@ objects:
             httpGet:
               path: /health
               port: 8080
-            initialDelaySeconds: 30
+            initialDelaySeconds: 600
             periodSeconds: 15
             timeoutSeconds: 1
             failureThreshold: 2
