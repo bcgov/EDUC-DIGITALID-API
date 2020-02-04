@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Component
 public class DigitalIDPayloadValidator {
@@ -22,7 +24,7 @@ public class DigitalIDPayloadValidator {
     this.codeTableService = codeTableService;
   }
 
-  public List<FieldError> validatePayload(DigitalID digitalID) {
+  public List<FieldError> validatePayload(final DigitalID digitalID) {
     final List<FieldError> apiValidationErrors = new ArrayList<>();
     validateLastAccessChannelCode(digitalID, apiValidationErrors);
     return apiValidationErrors;
@@ -40,7 +42,7 @@ public class DigitalIDPayloadValidator {
   }
 
   private FieldError createFieldError(Object rejectedValue, String message) {
-    return new FieldError("student", "lastAccessChannelCode", rejectedValue, false, null, null, message);
+    return new FieldError("DigitalID", "lastAccessChannelCode", rejectedValue, false, null, null, message);
   }
 
 }

@@ -1,16 +1,17 @@
 package ca.bc.gov.educ.api.digitalid.controller;
 
 import ca.bc.gov.educ.api.digitalid.endpoint.DigitalIDEndpoint;
+import ca.bc.gov.educ.api.digitalid.exception.InvalidPayloadException;
+import ca.bc.gov.educ.api.digitalid.exception.errors.ApiError;
 import ca.bc.gov.educ.api.digitalid.mappers.DigitalIDEntityMapper;
 import ca.bc.gov.educ.api.digitalid.service.DigitalIDService;
 import ca.bc.gov.educ.api.digitalid.struct.DigitalID;
+import ca.bc.gov.educ.api.digitalid.validator.DigitalIDPayloadValidator;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +19,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
+
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 /**
  * Digital Identity controller
@@ -29,13 +33,19 @@ import java.util.UUID;
 @RestController
 @EnableResourceServer
 @Slf4j
+@SuppressWarnings("squid:ModifiersOrderCheck")
 public class DigitalIDController implements DigitalIDEndpoint {
-
+  private final static DigitalIDEntityMapper mapper = DigitalIDEntityMapper.mapper;
   @Getter(AccessLevel.PRIVATE)
   private final DigitalIDService service;
-  final DigitalIDEntityMapper mapper = DigitalIDEntityMapper.mapper;
 
-  DigitalIDController(@Autowired final DigitalIDService digitalIDService) {
+  @Getter(AccessLevel.PRIVATE)
+  private final DigitalIDPayloadValidator payloadValidator;
+
+
+  @Autowired
+  public DigitalIDController(final DigitalIDService digitalIDService, final DigitalIDPayloadValidator payloadValidator) {
+    this.payloadValidator = payloadValidator;
     this.service = digitalIDService;
   }
 
@@ -48,10 +58,22 @@ public class DigitalIDController implements DigitalIDEndpoint {
   }
 
   public DigitalID createDigitalID(@Validated @RequestBody DigitalID digitalID) {
+    val validationResult = getPayloadValidator().validatePayload(digitalID);
+    if (!validationResult.isEmpty()) {
+      ApiError error = ApiError.builder().timestamp(LocalDateTime.now()).message("Payload contains invalid data.").status(BAD_REQUEST).build();
+      error.addValidationErrors(validationResult);
+      throw new InvalidPayloadException(error);
+    }
     return mapper.toStructure(service.createDigitalID(mapper.toModel(digitalID)));
   }
 
   public DigitalID updateDigitalID(@Validated @RequestBody DigitalID digitalID) {
+    val validationResult = getPayloadValidator().validatePayload(digitalID);
+    if (!validationResult.isEmpty()) {
+      ApiError error = ApiError.builder().timestamp(LocalDateTime.now()).message("Payload contains invalid data.").status(BAD_REQUEST).build();
+      error.addValidationErrors(validationResult);
+      throw new InvalidPayloadException(error);
+    }
     return mapper.toStructure(service.updateDigitalID(mapper.toModel(digitalID)));
   }
 

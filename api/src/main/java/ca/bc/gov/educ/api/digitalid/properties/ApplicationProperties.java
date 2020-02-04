@@ -22,6 +22,6 @@ public class ApplicationProperties {
   @Value("${token.url}")
   private String tokenURL;
   @Value("${codetable.api.url}")
-  private String codetableApiURL;
+  private String codeTableApiURL;
 
 }

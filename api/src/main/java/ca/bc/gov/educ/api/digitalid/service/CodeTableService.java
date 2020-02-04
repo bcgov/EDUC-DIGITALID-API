@@ -51,7 +51,7 @@ public class CodeTableService {
     HttpHeaders headers = new HttpHeaders();
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     ResponseEntity<AccessChannelCode[]> accessChannelCodeResponse;
-    accessChannelCodeResponse = restTemplate.exchange(props.getCodetableApiURL() + ACCESS_CHANNEL_CODE.getValue(), HttpMethod.GET, new HttpEntity<>(PARAMETERS, headers), AccessChannelCode[].class);
+    accessChannelCodeResponse = restTemplate.exchange(props.getCodeTableApiURL() + ACCESS_CHANNEL_CODE.getValue(), HttpMethod.GET, new HttpEntity<>(PARAMETERS, headers), AccessChannelCode[].class);
     if (accessChannelCodeResponse.getBody() != null) {
       lastAccessChannelCodeMap.putAll(Arrays.stream(accessChannelCodeResponse.getBody()).collect(Collectors.toMap(AccessChannelCode::getAccessChannelCode, dataSource -> dataSource)));
     }
