@@ -14,6 +14,6 @@ import ca.bc.gov.educ.api.digitalid.model.IdentityTypeCodeEntity;
  * 
  */
 @Repository
-public interface IdentityTypeCodeTableRepository extends CrudRepository<IdentityTypeCodeEntity, Long> {
+public interface IdentityTypeCodeTableRepository extends CrudRepository<IdentityTypeCodeEntity, String> {
     List<IdentityTypeCodeEntity> findAll();
 }

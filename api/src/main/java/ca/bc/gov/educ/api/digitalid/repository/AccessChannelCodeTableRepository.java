@@ -14,6 +14,6 @@ import ca.bc.gov.educ.api.digitalid.model.AccessChannelCodeEntity;
  * 
  */
 @Repository
-public interface AccessChannelCodeTableRepository extends CrudRepository<AccessChannelCodeEntity, Long> {
+public interface AccessChannelCodeTableRepository extends CrudRepository<AccessChannelCodeEntity, String> {
     List<AccessChannelCodeEntity> findAll();
 }
