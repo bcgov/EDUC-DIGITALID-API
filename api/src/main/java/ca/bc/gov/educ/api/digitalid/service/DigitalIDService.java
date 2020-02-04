@@ -68,8 +68,8 @@ public class DigitalIDService {
   private static Map<String, IdentityTypeCode> identityTypeCodeMap = new ConcurrentHashMap<>();
   private final ApplicationProperties props;
   
-  
-  DigitalIDService(@Autowired final DigitalIDRepository digitalIDRepository, @Autowired final AccessChannelCodeTableRepository accessChannelCodeTableRepo, @Autowired final IdentityTypeCodeTableRepository identityTypeCodeTableRepo, final RestUtils restUtils, ApplicationProperties props) {
+  @Autowired
+  DigitalIDService(final DigitalIDRepository digitalIDRepository, final AccessChannelCodeTableRepository accessChannelCodeTableRepo, final IdentityTypeCodeTableRepository identityTypeCodeTableRepo, final RestUtils restUtils, ApplicationProperties props) {
     this.digitalIDRepository = digitalIDRepository;
     this.accessChannelCodeTableRepo = accessChannelCodeTableRepo;
     this.identityTypeCodeTableRepo = identityTypeCodeTableRepo;
