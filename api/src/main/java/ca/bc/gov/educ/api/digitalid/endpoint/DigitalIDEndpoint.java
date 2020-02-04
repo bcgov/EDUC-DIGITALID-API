@@ -19,17 +19,17 @@ import org.springframework.web.bind.annotation.*;
 public interface DigitalIDEndpoint {
 
   @GetMapping("/")
-  @PreAuthorize("#oauth2.hasScope('READ_DIGITALID')")
+  //@PreAuthorize("#oauth2.hasScope('READ_DIGITALID')")
   @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "NOT FOUND.")})
   DigitalID searchDigitalID(@RequestParam("identitytype") String typeCode, @RequestParam("identityvalue") String typeValue);
 
   @GetMapping("/{id}")
-  @PreAuthorize("#oauth2.hasScope('READ_DIGITALID')")
+  //@PreAuthorize("#oauth2.hasScope('READ_DIGITALID')")
   @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "NOT FOUND.")})
   DigitalID retrieveDigitalID(@PathVariable String id);
 
   @PostMapping()
-  @PreAuthorize("#oauth2.hasScope('WRITE_DIGITALID')")
+  //@PreAuthorize("#oauth2.hasScope('WRITE_DIGITALID')")
   @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "201", description = "CREATED.")})
   DigitalID createDigitalID(@Validated @RequestBody DigitalID digitalID);
 

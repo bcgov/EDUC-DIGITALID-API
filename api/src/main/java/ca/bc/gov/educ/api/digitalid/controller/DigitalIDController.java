@@ -39,7 +39,7 @@ public class DigitalIDController implements DigitalIDEndpoint {
     this.service = digitalIDService;
   }
 
-  public DigitalID searchDigitalID(@RequestParam("identitytype") String typeCode, @RequestParam("identityvalue") String typeValue) {
+  public DigitalID searchDigitalID(@RequestParam(value = "identitytype", required = false) String typeCode, @RequestParam("identityvalue") String typeValue) {
     return mapper.toStructure(service.searchDigitalId(typeCode, typeValue));
   }
 
