@@ -6,7 +6,7 @@
 
 	<groupId>ca.bc.gov.educ.api.digitalid</groupId>
 	<artifactId>digitalid-api</artifactId>
-	<version>0.0.1.SNAPSHOT</version>
+	<version>0.0.1-SNAPSHOT</version>
 
 	<properties>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
@@ -109,6 +109,16 @@
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-core</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -193,6 +203,22 @@
 					    <destFile>${project.build.directory}/coverage-reports/jacoco-it.exec</destFile>
 					</configuration>
 				    </execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.hibernate.orm.tooling</groupId>
+				<artifactId>hibernate-enhance-maven-plugin</artifactId>
+				<version>5.4.10.Final</version>
+				<executions>
+					<execution>
+						<configuration>
+							<failOnError>true</failOnError>
+							<enableLazyInitialization>true</enableLazyInitialization>
+						</configuration>
+						<goals>
+							<goal>enhance</goal>
+						</goals>
+					</execution>
 				</executions>
 			</plugin>
 		</plugins>
