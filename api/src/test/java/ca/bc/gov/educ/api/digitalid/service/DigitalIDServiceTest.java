@@ -23,7 +23,6 @@ import ca.bc.gov.educ.api.digitalid.properties.ApplicationProperties;
 import ca.bc.gov.educ.api.digitalid.repository.AccessChannelCodeTableRepository;
 import ca.bc.gov.educ.api.digitalid.repository.DigitalIDRepository;
 import ca.bc.gov.educ.api.digitalid.repository.IdentityTypeCodeTableRepository;
-import ca.bc.gov.educ.api.digitalid.rest.RestUtils;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -39,13 +38,11 @@ public class DigitalIDServiceTest {
   @Mock
   RestTemplate template;
   @Mock
-  RestUtils restUtils;
-  @Mock
   ApplicationProperties applicationProperties;
 
   @Before
   public void before() {
-    service = new DigitalIDService(digitalIDRepository, accessChannelCodeRepository, identityTypeCodeRepository, restUtils, applicationProperties);
+    service = new DigitalIDService(digitalIDRepository, accessChannelCodeRepository, identityTypeCodeRepository, applicationProperties);
   }
 
   @Test
