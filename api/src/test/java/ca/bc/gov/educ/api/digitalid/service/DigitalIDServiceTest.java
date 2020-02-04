@@ -1,35 +1,51 @@
 package ca.bc.gov.educ.api.digitalid.service;
 
-import ca.bc.gov.educ.api.digitalid.exception.EntityNotFoundException;
-import ca.bc.gov.educ.api.digitalid.exception.InvalidParameterException;
-import ca.bc.gov.educ.api.digitalid.model.DigitalIDEntity;
-import ca.bc.gov.educ.api.digitalid.repository.DigitalIDRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Date;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.RestTemplate;
+
+import ca.bc.gov.educ.api.digitalid.exception.EntityNotFoundException;
+import ca.bc.gov.educ.api.digitalid.exception.InvalidParameterException;
+import ca.bc.gov.educ.api.digitalid.model.DigitalIDEntity;
+import ca.bc.gov.educ.api.digitalid.properties.ApplicationProperties;
+import ca.bc.gov.educ.api.digitalid.repository.AccessChannelCodeTableRepository;
+import ca.bc.gov.educ.api.digitalid.repository.DigitalIDRepository;
+import ca.bc.gov.educ.api.digitalid.repository.IdentityTypeCodeTableRepository;
+import ca.bc.gov.educ.api.digitalid.rest.RestUtils;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class DigitalIDServiceTest {
 
   @Autowired
-  private DigitalIDRepository repository;
+  private DigitalIDRepository digitalIDRepository;
+  @Autowired
+  private AccessChannelCodeTableRepository accessChannelCodeRepository;
+  @Autowired
+  private IdentityTypeCodeTableRepository identityTypeCodeRepository;
   DigitalIDService service;
+  @Mock
+  RestTemplate template;
+  @Mock
+  RestUtils restUtils;
+  @Mock
+  ApplicationProperties applicationProperties;
 
   @Before
   public void before() {
-    service = new DigitalIDService(repository);
+    service = new DigitalIDService(digitalIDRepository, accessChannelCodeRepository, identityTypeCodeRepository, restUtils, applicationProperties);
   }
 
   @Test
