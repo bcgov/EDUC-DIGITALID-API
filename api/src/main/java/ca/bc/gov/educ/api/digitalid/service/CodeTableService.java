@@ -5,6 +5,7 @@ import ca.bc.gov.educ.api.digitalid.rest.RestUtils;
 import ca.bc.gov.educ.api.digitalid.struct.AccessChannelCode;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.*;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 import static ca.bc.gov.educ.api.digitalid.constant.CodeTableConstants.*;
 
 @Service
+@Slf4j
 public class CodeTableService {
 
   public static final String PARAMETERS = "parameters";
@@ -43,7 +45,9 @@ public class CodeTableService {
 
   @PostConstruct
   public void loadCodeTableDataToMemory() {
+    log.info("Loading code table data to memory.");
     loadAccessChannelCodes();
+    log.info("Loading code table data to memory completed.");
   }
 
   public void loadAccessChannelCodes() {
