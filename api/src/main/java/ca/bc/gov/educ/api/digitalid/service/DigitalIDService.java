@@ -1,23 +1,7 @@
 package ca.bc.gov.educ.api.digitalid.service;
 
-import java.util.Date;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
-
 import ca.bc.gov.educ.api.digitalid.exception.EntityNotFoundException;
 import ca.bc.gov.educ.api.digitalid.exception.InvalidParameterException;
-import ca.bc.gov.educ.api.digitalid.mappers.DigitalIDMapper;
 import ca.bc.gov.educ.api.digitalid.model.AccessChannelCodeEntity;
 import ca.bc.gov.educ.api.digitalid.model.DigitalIDEntity;
 import ca.bc.gov.educ.api.digitalid.model.IdentityTypeCodeEntity;
@@ -25,11 +9,16 @@ import ca.bc.gov.educ.api.digitalid.properties.ApplicationProperties;
 import ca.bc.gov.educ.api.digitalid.repository.AccessChannelCodeTableRepository;
 import ca.bc.gov.educ.api.digitalid.repository.DigitalIDRepository;
 import ca.bc.gov.educ.api.digitalid.repository.IdentityTypeCodeTableRepository;
-import ca.bc.gov.educ.api.digitalid.struct.AccessChannelCode;
-import ca.bc.gov.educ.api.digitalid.struct.IdentityTypeCode;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * DigitalIDService
@@ -42,21 +31,17 @@ import lombok.extern.slf4j.Slf4j;
 public class DigitalIDService {
   private static final String DIGITAL_ID_ATTRIBUTE = "digitalID";
 
-  private final static DigitalIDMapper mapper = DigitalIDMapper.mapper;
-  
+
   @Getter(AccessLevel.PRIVATE)
   private final DigitalIDRepository digitalIDRepository;
-  
+
   @Getter(AccessLevel.PRIVATE)
   private final AccessChannelCodeTableRepository accessChannelCodeTableRepo;
-  
+
   @Getter(AccessLevel.PRIVATE)
   private final IdentityTypeCodeTableRepository identityTypeCodeTableRepo;
-  
-  public static final String PARAMETERS = "parameters";
-  private static Map<String, AccessChannelCode> accessChannelCodeMap = new ConcurrentHashMap<>();
-  private static Map<String, IdentityTypeCode> identityTypeCodeMap = new ConcurrentHashMap<>();
-  
+
+
   @Autowired
   DigitalIDService(final DigitalIDRepository digitalIDRepository, final AccessChannelCodeTableRepository accessChannelCodeTableRepo, final IdentityTypeCodeTableRepository identityTypeCodeTableRepo, ApplicationProperties props) {
     this.digitalIDRepository = digitalIDRepository;
@@ -64,60 +49,33 @@ public class DigitalIDService {
     this.identityTypeCodeTableRepo = identityTypeCodeTableRepo;
   }
 
-  @PreDestroy
-  public void close() {
-    accessChannelCodeMap.clear();
-    identityTypeCodeMap.clear();
-  }
 
-  @PostConstruct
-  public void loadCodeTableDataToMemory() {
-    log.info("Loading digital ID code table data to memory.");
-    getAccessChannelCodesList();
-    getIdentityTypeCodesList();
-    log.info("Loading digital ID code table data to memory completed.");
-  }
-  
   /**
    * Returns the full list of access channel codes
-   * 
+   *
    * @return
    */
-  public Map<String, AccessChannelCode> getAccessChannelCodesList() {
-	  if(accessChannelCodeMap == null) {
-		  accessChannelCodeMap = accessChannelCodeTableRepo.findAll().stream().map(mapper::toStructure).collect(Collectors.toList()).stream().collect(Collectors.toMap(AccessChannelCode::getAccessChannelCode, Function.identity()));
-	  }
-	  return accessChannelCodeMap;
-  }
-  
-  /**
-   * Returns the full list of access channel codes
-   * 
-   * @return
-   */
-  public Map<String, IdentityTypeCode> getIdentityTypeCodesList() {
-	  if(identityTypeCodeMap == null) {
-		  identityTypeCodeMap = identityTypeCodeTableRepo.findAll().stream().map(mapper::toStructure).collect(Collectors.toList()).stream().collect(Collectors.toMap(IdentityTypeCode::getIdentityTypeCode, Function.identity()));
-	  }
-	  return identityTypeCodeMap;
+  public List<AccessChannelCodeEntity> getAccessChannelCodesList() {
+    return accessChannelCodeTableRepo.findAll();
   }
 
-  public AccessChannelCode findAccessChannelCode(String accessChannelCode) {
-    if (accessChannelCodeMap.containsKey(accessChannelCode)) {
-      return accessChannelCodeMap.get(accessChannelCode);
-    }
-    getAccessChannelCodesList();
-    return accessChannelCodeMap.get(accessChannelCode);
+  /**
+   * Returns the full list of access channel codes
+   *
+   * @return
+   */
+  public List<IdentityTypeCodeEntity> getIdentityTypeCodesList() {
+    return identityTypeCodeTableRepo.findAll();
   }
-  
-  public IdentityTypeCode findIdentityTypeCode(String identityTypeCode) {
-    if (identityTypeCodeMap.containsKey(identityTypeCode)) {
-      return identityTypeCodeMap.get(identityTypeCode);
-    }
-    getIdentityTypeCodesList();
-    return identityTypeCodeMap.get(identityTypeCode);
+
+  public Optional<AccessChannelCodeEntity> findAccessChannelCode(String accessChannelCode) {
+    return accessChannelCodeTableRepo.findById(accessChannelCode);
   }
-  
+
+  public Optional<IdentityTypeCodeEntity> findIdentityTypeCode(String identityTypeCode) {
+    return identityTypeCodeTableRepo.findById(identityTypeCode);
+  }
+
   /**
    * Search for DigitalIDEntity by identity value and identity type code (BCeID or BCSC)
    *

@@ -3,7 +3,11 @@ package ca.bc.gov.educ.api.digitalid.validator;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
+import ca.bc.gov.educ.api.digitalid.mappers.DigitalIDMapper;
+import ca.bc.gov.educ.api.digitalid.model.AccessChannelCodeEntity;
+import ca.bc.gov.educ.api.digitalid.model.IdentityTypeCodeEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
@@ -20,6 +24,7 @@ public class DigitalIDPayloadValidator {
 
   @Getter(AccessLevel.PRIVATE)
   private final DigitalIDService digitalIDService;
+  private static final DigitalIDMapper mapper = DigitalIDMapper.mapper;
 
   @Autowired
   public DigitalIDPayloadValidator(final DigitalIDService digitalIDService) {
@@ -31,9 +36,10 @@ public class DigitalIDPayloadValidator {
     validateLastAccessChannelCode(digitalID, apiValidationErrors);
     return apiValidationErrors;
   }
-  
+
   protected void validateIdentityTypeCode(DigitalID digitalID, List<FieldError> apiValidationErrors) {
-    final IdentityTypeCode identityTypeCode = digitalIDService.findIdentityTypeCode(digitalID.getIdentityTypeCode());
+    Optional<IdentityTypeCodeEntity> identityTypeCodeEntity = digitalIDService.findIdentityTypeCode(digitalID.getIdentityTypeCode());
+    final IdentityTypeCode identityTypeCode = identityTypeCodeEntity.map(mapper::toStructure).orElse(null);
     if (identityTypeCode == null) {
       apiValidationErrors.add(createFieldError(digitalID.getLastAccessChannelCode(), "Invalid Identity Type Code."));
     } else if (identityTypeCode.getEffectiveDate() != null && new Date().before(identityTypeCode.getEffectiveDate())) {
@@ -44,7 +50,8 @@ public class DigitalIDPayloadValidator {
   }
 
   protected void validateLastAccessChannelCode(DigitalID digitalID, List<FieldError> apiValidationErrors) {
-    final AccessChannelCode accessChannelCode = digitalIDService.findAccessChannelCode(digitalID.getLastAccessChannelCode());
+    Optional<AccessChannelCodeEntity> accessChannelCodeEntity = digitalIDService.findAccessChannelCode(digitalID.getLastAccessChannelCode());
+    final AccessChannelCode accessChannelCode = accessChannelCodeEntity.map(mapper::toStructure).orElse(null);
     if (accessChannelCode == null) {
       apiValidationErrors.add(createFieldError(digitalID.getLastAccessChannelCode(), "Invalid Last Access Channel Code."));
     } else if (accessChannelCode.getEffectiveDate() != null && new Date().before(accessChannelCode.getEffectiveDate())) {

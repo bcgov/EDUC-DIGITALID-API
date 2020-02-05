@@ -1,20 +1,5 @@
 package ca.bc.gov.educ.api.digitalid.controller;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import ca.bc.gov.educ.api.digitalid.endpoint.DigitalIDEndpoint;
 import ca.bc.gov.educ.api.digitalid.exception.InvalidPayloadException;
 import ca.bc.gov.educ.api.digitalid.exception.errors.ApiError;
@@ -26,8 +11,22 @@ import ca.bc.gov.educ.api.digitalid.struct.IdentityTypeCode;
 import ca.bc.gov.educ.api.digitalid.validator.DigitalIDPayloadValidator;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.val;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 /**
  * Digital Identity controller
@@ -61,13 +60,13 @@ public class DigitalIDController implements DigitalIDEndpoint {
   public DigitalID retrieveDigitalID(@PathVariable String id) {
     return mapper.toStructure(service.retrieveDigitalID(UUID.fromString(id)));
   }
-  
+
   public List<AccessChannelCode> retrieveAccessChannelCodes() {
-  	return new ArrayList<>(service.getAccessChannelCodesList().values());
+    return service.getAccessChannelCodesList().stream().map(mapper::toStructure).collect(Collectors.toList());
   }
 
   public List<IdentityTypeCode> retrieveIdentityTypeCodes() {
-	  return new ArrayList<>(service.getIdentityTypeCodesList().values());
+    return service.getIdentityTypeCodesList().stream().map(mapper::toStructure).collect(Collectors.toList());
   }
 
   public DigitalID createDigitalID(@Validated @RequestBody DigitalID digitalID) {

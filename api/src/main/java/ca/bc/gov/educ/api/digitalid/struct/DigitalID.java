@@ -14,6 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@SuppressWarnings("squid:S1700")
 public class DigitalID {
     private String digitalID;
     private String studentID;
