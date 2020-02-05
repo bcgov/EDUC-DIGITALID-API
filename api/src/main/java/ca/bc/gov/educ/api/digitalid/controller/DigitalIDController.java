@@ -3,9 +3,11 @@ package ca.bc.gov.educ.api.digitalid.controller;
 import ca.bc.gov.educ.api.digitalid.endpoint.DigitalIDEndpoint;
 import ca.bc.gov.educ.api.digitalid.exception.InvalidPayloadException;
 import ca.bc.gov.educ.api.digitalid.exception.errors.ApiError;
-import ca.bc.gov.educ.api.digitalid.mappers.DigitalIDEntityMapper;
+import ca.bc.gov.educ.api.digitalid.mappers.DigitalIDMapper;
 import ca.bc.gov.educ.api.digitalid.service.DigitalIDService;
+import ca.bc.gov.educ.api.digitalid.struct.AccessChannelCode;
 import ca.bc.gov.educ.api.digitalid.struct.DigitalID;
+import ca.bc.gov.educ.api.digitalid.struct.IdentityTypeCode;
 import ca.bc.gov.educ.api.digitalid.validator.DigitalIDPayloadValidator;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -20,7 +22,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
@@ -35,7 +39,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 @Slf4j
 @SuppressWarnings("squid:ModifiersOrderCheck")
 public class DigitalIDController implements DigitalIDEndpoint {
-  private final static DigitalIDEntityMapper mapper = DigitalIDEntityMapper.mapper;
+  private final static DigitalIDMapper mapper = DigitalIDMapper.mapper;
   @Getter(AccessLevel.PRIVATE)
   private final DigitalIDService service;
 
@@ -55,6 +59,14 @@ public class DigitalIDController implements DigitalIDEndpoint {
 
   public DigitalID retrieveDigitalID(@PathVariable String id) {
     return mapper.toStructure(service.retrieveDigitalID(UUID.fromString(id)));
+  }
+
+  public List<AccessChannelCode> retrieveAccessChannelCodes() {
+    return service.getAccessChannelCodesList().stream().map(mapper::toStructure).collect(Collectors.toList());
+  }
+
+  public List<IdentityTypeCode> retrieveIdentityTypeCodes() {
+    return service.getIdentityTypeCodesList().stream().map(mapper::toStructure).collect(Collectors.toList());
   }
 
   public DigitalID createDigitalID(@Validated @RequestBody DigitalID digitalID) {
@@ -82,4 +94,6 @@ public class DigitalIDController implements DigitalIDEndpoint {
     log.info("Health Check OK, returning OK");
     return "OK";
   }
+
+
 }

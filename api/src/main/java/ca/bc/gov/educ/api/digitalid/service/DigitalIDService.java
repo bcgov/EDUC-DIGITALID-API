@@ -2,14 +2,21 @@ package ca.bc.gov.educ.api.digitalid.service;
 
 import ca.bc.gov.educ.api.digitalid.exception.EntityNotFoundException;
 import ca.bc.gov.educ.api.digitalid.exception.InvalidParameterException;
+import ca.bc.gov.educ.api.digitalid.model.AccessChannelCodeEntity;
 import ca.bc.gov.educ.api.digitalid.model.DigitalIDEntity;
+import ca.bc.gov.educ.api.digitalid.model.IdentityTypeCodeEntity;
+import ca.bc.gov.educ.api.digitalid.properties.ApplicationProperties;
+import ca.bc.gov.educ.api.digitalid.repository.AccessChannelCodeTableRepository;
 import ca.bc.gov.educ.api.digitalid.repository.DigitalIDRepository;
+import ca.bc.gov.educ.api.digitalid.repository.IdentityTypeCodeTableRepository;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,14 +27,53 @@ import java.util.UUID;
  */
 
 @Service
+@Slf4j
 public class DigitalIDService {
   private static final String DIGITAL_ID_ATTRIBUTE = "digitalID";
+
 
   @Getter(AccessLevel.PRIVATE)
   private final DigitalIDRepository digitalIDRepository;
 
-  DigitalIDService(@Autowired final DigitalIDRepository digitalIDRepository) {
+  @Getter(AccessLevel.PRIVATE)
+  private final AccessChannelCodeTableRepository accessChannelCodeTableRepo;
+
+  @Getter(AccessLevel.PRIVATE)
+  private final IdentityTypeCodeTableRepository identityTypeCodeTableRepo;
+
+
+  @Autowired
+  DigitalIDService(final DigitalIDRepository digitalIDRepository, final AccessChannelCodeTableRepository accessChannelCodeTableRepo, final IdentityTypeCodeTableRepository identityTypeCodeTableRepo, ApplicationProperties props) {
     this.digitalIDRepository = digitalIDRepository;
+    this.accessChannelCodeTableRepo = accessChannelCodeTableRepo;
+    this.identityTypeCodeTableRepo = identityTypeCodeTableRepo;
+  }
+
+
+  /**
+   * Returns the full list of access channel codes
+   *
+   * @return
+   */
+  public List<AccessChannelCodeEntity> getAccessChannelCodesList() {
+    return accessChannelCodeTableRepo.findAll();
+  }
+
+  /**
+   * Returns the full list of access channel codes
+   *
+   * @return
+   */
+  public List<IdentityTypeCodeEntity> getIdentityTypeCodesList() {
+    return identityTypeCodeTableRepo.findAll();
+  }
+
+  public Optional<AccessChannelCodeEntity> findAccessChannelCode(String accessChannelCode) {
+    return accessChannelCodeTableRepo.findById(accessChannelCode);
+  }
+
+  public Optional<IdentityTypeCodeEntity> findIdentityTypeCode(String identityTypeCode) {
+    return identityTypeCodeTableRepo.findById(identityTypeCode);
   }
 
   /**

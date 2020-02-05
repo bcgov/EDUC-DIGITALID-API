@@ -103,14 +103,6 @@ pipeline{
         sh '/bin/bash -c "mvn -f ./api/pom.xml -Dmaven.test.skip=true package"'
       }
     }
-    stage('Add client jar to m2 repo') {
-		  steps {	
-        script {
-          def addJar = $//bin/bash -c "mvn install:install-file -Dfile=./api/target/digitalid-api-${VERSION}-client.jar -DgroupId=ca.bc.gov.educ.api.digitalid -DartifactId=digitalid-api-client -Dversion=${VERSION} -Dpackaging=jar"/$
-          sh addJar
-        }
-      }
-    }    
     stage('Create Image Builder') {
       when {
         expression {
