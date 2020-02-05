@@ -33,6 +33,7 @@ public class DigitalIDPayloadValidator {
 
   public List<FieldError> validatePayload(final DigitalID digitalID) {
     final List<FieldError> apiValidationErrors = new ArrayList<>();
+    validateIdentityTypeCode(digitalID, apiValidationErrors);
     validateLastAccessChannelCode(digitalID, apiValidationErrors);
     return apiValidationErrors;
   }

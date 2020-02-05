@@ -1,11 +1,10 @@
 package ca.bc.gov.educ.api.digitalid.repository;
 
-import java.util.List;
-
+import ca.bc.gov.educ.api.digitalid.model.AccessChannelCodeEntity;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import ca.bc.gov.educ.api.digitalid.model.AccessChannelCodeEntity;
+import java.util.List;
 
 /**
  * Access Channel Code Table Repository
