@@ -13,12 +13,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * DigitalIDService
@@ -55,6 +54,7 @@ public class DigitalIDService {
    *
    * @return
    */
+  @Cacheable("accessChannelCodes")
   public List<AccessChannelCodeEntity> getAccessChannelCodesList() {
     return accessChannelCodeTableRepo.findAll();
   }
@@ -64,16 +64,17 @@ public class DigitalIDService {
    *
    * @return
    */
+  @Cacheable("identityTypeCodes")
   public List<IdentityTypeCodeEntity> getIdentityTypeCodesList() {
     return identityTypeCodeTableRepo.findAll();
   }
 
   public Optional<AccessChannelCodeEntity> findAccessChannelCode(String accessChannelCode) {
-    return accessChannelCodeTableRepo.findById(accessChannelCode);
+    return Optional.ofNullable(loadAllAccessChannelCodes().get(accessChannelCode));
   }
 
   public Optional<IdentityTypeCodeEntity> findIdentityTypeCode(String identityTypeCode) {
-    return identityTypeCodeTableRepo.findById(identityTypeCode);
+    return Optional.ofNullable(loadAllIdentityTypeCodes().get(identityTypeCode));
   }
 
   /**
@@ -168,4 +169,13 @@ public class DigitalIDService {
       throw new InvalidParameterException("updateDate");
   }
 
+
+  private Map<String, AccessChannelCodeEntity> loadAllAccessChannelCodes() {
+    return getAccessChannelCodesList().stream().collect(Collectors.toMap(AccessChannelCodeEntity::getAccessChannelCode, accessChannel -> accessChannel));
+  }
+
+
+  private Map<String, IdentityTypeCodeEntity> loadAllIdentityTypeCodes() {
+    return getIdentityTypeCodesList().stream().collect(Collectors.toMap(IdentityTypeCodeEntity::getIdentityTypeCode, identityTypeCodeEntity -> identityTypeCodeEntity));
+  }
 }
