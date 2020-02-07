@@ -4,13 +4,7 @@ import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import ca.bc.gov.educ.api.digitalid.struct.AccessChannelCode;
 import ca.bc.gov.educ.api.digitalid.struct.DigitalID;
@@ -20,6 +14,8 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
+import static org.springframework.http.HttpStatus.CREATED;
 
 @RequestMapping("/")
 @OpenAPIDefinition(info = @Info(title = "API for Digital ID.", description = "This CRUD API is for Digital ID related to a student in BC.", version = "1"), security = {@SecurityRequirement(name = "OAUTH2", scopes = {"READ_DIGITALID", "WRITE_DIGITALID"})})
@@ -37,7 +33,8 @@ public interface DigitalIDEndpoint {
 
   @PostMapping
   @PreAuthorize("#oauth2.hasScope('WRITE_DIGITALID')")
-  @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "201", description = "CREATED.")})
+  @ApiResponses(value = {@ApiResponse(responseCode = "400", description = "BAD REQUEST"), @ApiResponse(responseCode = "201", description = "CREATED.")})
+  @ResponseStatus(code = CREATED)
   DigitalID createDigitalID(@Validated @RequestBody DigitalID digitalID);
 
   @PutMapping
