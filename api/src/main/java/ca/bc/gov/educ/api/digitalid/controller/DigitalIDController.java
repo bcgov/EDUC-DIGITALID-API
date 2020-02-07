@@ -16,7 +16,10 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,7 +27,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CREATED;
 
 /**
  * Digital Identity controller
@@ -67,7 +69,6 @@ public class DigitalIDController implements DigitalIDEndpoint {
     return service.getIdentityTypeCodesList().stream().map(mapper::toStructure).collect(Collectors.toList());
   }
 
-  @ResponseStatus(code = CREATED)
   public DigitalID createDigitalID(@Validated @RequestBody DigitalID digitalID) {
     val validationResult = getPayloadValidator().validatePayload(digitalID);
     if (!validationResult.isEmpty()) {
