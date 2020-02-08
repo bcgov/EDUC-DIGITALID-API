@@ -91,7 +91,6 @@ public class DigitalIDController implements DigitalIDEndpoint {
 
   @Override
   public String health() {
-    log.info("Health Check OK, returning OK");
     return "OK";
   }
 
