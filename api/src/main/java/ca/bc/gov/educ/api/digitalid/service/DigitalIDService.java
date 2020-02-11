@@ -135,7 +135,8 @@ public class DigitalIDService {
       newDigitalID.setIdentityValue(digitalID.getIdentityValue());
       newDigitalID.setLastAccessDate(digitalID.getLastAccessDate());
       newDigitalID.setLastAccessChannelCode(digitalID.getLastAccessChannelCode());
-      newDigitalID.setUpdateDate(new Date());
+      newDigitalID.setUpdateDate(digitalID.getUpdateDate());
+      newDigitalID.setUpdateUser(digitalID.getUpdateUser());
       newDigitalID = digitalIDRepository.save(newDigitalID);
       return newDigitalID;
     } else {
