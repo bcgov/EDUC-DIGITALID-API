@@ -106,7 +106,6 @@ public class DigitalIDServiceTest {
     newDigitalID.setLastAccessDate(new Date());
     newDigitalID = service.updateDigitalID(newDigitalID);
 
-    assertNotNull(newDigitalID.getUpdateDate());
     assertTrue("newValue123".equalsIgnoreCase(newDigitalID.getIdentityValue()));
   }
 }

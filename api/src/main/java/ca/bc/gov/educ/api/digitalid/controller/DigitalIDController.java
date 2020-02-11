@@ -106,12 +106,8 @@ public class DigitalIDController implements DigitalIDEndpoint {
     if (StringUtils.isBlank(digitalID.getUpdateUser())) {
       digitalID.setUpdateUser(ApplicationProperties.API_NAME);
     }
-    if (digitalID.getCreateDate() == null) {
-      digitalID.setCreateDate(new Date());
-    }
-    if (digitalID.getUpdateDate() == null) {
-      digitalID.setUpdateDate(new Date());
-    }
+    digitalID.setCreateDate(new Date());
+    digitalID.setUpdateDate(new Date());
   }
 
 
