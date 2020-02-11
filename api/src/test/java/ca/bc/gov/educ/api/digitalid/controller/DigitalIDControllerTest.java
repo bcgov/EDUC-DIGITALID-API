@@ -128,6 +128,14 @@ public class DigitalIDControllerTest {
 
   @Test
   @WithMockOAuth2Scope(scope = "WRITE_DIGITALID")
+  public void testCreateDigitalId_GivenDigitalIdInPayload_ShouldReturnStatusBadRequest() throws Exception {
+    this.mockMvc.perform(post("/").contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON).content(asJsonString(DigitalID.builder().digitalID(UUID.randomUUID().toString()).identityTypeCode("BCSC").lastAccessChannelCode("AC")
+                    .createUser("TEST").updateUser("TEST").identityValue("Test1").lastAccessDate(new Date()).build()))).andDo(print()).andExpect(status().isBadRequest());
+  }
+
+  @Test
+  @WithMockOAuth2Scope(scope = "WRITE_DIGITALID")
   public void testCreateDigitalId_GivenInvalidLACInPayload_ShouldReturnStatusBadRequest() throws Exception {
     this.mockMvc.perform(post("/").contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON).content(asJsonString(DigitalID.builder().identityTypeCode("BCSC").lastAccessChannelCode("AC1")
@@ -205,10 +213,9 @@ public class DigitalIDControllerTest {
   @WithMockOAuth2Scope(scope = "READ_DIGITALID")
   public void testSearchDigitalId_GivenIdentityTypeAndIdentityValueExistInDB_ShouldReturnStatusOK() throws Exception {
     DigitalIDEntity entity = service.createDigitalID(createDigitalIDMockData());
-    this.mockMvc.perform(get("/").param("identitytype",entity.getIdentityTypeCode()).param("identityvalue",entity.getIdentityValue()).contentType(MediaType.APPLICATION_JSON)
+    this.mockMvc.perform(get("/").param("identitytype", entity.getIdentityTypeCode()).param("identityvalue", entity.getIdentityValue()).contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$.identityValue").value("123"));
   }
-
 
 
   private DigitalIDEntity createDigitalIDMockData() {
