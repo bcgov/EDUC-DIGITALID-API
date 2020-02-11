@@ -1,11 +1,9 @@
 package ca.bc.gov.educ.api.digitalid.service;
 
 import ca.bc.gov.educ.api.digitalid.exception.EntityNotFoundException;
-import ca.bc.gov.educ.api.digitalid.exception.InvalidParameterException;
 import ca.bc.gov.educ.api.digitalid.model.AccessChannelCodeEntity;
 import ca.bc.gov.educ.api.digitalid.model.DigitalIDEntity;
 import ca.bc.gov.educ.api.digitalid.model.IdentityTypeCodeEntity;
-import ca.bc.gov.educ.api.digitalid.properties.ApplicationProperties;
 import ca.bc.gov.educ.api.digitalid.repository.AccessChannelCodeTableRepository;
 import ca.bc.gov.educ.api.digitalid.repository.DigitalIDRepository;
 import ca.bc.gov.educ.api.digitalid.repository.IdentityTypeCodeTableRepository;
@@ -30,7 +28,6 @@ import java.util.stream.Collectors;
 public class DigitalIDService {
   private static final String DIGITAL_ID_ATTRIBUTE = "digitalID";
 
-
   @Getter(AccessLevel.PRIVATE)
   private final DigitalIDRepository digitalIDRepository;
 
@@ -42,7 +39,7 @@ public class DigitalIDService {
 
 
   @Autowired
-  DigitalIDService(final DigitalIDRepository digitalIDRepository, final AccessChannelCodeTableRepository accessChannelCodeTableRepo, final IdentityTypeCodeTableRepository identityTypeCodeTableRepo, ApplicationProperties props) {
+  DigitalIDService(final DigitalIDRepository digitalIDRepository, final AccessChannelCodeTableRepository accessChannelCodeTableRepo, final IdentityTypeCodeTableRepository identityTypeCodeTableRepo) {
     this.digitalIDRepository = digitalIDRepository;
     this.accessChannelCodeTableRepo = accessChannelCodeTableRepo;
     this.identityTypeCodeTableRepo = identityTypeCodeTableRepo;
@@ -52,7 +49,7 @@ public class DigitalIDService {
   /**
    * Returns the full list of access channel codes
    *
-   * @return
+   * @return {@link List<AccessChannelCodeEntity>}
    */
   @Cacheable("accessChannelCodes")
   public List<AccessChannelCodeEntity> getAccessChannelCodesList() {
@@ -62,7 +59,7 @@ public class DigitalIDService {
   /**
    * Returns the full list of access channel codes
    *
-   * @return
+   * @return {@link List<IdentityTypeCodeEntity>}
    */
   @Cacheable("identityTypeCodes")
   public List<IdentityTypeCodeEntity> getIdentityTypeCodesList() {
@@ -80,10 +77,10 @@ public class DigitalIDService {
   /**
    * Search for DigitalIDEntity by identity value and identity type code (BCeID or BCSC)
    *
-   * @param typeValue
-   * @param typeCode
-   * @return
-   * @throws EntityNotFoundException
+   * @param typeValue typeValue path param
+   * @param typeCode  typeCode path param
+   * @return DigitalIDEntity if found.
+   * @throws EntityNotFoundException if not
    */
   public DigitalIDEntity searchDigitalId(String typeCode, String typeValue) {
 
@@ -99,9 +96,9 @@ public class DigitalIDService {
   /**
    * Search for DigitalIDEntity by digital id
    *
-   * @param id
-   * @return
-   * @throws EntityNotFoundException
+   * @param id path param id.
+   * @return {@link DigitalIDEntity} if found.
+   * @throws EntityNotFoundException if not found by the guid.
    */
   public DigitalIDEntity retrieveDigitalID(UUID id) {
     Optional<DigitalIDEntity> result = getDigitalIDRepository().findById(id);
@@ -115,37 +112,22 @@ public class DigitalIDService {
   /**
    * Creates a DigitalIDEntity
    *
-   * @param digitalID
-   * @return
-   * @throws EntityNotFoundException
-   * @throws InvalidParameterException
+   * @param digitalID the digitalID entity object to be persisted.
+   * @return the persisted object.
    */
   public DigitalIDEntity createDigitalID(DigitalIDEntity digitalID) {
-
-    validateCreateParameters(digitalID);
-
-    if (digitalID.getDigitalID() != null) {
-      throw new InvalidParameterException(DIGITAL_ID_ATTRIBUTE);
-    }
-    digitalID.setUpdateDate(new Date());
-    digitalID.setCreateDate(new Date());
-
     return digitalIDRepository.save(digitalID);
   }
 
   /**
    * Updates a DigitalIDEntity
    *
-   * @param digitalID
-   * @return
-   * @throws Exception
+   * @param digitalID the entity to be updated.
+   * @return updated {@link DigitalIDEntity}
+   * @throws EntityNotFoundException if not found by the {@link DigitalIDEntity#getDigitalID()}
    */
   public DigitalIDEntity updateDigitalID(DigitalIDEntity digitalID) {
-
-    validateCreateParameters(digitalID);
-
     Optional<DigitalIDEntity> curDigitalID = digitalIDRepository.findById(digitalID.getDigitalID());
-
     if (curDigitalID.isPresent()) {
       DigitalIDEntity newDigitalID = curDigitalID.get();
       newDigitalID.setStudentID(digitalID.getStudentID());
@@ -155,20 +137,11 @@ public class DigitalIDService {
       newDigitalID.setLastAccessChannelCode(digitalID.getLastAccessChannelCode());
       newDigitalID.setUpdateDate(new Date());
       newDigitalID = digitalIDRepository.save(newDigitalID);
-
       return newDigitalID;
     } else {
       throw new EntityNotFoundException(DigitalIDEntity.class, DIGITAL_ID_ATTRIBUTE, digitalID.getDigitalID().toString());
     }
   }
-
-  private void validateCreateParameters(DigitalIDEntity digitalIDEntity) {
-    if (digitalIDEntity.getCreateDate() != null)
-      throw new InvalidParameterException("createDate");
-    if (digitalIDEntity.getUpdateDate() != null)
-      throw new InvalidParameterException("updateDate");
-  }
-
 
   private Map<String, AccessChannelCodeEntity> loadAllAccessChannelCodes() {
     return getAccessChannelCodesList().stream().collect(Collectors.toMap(AccessChannelCodeEntity::getAccessChannelCode, accessChannel -> accessChannel));

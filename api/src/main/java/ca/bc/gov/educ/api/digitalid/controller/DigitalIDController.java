@@ -13,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.validation.annotation.Validated;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -70,28 +72,45 @@ public class DigitalIDController implements DigitalIDEndpoint {
   }
 
   public DigitalID createDigitalID(@Validated @RequestBody DigitalID digitalID) {
-    val validationResult = getPayloadValidator().validatePayload(digitalID);
+    val validationResult = getPayloadValidator().validatePayload(digitalID, true);
     if (!validationResult.isEmpty()) {
       ApiError error = ApiError.builder().timestamp(LocalDateTime.now()).message("Payload contains invalid data.").status(BAD_REQUEST).build();
       error.addValidationErrors(validationResult);
       throw new InvalidPayloadException(error);
     }
+    setAuditColumns(digitalID);
     return mapper.toStructure(service.createDigitalID(mapper.toModel(digitalID)));
   }
 
   public DigitalID updateDigitalID(@Validated @RequestBody DigitalID digitalID) {
-    val validationResult = getPayloadValidator().validatePayload(digitalID);
+    val validationResult = getPayloadValidator().validatePayload(digitalID, false);
     if (!validationResult.isEmpty()) {
       ApiError error = ApiError.builder().timestamp(LocalDateTime.now()).message("Payload contains invalid data.").status(BAD_REQUEST).build();
       error.addValidationErrors(validationResult);
       throw new InvalidPayloadException(error);
     }
+    setAuditColumns(digitalID);
     return mapper.toStructure(service.updateDigitalID(mapper.toModel(digitalID)));
   }
 
   @Override
   public String health() {
     return "OK";
+  }
+
+  private void setAuditColumns(DigitalID digitalID) {
+    if (StringUtils.isBlank(digitalID.getCreateUser())) {
+      digitalID.setCreateUser("DIGITAL_ID_API");
+    }
+    if (StringUtils.isBlank(digitalID.getUpdateUser())) {
+      digitalID.setUpdateUser("DIGITAL_ID_API");
+    }
+    if (digitalID.getCreateDate() == null) {
+      digitalID.setCreateDate(new Date());
+    }
+    if (digitalID.getUpdateDate() == null) {
+      digitalID.setUpdateDate(new Date());
+    }
   }
 
 
