@@ -4,6 +4,7 @@ import ca.bc.gov.educ.api.digitalid.endpoint.DigitalIDEndpoint;
 import ca.bc.gov.educ.api.digitalid.exception.InvalidPayloadException;
 import ca.bc.gov.educ.api.digitalid.exception.errors.ApiError;
 import ca.bc.gov.educ.api.digitalid.mappers.DigitalIDMapper;
+import ca.bc.gov.educ.api.digitalid.properties.ApplicationProperties;
 import ca.bc.gov.educ.api.digitalid.service.DigitalIDService;
 import ca.bc.gov.educ.api.digitalid.struct.AccessChannelCode;
 import ca.bc.gov.educ.api.digitalid.struct.DigitalID;
@@ -100,10 +101,10 @@ public class DigitalIDController implements DigitalIDEndpoint {
 
   private void setAuditColumns(DigitalID digitalID) {
     if (StringUtils.isBlank(digitalID.getCreateUser())) {
-      digitalID.setCreateUser("DIGITAL_ID_API");
+      digitalID.setCreateUser(ApplicationProperties.API_NAME);
     }
     if (StringUtils.isBlank(digitalID.getUpdateUser())) {
-      digitalID.setUpdateUser("DIGITAL_ID_API");
+      digitalID.setUpdateUser(ApplicationProperties.API_NAME);
     }
     if (digitalID.getCreateDate() == null) {
       digitalID.setCreateDate(new Date());
