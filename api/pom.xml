@@ -16,7 +16,9 @@
 		<!-- Enable language to disable other language analysis -->
 		<sonar.language>java</sonar.language>
 		<!-- Exclude few packages from sonar -->
-		<sonar.exclusions>src/main/resources/**,src/main/java/ca/bc/gov/educ/api/digitalid/struct/**,src/main/java/ca/bc/gov/educ/api/digitalid/model/**</sonar.exclusions>
+		<sonar.exclusions>src/main/resources/**,
+			src/main/java/ca/bc/gov/educ/api/penrequest/mappers/**,src/main/java/ca/bc/gov/educ/api/penrequest/exception/**,src/main/java/ca/bc/gov/educ/api/penrequest/model/**,src/main/java/ca/bc/gov/educ/api/penrequest/struct/**
+		</sonar.exclusions>
 		<java.version>1.8</java.version>
 
 		<maven.compiler.version>3.8.0</maven.compiler.version>
