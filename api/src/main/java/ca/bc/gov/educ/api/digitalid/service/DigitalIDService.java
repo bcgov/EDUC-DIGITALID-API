@@ -116,6 +116,16 @@ public class DigitalIDService {
    * @return the persisted object.
    */
   public DigitalIDEntity createDigitalID(DigitalIDEntity digitalID) {
+    validateCreateParameters(digitalID);
+
+    if (digitalID.getDigitalID() != null) {
+      throw new InvalidParameterException(DIGITAL_ID_ATTRIBUTE);
+    }
+    digitalID.setUpdateDate(new Date());
+    digitalID.setCreateDate(new Date());
+    digitalID.setIdentityTypeCode(digitalID.getIdentityTypeCode().toUpperCase());
+    digitalID.setIdentityValue(digitalID.getIdentityValue().toUpperCase());
+
     return digitalIDRepository.save(digitalID);
   }
 
@@ -135,6 +145,8 @@ public class DigitalIDService {
       newDigitalID.setIdentityValue(digitalID.getIdentityValue());
       newDigitalID.setLastAccessDate(digitalID.getLastAccessDate());
       newDigitalID.setLastAccessChannelCode(digitalID.getLastAccessChannelCode());
+      newDigitalID.setIdentityTypeCode(digitalID.getIdentityTypeCode().toUpperCase());
+      newDigitalID.setIdentityValue(digitalID.getIdentityValue().toUpperCase());
       newDigitalID.setUpdateDate(digitalID.getUpdateDate());
       newDigitalID.setUpdateUser(digitalID.getUpdateUser());
       newDigitalID = digitalIDRepository.save(newDigitalID);
