@@ -15,7 +15,10 @@
 		<sonar.projectVersion>${project.version}</sonar.projectVersion>
 		<!-- Enable language to disable other language analysis -->
 		<sonar.language>java</sonar.language>
-		<sonar.exclusions>src/main/resources/**</sonar.exclusions>
+		<!-- Exclude few packages from sonar -->
+		<sonar.exclusions>src/main/resources/**,
+			src/main/java/ca/bc/gov/educ/api/digitalid/mappers/**,src/main/java/ca/bc/gov/educ/api/digitalid/exception/**,src/main/java/ca/bc/gov/educ/api/digitalid/model/**,src/main/java/ca/bc/gov/educ/api/digitalid/struct/**
+		</sonar.exclusions>
 		<java.version>1.8</java.version>
 
 		<maven.compiler.version>3.8.0</maven.compiler.version>

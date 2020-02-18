@@ -1,28 +1,24 @@
 package ca.bc.gov.educ.api.digitalid.service;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import ca.bc.gov.educ.api.digitalid.exception.EntityNotFoundException;
+import ca.bc.gov.educ.api.digitalid.exception.InvalidParameterException;
+import ca.bc.gov.educ.api.digitalid.model.DigitalIDEntity;
+import ca.bc.gov.educ.api.digitalid.repository.AccessChannelCodeTableRepository;
+import ca.bc.gov.educ.api.digitalid.repository.DigitalIDRepository;
+import ca.bc.gov.educ.api.digitalid.repository.IdentityTypeCodeTableRepository;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Date;
 import java.util.UUID;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.client.RestTemplate;
-
-import ca.bc.gov.educ.api.digitalid.exception.EntityNotFoundException;
-import ca.bc.gov.educ.api.digitalid.exception.InvalidParameterException;
-import ca.bc.gov.educ.api.digitalid.model.DigitalIDEntity;
-import ca.bc.gov.educ.api.digitalid.properties.ApplicationProperties;
-import ca.bc.gov.educ.api.digitalid.repository.AccessChannelCodeTableRepository;
-import ca.bc.gov.educ.api.digitalid.repository.DigitalIDRepository;
-import ca.bc.gov.educ.api.digitalid.repository.IdentityTypeCodeTableRepository;
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -35,14 +31,11 @@ public class DigitalIDServiceTest {
   @Autowired
   private IdentityTypeCodeTableRepository identityTypeCodeRepository;
   DigitalIDService service;
-  @Mock
-  RestTemplate template;
-  @Mock
-  ApplicationProperties applicationProperties;
+
 
   @Before
   public void before() {
-    service = new DigitalIDService(digitalIDRepository, accessChannelCodeRepository, identityTypeCodeRepository, applicationProperties);
+    service = new DigitalIDService(digitalIDRepository, accessChannelCodeRepository, identityTypeCodeRepository);
   }
 
   @Test
@@ -56,19 +49,6 @@ public class DigitalIDServiceTest {
     digitalID = service.createDigitalID(digitalID);
     assertNotNull(digitalID);
     assertNotNull(digitalID.getDigitalID());
-    assertNotNull(digitalID.getCreateDate());
-  }
-
-  @Test
-  public void testCreateDigitalID_WhenGivenDigitalIDInPayload_ThrowsInvalidParameterException() {
-    DigitalIDEntity digitalID = new DigitalIDEntity();
-    digitalID.setDigitalID(UUID.fromString("00000000-8000-0000-000e-000000000000"));
-    digitalID.setIdentityTypeCode("BCSC");
-    digitalID.setIdentityValue("realValue123");
-    digitalID.setLastAccessChannelCode("OSPR");
-    digitalID.setLastAccessDate(new Date());
-
-    assertThrows(InvalidParameterException.class, () -> service.createDigitalID(digitalID));
   }
 
 
@@ -105,9 +85,7 @@ public class DigitalIDServiceTest {
 
   @Test
   public void testRetrieveDigitalID_WhenGivenDigitalIDDoesNotExist_ShouldThrowEntityNotFoundException() {
-    assertThrows(EntityNotFoundException.class, () -> {
-      service.retrieveDigitalID(UUID.fromString("00000000-8000-0000-000e-000000000000"));
-    });
+    assertThrows(EntityNotFoundException.class, () -> service.retrieveDigitalID(UUID.fromString("00000000-8000-0000-000e-000000000000")));
   }
 
   @Test
@@ -128,7 +106,6 @@ public class DigitalIDServiceTest {
     newDigitalID.setLastAccessDate(new Date());
     newDigitalID = service.updateDigitalID(newDigitalID);
 
-    assertNotNull(newDigitalID.getUpdateDate());
     assertTrue("newValue123".equalsIgnoreCase(newDigitalID.getIdentityValue()));
   }
 }

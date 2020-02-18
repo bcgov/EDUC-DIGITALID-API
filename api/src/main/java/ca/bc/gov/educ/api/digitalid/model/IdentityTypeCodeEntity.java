@@ -2,16 +2,13 @@ package ca.bc.gov.educ.api.digitalid.model;
 
 import lombok.*;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
+import java.util.Date;
 
 @Builder
 @NoArgsConstructor
@@ -23,7 +20,6 @@ import javax.validation.constraints.PastOrPresent;
 public class IdentityTypeCodeEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "identity_type_code", unique = true, updatable = false)
   String identityTypeCode;
 

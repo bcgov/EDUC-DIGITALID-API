@@ -4,6 +4,7 @@ import ca.bc.gov.educ.api.digitalid.endpoint.DigitalIDEndpoint;
 import ca.bc.gov.educ.api.digitalid.exception.InvalidPayloadException;
 import ca.bc.gov.educ.api.digitalid.exception.errors.ApiError;
 import ca.bc.gov.educ.api.digitalid.mappers.DigitalIDMapper;
+import ca.bc.gov.educ.api.digitalid.properties.ApplicationProperties;
 import ca.bc.gov.educ.api.digitalid.service.DigitalIDService;
 import ca.bc.gov.educ.api.digitalid.struct.AccessChannelCode;
 import ca.bc.gov.educ.api.digitalid.struct.DigitalID;
@@ -13,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.validation.annotation.Validated;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -70,29 +73,41 @@ public class DigitalIDController implements DigitalIDEndpoint {
   }
 
   public DigitalID createDigitalID(@Validated @RequestBody DigitalID digitalID) {
-    val validationResult = getPayloadValidator().validatePayload(digitalID);
+    val validationResult = getPayloadValidator().validatePayload(digitalID, true);
     if (!validationResult.isEmpty()) {
       ApiError error = ApiError.builder().timestamp(LocalDateTime.now()).message("Payload contains invalid data.").status(BAD_REQUEST).build();
       error.addValidationErrors(validationResult);
       throw new InvalidPayloadException(error);
     }
+    setAuditColumns(digitalID);
     return mapper.toStructure(service.createDigitalID(mapper.toModel(digitalID)));
   }
 
   public DigitalID updateDigitalID(@Validated @RequestBody DigitalID digitalID) {
-    val validationResult = getPayloadValidator().validatePayload(digitalID);
+    val validationResult = getPayloadValidator().validatePayload(digitalID, false);
     if (!validationResult.isEmpty()) {
       ApiError error = ApiError.builder().timestamp(LocalDateTime.now()).message("Payload contains invalid data.").status(BAD_REQUEST).build();
       error.addValidationErrors(validationResult);
       throw new InvalidPayloadException(error);
     }
+    setAuditColumns(digitalID);
     return mapper.toStructure(service.updateDigitalID(mapper.toModel(digitalID)));
   }
 
   @Override
   public String health() {
-    log.info("Health Check OK, returning OK");
     return "OK";
+  }
+
+  private void setAuditColumns(DigitalID digitalID) {
+    if (StringUtils.isBlank(digitalID.getCreateUser())) {
+      digitalID.setCreateUser(ApplicationProperties.API_NAME);
+    }
+    if (StringUtils.isBlank(digitalID.getUpdateUser())) {
+      digitalID.setUpdateUser(ApplicationProperties.API_NAME);
+    }
+    digitalID.setCreateDate(new Date());
+    digitalID.setUpdateDate(new Date());
   }
 
 
