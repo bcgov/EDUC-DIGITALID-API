@@ -118,8 +118,8 @@ public class DigitalIDService {
   public DigitalIDEntity createDigitalID(DigitalIDEntity digitalID) {
     digitalID.setUpdateDate(new Date());
     digitalID.setCreateDate(new Date());
-    digitalID.setIdentityTypeCode(digitalID.getIdentityTypeCode().toUpperCase());
-    digitalID.setIdentityValue(digitalID.getIdentityValue().toUpperCase());
+    digitalID.setIdentityTypeCode(digitalID.getIdentityTypeCode());
+    digitalID.setIdentityValue(digitalID.getIdentityValue());
 
     return digitalIDRepository.save(digitalID);
   }
@@ -140,8 +140,8 @@ public class DigitalIDService {
       newDigitalID.setIdentityValue(digitalID.getIdentityValue());
       newDigitalID.setLastAccessDate(digitalID.getLastAccessDate());
       newDigitalID.setLastAccessChannelCode(digitalID.getLastAccessChannelCode());
-      newDigitalID.setIdentityTypeCode(digitalID.getIdentityTypeCode().toUpperCase());
-      newDigitalID.setIdentityValue(digitalID.getIdentityValue().toUpperCase());
+      newDigitalID.setIdentityTypeCode(digitalID.getIdentityTypeCode());
+      newDigitalID.setIdentityValue(digitalID.getIdentityValue());
       newDigitalID.setUpdateDate(digitalID.getUpdateDate());
       newDigitalID.setUpdateUser(digitalID.getUpdateUser());
       newDigitalID = digitalIDRepository.save(newDigitalID);
