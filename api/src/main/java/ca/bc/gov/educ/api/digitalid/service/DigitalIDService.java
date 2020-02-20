@@ -116,11 +116,6 @@ public class DigitalIDService {
    * @return the persisted object.
    */
   public DigitalIDEntity createDigitalID(DigitalIDEntity digitalID) {
-    validateCreateParameters(digitalID);
-
-    if (digitalID.getDigitalID() != null) {
-      throw new InvalidParameterException(DIGITAL_ID_ATTRIBUTE);
-    }
     digitalID.setUpdateDate(new Date());
     digitalID.setCreateDate(new Date());
     digitalID.setIdentityTypeCode(digitalID.getIdentityTypeCode().toUpperCase());
