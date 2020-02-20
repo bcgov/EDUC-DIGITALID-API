@@ -196,7 +196,7 @@ public class DigitalIDControllerTest {
     DigitalIDEntity entity = service.createDigitalID(createDigitalIDMockData());
     this.mockMvc.perform(put("/").contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON).content(asJsonString(DigitalID.builder().digitalID(entity.getDigitalID().toString()).identityTypeCode("BCSC").lastAccessChannelCode("AC")
-                    .createUser("TEST").updateUser("TEST").identityValue("Test").lastAccessDate(new Date()).build()))).andDo(print()).andExpect(status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$.identityValue").value("Test"));
+                    .createUser("TEST").updateUser("TEST").identityValue("Test").lastAccessDate(new Date()).build()))).andDo(print()).andExpect(status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$.identityValue").value("TEST"));
   }
 
   @Test
