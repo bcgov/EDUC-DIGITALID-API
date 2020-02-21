@@ -22,6 +22,11 @@ objects:
       type: Rolling
     template:
       metadata:
+        annotations:
+          openshift.io/generated-by: digitalidapi
+          prometheus.io/path: /actuator/prometheus
+          prometheus.io/port: '8080'
+          prometheus.io/scrape: 'true'
         labels:
           app: "${APP_NAME}-${JOB_NAME}"
           deploymentConfig: "${APP_NAME}-${JOB_NAME}"
@@ -29,6 +34,10 @@ objects:
         containers:
         - image: docker-registry.default.svc:5000/${NAMESPACE}/${REPO_NAME}-${JOB_NAME}:${TAG}
           imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: tls-certs
+              mountPath: "/etc/tls-certs"
+              readOnly: true
           readinessProbe:
             tcpSocket:
               port: 8080
@@ -51,6 +60,10 @@ objects:
           - containerPort: ${{CONTAINER_PORT}}
             protocol: TCP
           resources: {}
+        volumes:
+          - name: tls-certs
+            secret:
+              secretName: services-card-api-cert
     test: false
     triggers:
     - type: ConfigChange
@@ -66,6 +79,8 @@ objects:
 - apiVersion: v1
   kind: Service
   metadata:
+    annotations:
+      service.alpha.openshift.io/serving-cert-secret-name: "digitalid-api-cert"
     labels:
       app: "${APP_NAME}-${JOB_NAME}"
     name: "${APP_NAME}-${JOB_NAME}"
