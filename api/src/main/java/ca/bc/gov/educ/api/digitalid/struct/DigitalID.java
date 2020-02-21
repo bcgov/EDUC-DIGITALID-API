@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
-import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Size;
-import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -25,18 +23,17 @@ public class DigitalID {
   @NotNull(message = "identityValue cannot be null")
   @Size(max = 255)
   private String identityValue;
-  @PastOrPresent
   @NotNull(message = "lastAccessDate cannot be null")
-  private Date lastAccessDate;
+  private String lastAccessDate;
   @NotNull(message = "lastAccessChannelCode cannot be null")
   @Size(max = 10)
   private String lastAccessChannelCode;
   @Size(max = 32)
   private String createUser;
   @Null
-  private Date createDate;
+  private String createDate;
   @Size(max = 32)
   private String updateUser;
   @Null
-  private Date updateDate;
+  private String updateDate;
 }

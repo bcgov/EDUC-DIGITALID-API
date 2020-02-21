@@ -1,22 +1,16 @@
 package ca.bc.gov.educ.api.digitalid.model;
 
-import java.util.Date;
-import java.util.UUID;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PastOrPresent;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
+import javax.persistence.*;
+import javax.validation.constraints.PastOrPresent;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Digital Identity Entity
@@ -42,20 +36,16 @@ public class DigitalIDEntity {
   @Column(name = "student_id", unique = true, columnDefinition = "BINARY(16)")
   UUID studentID;
 
-  @NotNull(message = "identityTypeCode cannot be null")
   @Column(name = "identity_type_code")
   String identityTypeCode;
 
-  @NotNull(message = "identityValue cannot be null")
   @Column(name = "identity_value")
   String identityValue;
 
   @PastOrPresent
-  @NotNull(message = "lastAccessDate cannot be null")
   @Column(name = "last_access_date")
-  Date lastAccessDate;
+  LocalDateTime lastAccessDate;
 
-  @NotNull(message = "lastAccessChannelCode cannot be null")
   @Column(name = "last_access_channel_code")
   String lastAccessChannelCode;
 
@@ -64,13 +54,13 @@ public class DigitalIDEntity {
 
   @PastOrPresent
   @Column(name = "create_date", updatable = false)
-  Date createDate;
+  LocalDateTime createDate;
 
   @Column(name = "update_user", updatable = false)
   String updateUser;
 
   @PastOrPresent
   @Column(name = "update_date", updatable = false)
-  Date updateDate;
+  LocalDateTime updateDate;
 
 }

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,6 +37,9 @@ public class DigitalIDPayloadValidator {
     final List<FieldError> apiValidationErrors = new ArrayList<>();
     if (isCreateOperation && digitalID.getDigitalID() != null) {
       apiValidationErrors.add(createFieldError(digitalID.getDigitalID(), "digitalID should be null for post operation.", "digitalID"));
+    }
+    if(LocalDateTime.now().isBefore(LocalDateTime.parse( digitalID.getLastAccessDate() ) )){
+      apiValidationErrors.add(createFieldError(digitalID.getLastAccessDate(), "Last Access Date should be past or present", "lastAccessDate"));
     }
     validateIdentityTypeCode(digitalID, apiValidationErrors);
     validateLastAccessChannelCode(digitalID, apiValidationErrors);

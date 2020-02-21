@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -37,7 +38,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class DigitalIDControllerTest {
-
   @Autowired
   AccessChannelCodeTableRepository accessChannelCodeTableRepository;
 
@@ -123,7 +123,7 @@ public class DigitalIDControllerTest {
   public void testCreateDigitalId_GivenValidPayload_ShouldReturnStatusCreated() throws Exception {
     this.mockMvc.perform(post("/").contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON).content(asJsonString(DigitalID.builder().identityTypeCode("BCSC").lastAccessChannelCode("AC")
-                    .createUser("TEST").updateUser("TEST").identityValue("Test1").lastAccessDate(new Date()).build()))).andDo(print()).andExpect(status().isCreated());
+                    .createUser("TEST").updateUser("TEST").identityValue("Test1").lastAccessDate(LocalDateTime.now().toString()).build()))).andDo(print()).andExpect(status().isCreated());
   }
 
   @Test
@@ -131,7 +131,7 @@ public class DigitalIDControllerTest {
   public void testCreateDigitalId_GivenDigitalIdInPayload_ShouldReturnStatusBadRequest() throws Exception {
     this.mockMvc.perform(post("/").contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON).content(asJsonString(DigitalID.builder().digitalID(UUID.randomUUID().toString()).identityTypeCode("BCSC").lastAccessChannelCode("AC")
-                    .createUser("TEST").updateUser("TEST").identityValue("Test1").lastAccessDate(new Date()).build()))).andDo(print()).andExpect(status().isBadRequest());
+                    .createUser("TEST").updateUser("TEST").identityValue("Test1").lastAccessDate(LocalDateTime.now().toString()).build()))).andDo(print()).andExpect(status().isBadRequest());
   }
 
   @Test
@@ -139,7 +139,7 @@ public class DigitalIDControllerTest {
   public void testCreateDigitalId_GivenInvalidLACInPayload_ShouldReturnStatusBadRequest() throws Exception {
     this.mockMvc.perform(post("/").contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON).content(asJsonString(DigitalID.builder().identityTypeCode("BCSC").lastAccessChannelCode("AC1")
-                    .createUser("TEST").updateUser("TEST").identityValue("Test1").lastAccessDate(new Date()).build()))).andDo(print()).andExpect(status().isBadRequest());
+                    .createUser("TEST").updateUser("TEST").identityValue("Test1").lastAccessDate(LocalDateTime.now().toString()).build()))).andDo(print()).andExpect(status().isBadRequest());
   }
 
   @Test
@@ -147,7 +147,7 @@ public class DigitalIDControllerTest {
   public void testCreateDigitalId_GivenInvalidLITCInPayload_ShouldReturnStatusBadRequest() throws Exception {
     this.mockMvc.perform(post("/").contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON).content(asJsonString(DigitalID.builder().identityTypeCode("BCSC1").lastAccessChannelCode("AC")
-                    .createUser("TEST").updateUser("TEST").identityValue("Test1").lastAccessDate(new Date()).build()))).andDo(print()).andExpect(status().isBadRequest());
+                    .createUser("TEST").updateUser("TEST").identityValue("Test1").lastAccessDate(LocalDateTime.now().toString()).build()))).andDo(print()).andExpect(status().isBadRequest());
   }
 
   @Test
@@ -155,7 +155,7 @@ public class DigitalIDControllerTest {
   public void testCreateDigitalId_GivenITCIsNull_ShouldReturnStatusBadRequest() throws Exception {
     this.mockMvc.perform(post("/").contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON).content(asJsonString(DigitalID.builder().identityTypeCode(null).lastAccessChannelCode("AC")
-                    .createUser("TEST").updateUser("TEST").identityValue("Test1").lastAccessDate(new Date()).build()))).andDo(print()).andExpect(status().isBadRequest());
+                    .createUser("TEST").updateUser("TEST").identityValue("Test1").lastAccessDate(LocalDateTime.now().toString()).build()))).andDo(print()).andExpect(status().isBadRequest());
   }
 
   @Test
@@ -163,15 +163,28 @@ public class DigitalIDControllerTest {
   public void testCreateDigitalId_GivenITVIsNull_ShouldReturnStatusBadRequest() throws Exception {
     this.mockMvc.perform(post("/").contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON).content(asJsonString(DigitalID.builder().identityTypeCode("BCSC").lastAccessChannelCode("AC")
-                    .createUser("TEST").updateUser("TEST").identityValue(null).lastAccessDate(new Date()).build()))).andDo(print()).andExpect(status().isBadRequest());
+                    .createUser("TEST").updateUser("TEST").identityValue(null).lastAccessDate(LocalDateTime.now().toString()).build()))).andDo(print()).andExpect(status().isBadRequest());
   }
-
+  @Test
+  @WithMockOAuth2Scope(scope = "WRITE_DIGITALID")
+  public void testCreateDigitalId_GivenLADFormatWrong_ShouldReturnStatusBadRequest() throws Exception {
+    this.mockMvc.perform(post("/").contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON).content(asJsonString(DigitalID.builder().identityTypeCode("BCSC").lastAccessChannelCode("AC")
+                    .createUser("TEST").updateUser("TEST").identityValue("Test1").lastAccessDate("2020-01-0119:40:09").build()))).andDo(print()).andExpect(status().isBadRequest());
+  }
+  @Test
+  @WithMockOAuth2Scope(scope = "WRITE_DIGITALID")
+  public void testCreateDigitalId_GivenLADInFuture_ShouldReturnStatusBadRequest() throws Exception {
+    this.mockMvc.perform(post("/").contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON).content(asJsonString(DigitalID.builder().identityTypeCode("BCSC").lastAccessChannelCode("AC")
+                    .createUser("TEST").updateUser("TEST").identityValue("Test1").lastAccessDate("2199-01-01T19:40:09").build()))).andDo(print()).andExpect(status().isBadRequest());
+  }
   @Test
   @WithMockOAuth2Scope(scope = "WRITE_DIGITALID")
   public void testCreateDigitalId_GivenLACIsNull_ShouldReturnStatusBadRequest() throws Exception {
     this.mockMvc.perform(post("/").contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON).content(asJsonString(DigitalID.builder().identityTypeCode("BCSC").lastAccessChannelCode(null)
-                    .createUser("TEST").updateUser("TEST").identityValue("Test1").lastAccessDate(new Date()).build()))).andDo(print()).andExpect(status().isBadRequest());
+                    .createUser("TEST").updateUser("TEST").identityValue("Test1").lastAccessDate(LocalDateTime.now().toString()).build()))).andDo(print()).andExpect(status().isBadRequest());
   }
 
   @Test
@@ -187,7 +200,7 @@ public class DigitalIDControllerTest {
   public void testUpdateDigitalId_GivenRandomDigitalIDInPayload_ShouldReturnStatusNotFound() throws Exception {
     this.mockMvc.perform(put("/").contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON).content(asJsonString(DigitalID.builder().digitalID(UUID.randomUUID().toString()).identityTypeCode("BCSC").lastAccessChannelCode("AC")
-                    .createUser("TEST").updateUser("TEST").identityValue("Test1").lastAccessDate(new Date()).build()))).andDo(print()).andExpect(status().isNotFound());
+                    .createUser("TEST").updateUser("TEST").identityValue("Test1").lastAccessDate(LocalDateTime.now().toString()).build()))).andDo(print()).andExpect(status().isNotFound());
   }
 
   @Test
@@ -196,7 +209,7 @@ public class DigitalIDControllerTest {
     DigitalIDEntity entity = service.createDigitalID(createDigitalIDMockData());
     this.mockMvc.perform(put("/").contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON).content(asJsonString(DigitalID.builder().digitalID(entity.getDigitalID().toString()).identityTypeCode("BCSC").lastAccessChannelCode("AC")
-                    .createUser("TEST").updateUser("TEST").identityValue("Test").lastAccessDate(new Date()).build()))).andDo(print()).andExpect(status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$.identityValue").value("TEST"));
+                    .createUser("TEST").updateUser("TEST").identityValue("Test").lastAccessDate(LocalDateTime.now().toString()).build()))).andDo(print()).andExpect(status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$.identityValue").value("TEST"));
   }
 
   @Test
@@ -205,7 +218,7 @@ public class DigitalIDControllerTest {
     DigitalIDEntity entity = service.createDigitalID(createDigitalIDMockData());
     this.mockMvc.perform(put("/").contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON).content(asJsonString(DigitalID.builder().digitalID(entity.getDigitalID().toString()).identityTypeCode("BCSC1").lastAccessChannelCode("AC")
-                    .createUser("TEST").updateUser("TEST").identityValue("Test1").lastAccessDate(new Date()).build()))).andDo(print()).andExpect(status().isBadRequest());
+                    .createUser("TEST").updateUser("TEST").identityValue("Test1").lastAccessDate(LocalDateTime.now().toString()).build()))).andDo(print()).andExpect(status().isBadRequest());
   }
 
 
@@ -219,7 +232,7 @@ public class DigitalIDControllerTest {
 
 
   private DigitalIDEntity createDigitalIDMockData() {
-    return DigitalIDEntity.builder().identityTypeCode("BCSC").identityValue("123").lastAccessChannelCode("ABC").createUser("TEST").lastAccessDate(new Date()).updateUser("TEST").build();
+    return DigitalIDEntity.builder().identityTypeCode("BCSC").identityValue("123").lastAccessChannelCode("ABC").createUser("TEST").lastAccessDate(LocalDateTime.now()).updateUser("TEST").build();
   }
 
   public static String asJsonString(final Object obj) {

@@ -116,11 +116,6 @@ public class DigitalIDService {
    * @return the persisted object.
    */
   public DigitalIDEntity createDigitalID(DigitalIDEntity digitalID) {
-    digitalID.setUpdateDate(new Date());
-    digitalID.setCreateDate(new Date());
-    digitalID.setIdentityTypeCode(digitalID.getIdentityTypeCode());
-    digitalID.setIdentityValue(digitalID.getIdentityValue());
-
     return digitalIDRepository.save(digitalID);
   }
 
