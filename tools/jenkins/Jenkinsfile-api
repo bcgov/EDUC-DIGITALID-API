@@ -22,21 +22,6 @@ pipeline{
             resourceLimitCpu: 3
             resourceLimitMemory: 2Gi
             env:
-            - name: JDBC_URL
-              valueFrom:
-                secretKeyRef:
-                  name: 'unit-test-db'
-                  key: url
-            - name: ORACLE_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: 'unit-test-db'
-                  key: username
-            - name: TMP_ORACLE_PASSWORD
-              valueFrom:
-                configMapKeyRef:
-                  name: 'unit-test-db'
-                  key: password
             - name: SONARQUBE_HOSTNAME
               valueFrom:
                 secretKeyRef:
