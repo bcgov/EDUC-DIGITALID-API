@@ -15,6 +15,8 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ca.bc.gov.educ.api.digitalid.exception.errors.ApiError;
 
+import java.time.format.DateTimeParseException;
+
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -22,15 +24,6 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
 
-  /**
-   * Handles HttpMessageNotReadableException
-   *
-   * @param ex
-   * @param headers
-   * @param status
-   * @param request
-   * @return
-   */
   @Override
   protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
     String error = "Malformed JSON request";
@@ -96,4 +89,18 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     return buildResponseEntity(ex.getError());
   }
 
+  /**
+   * Handles InvalidParameterException
+   *
+   * @param ex the InvalidParameterException
+   * @return the ApiError object
+   */
+  @ExceptionHandler(DateTimeParseException.class)
+  protected ResponseEntity<Object> handleDateTimeParseException(DateTimeParseException ex) {
+    ApiError apiError = new ApiError(BAD_REQUEST);
+    apiError.setMessage(ex.getMessage().concat(" , Expected pattern is yyyy-mm-ddTHH:MM:SS"));
+    return buildResponseEntity(apiError);
+  }
+
 }
+

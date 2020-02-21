@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -106,8 +105,8 @@ public class DigitalIDController implements DigitalIDEndpoint {
     if (StringUtils.isBlank(digitalID.getUpdateUser())) {
       digitalID.setUpdateUser(ApplicationProperties.API_NAME);
     }
-    digitalID.setCreateDate(new Date());
-    digitalID.setUpdateDate(new Date());
+    digitalID.setCreateDate(LocalDateTime.now().toString());
+    digitalID.setUpdateDate(LocalDateTime.now().toString());
   }
 
 
