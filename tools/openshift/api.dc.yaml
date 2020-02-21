@@ -63,7 +63,7 @@ objects:
         volumes:
           - name: tls-certs
             secret:
-              secretName: services-card-api-cert
+              secretName: digitalid-api-cert
     test: false
     triggers:
     - type: ConfigChange
