@@ -1,12 +1,9 @@
 package ca.bc.gov.educ.api.digitalid.validator;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
-
-import java.util.*;
-
 import ca.bc.gov.educ.api.digitalid.model.AccessChannelCodeEntity;
 import ca.bc.gov.educ.api.digitalid.model.IdentityTypeCodeEntity;
+import ca.bc.gov.educ.api.digitalid.service.DigitalIDService;
+import ca.bc.gov.educ.api.digitalid.struct.DigitalID;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,10 +12,13 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.validation.FieldError;
 
-import ca.bc.gov.educ.api.digitalid.service.DigitalIDService;
-import ca.bc.gov.educ.api.digitalid.struct.AccessChannelCode;
-import ca.bc.gov.educ.api.digitalid.struct.DigitalID;
-import ca.bc.gov.educ.api.digitalid.struct.IdentityTypeCode;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DigitalIDPayloadValidatorTest {
@@ -44,8 +44,8 @@ public class DigitalIDPayloadValidatorTest {
   @Test
   public void testValidateLastAccessChannelCode_WhenAccessChannelCodeExistInCodeTableButEffectiveDateIsFutureDate_ShouldAddAnErrorTOTheReturnedList() {
     final List<FieldError> errorList = new ArrayList<>();
-    final AccessChannelCodeEntity code = AccessChannelCodeEntity.builder().effectiveDate(new GregorianCalendar(2099, Calendar.FEBRUARY, 1).getTime()).accessChannelCode("a1")
-            .displayOrder(1).expiryDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime()).description("Access Code 1").label("Access Code 1").build();
+    final AccessChannelCodeEntity code = AccessChannelCodeEntity.builder().effectiveDate(LocalDateTime.MAX).accessChannelCode("a1")
+            .displayOrder(1).expiryDate(LocalDateTime.MAX).description("Access Code 1").label("Access Code 1").build();
     when(service.findAccessChannelCode("a1")).thenReturn(java.util.Optional.ofNullable(code));
     payloadValidator.validateLastAccessChannelCode(DigitalID.builder().lastAccessChannelCode("a1").build(), errorList);
     assertEquals(1, errorList.size());
@@ -55,8 +55,8 @@ public class DigitalIDPayloadValidatorTest {
   @Test
   public void testValidateLastAccessChannelCode_WhenAccessChannelCodeExistInCodeTableButExpiryDateIsPastDate_ShouldAddAnErrorTOTheReturnedList() {
     final List<FieldError> errorList = new ArrayList<>();
-    final AccessChannelCodeEntity code = AccessChannelCodeEntity.builder().effectiveDate(new GregorianCalendar(2000, Calendar.FEBRUARY, 1).getTime()).accessChannelCode("a1")
-            .displayOrder(1).expiryDate(new GregorianCalendar(2019, Calendar.JANUARY, 1).getTime()).description("Access Code 1").label("Access Code 1").build();
+    final AccessChannelCodeEntity code = AccessChannelCodeEntity.builder().effectiveDate(LocalDateTime.now()).accessChannelCode("a1")
+            .displayOrder(1).expiryDate(LocalDateTime.MIN).description("Access Code 1").label("Access Code 1").build();
     when(service.findAccessChannelCode("a1")).thenReturn(java.util.Optional.ofNullable(code));
     payloadValidator.validateLastAccessChannelCode(DigitalID.builder().lastAccessChannelCode("a1").build(), errorList);
     assertEquals(1, errorList.size());
@@ -75,8 +75,8 @@ public class DigitalIDPayloadValidatorTest {
   @Test
   public void testValidateIdentityTypeCode_WhenAccessChannelCodeExistInCodeTableButEffectiveDateIsFutureDate_ShouldAddAnErrorTOTheReturnedList() {
     final List<FieldError> errorList = new ArrayList<>();
-    final IdentityTypeCodeEntity code = IdentityTypeCodeEntity.builder().effectiveDate(new GregorianCalendar(2099, Calendar.FEBRUARY, 1).getTime()).identityTypeCode("a1")
-            .displayOrder(1).expiryDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime()).description("Identity Code 1").label("Identity Code 1").build();
+    final IdentityTypeCodeEntity code = IdentityTypeCodeEntity.builder().effectiveDate(LocalDateTime.MAX).identityTypeCode("a1")
+            .displayOrder(1).expiryDate(LocalDateTime.MAX).description("Identity Code 1").label("Identity Code 1").build();
     when(service.findIdentityTypeCode("a1")).thenReturn(java.util.Optional.ofNullable(code));
     payloadValidator.validateIdentityTypeCode(DigitalID.builder().identityTypeCode("a1").build(), errorList);
     assertEquals(1, errorList.size());
@@ -86,8 +86,8 @@ public class DigitalIDPayloadValidatorTest {
   @Test
   public void testValidateIdentityTypeCode_WhenAccessChannelCodeExistInCodeTableButExpiryDateIsPastDate_ShouldAddAnErrorTOTheReturnedList() {
     final List<FieldError> errorList = new ArrayList<>();
-    final IdentityTypeCodeEntity code = IdentityTypeCodeEntity.builder().effectiveDate(new GregorianCalendar(2000, Calendar.FEBRUARY, 1).getTime()).identityTypeCode("a1")
-            .displayOrder(1).expiryDate(new GregorianCalendar(2019, Calendar.JANUARY, 1).getTime()).description("Identity Code 1").label("Identity Code 1").build();
+    final IdentityTypeCodeEntity code = IdentityTypeCodeEntity.builder().effectiveDate(LocalDateTime.now()).identityTypeCode("a1")
+            .displayOrder(1).expiryDate(LocalDateTime.MIN).description("Identity Code 1").label("Identity Code 1").build();
     when(service.findIdentityTypeCode("a1")).thenReturn(java.util.Optional.ofNullable(code));
     payloadValidator.validateIdentityTypeCode(DigitalID.builder().identityTypeCode("a1").build(), errorList);
     assertEquals(1, errorList.size());

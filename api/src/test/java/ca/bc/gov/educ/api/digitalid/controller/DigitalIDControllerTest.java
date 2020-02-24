@@ -24,9 +24,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDateTime;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.containsString;
@@ -75,14 +72,14 @@ public class DigitalIDControllerTest {
 
   private AccessChannelCodeEntity createAccessChannelCodeData() {
     return AccessChannelCodeEntity.builder().accessChannelCode("AC").description("Access Code")
-            .effectiveDate(new Date()).expiryDate(new GregorianCalendar(2199, Calendar.JANUARY, 1).getTime()).displayOrder(1).label("label").createDate(new Date())
-            .updateDate(new Date()).createUser("TEST").updateUser("TEST").build();
+            .effectiveDate(LocalDateTime.now()).expiryDate(LocalDateTime.MAX).displayOrder(1).label("label").createDate(LocalDateTime.now())
+            .updateDate(LocalDateTime.now()).createUser("TEST").updateUser("TEST").build();
   }
 
   private IdentityTypeCodeEntity createIdentityTypeCodeData() {
     return IdentityTypeCodeEntity.builder().identityTypeCode("BCSC").description("BC Services Card")
-            .effectiveDate(new Date()).expiryDate(new GregorianCalendar(2199, Calendar.JANUARY, 1).getTime()).displayOrder(1).label("label").createDate(new Date())
-            .updateDate(new Date()).createUser("TEST").updateUser("TEST").build();
+            .effectiveDate(LocalDateTime.now()).expiryDate(LocalDateTime.MAX).displayOrder(1).label("label").createDate(LocalDateTime.now())
+            .updateDate(LocalDateTime.now()).createUser("TEST").updateUser("TEST").build();
   }
 
   @Test
