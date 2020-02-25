@@ -135,7 +135,7 @@ pipeline{
     }
     stage('Promote to DEV') {
       steps{
-        deployStage('Dev', DEV, DEV_HOST_ROUTE)
+        deployStage('Dev', DEV, DEV_HOST_ROUTE, 'dev')
       }
       post{
         success{
@@ -157,7 +157,7 @@ pipeline{
     }
     stage('Deploy to Test'){
       steps{
-          deployStage('Test', TEST, TEST_HOST_ROUTE)
+          deployStage('Test', TEST, TEST_HOST_ROUTE, 'test')
       } 
       post {
         success{
@@ -170,7 +170,7 @@ pipeline{
     }
   }
 }
-def deployStage(String stageEnv, String projectEnv, String hostRouteEnv) {
+def deployStage(String stageEnv, String projectEnv, String hostRouteEnv, String tag) {
 
   if (!stageEnv.equalsIgnoreCase('Dev')) {
     input("Deploy to ${projectEnv}?")
@@ -179,7 +179,7 @@ def deployStage(String stageEnv, String projectEnv, String hostRouteEnv) {
   openshift.withCluster() {
     openshift.withProject(projectEnv) {
       echo "Tagging image"
-      openshift.tag("${TOOLS}/${REPO_NAME}-${JOB_NAME}:latest", "${REPO_NAME}-${JOB_NAME}:${TAG}")
+      openshift.tag("${TOOLS}/${REPO_NAME}-${JOB_NAME}:latest", "${REPO_NAME}-${JOB_NAME}:${tag}")
       def dcTemplate = openshift.process('-f',
         'tools/openshift/api.dc.yaml',
         "REPO_NAME=${REPO_NAME}",
@@ -187,7 +187,7 @@ def deployStage(String stageEnv, String projectEnv, String hostRouteEnv) {
         "NAMESPACE=${projectEnv}",
         "APP_NAME=${APP_NAME}",
         "HOST_ROUTE=${hostRouteEnv}",
-        "TAG=${TAG}"
+        "TAG=${tag}"
       )
 
       echo "Applying Deployment ${REPO_NAME}"
