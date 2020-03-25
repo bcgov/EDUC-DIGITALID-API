@@ -59,6 +59,10 @@ public class EventHandlerService {
           log.info("received update digital id event :: " + event.getEventPayload());
           handleUpdateDigitalIdEvent(event);
           break;
+        case GET_DIGITAL_ID:
+          log.info("received get digital id event :: " + event.getEventPayload());
+          handleGetDigitalIdEvent(event);
+          break;
         default:
           log.info("silently ignoring other events.");
           break;
@@ -68,19 +72,17 @@ public class EventHandlerService {
     }
   }
 
-  private void handleUpdateDigitalIdEvent(Event event) throws JsonProcessingException, IllegalAccessException {
+  private void handleGetDigitalIdEvent(Event event) throws JsonProcessingException{
     val digitalIdEventOptional = getDigitalIdEventRepository().findBySagaIdAndEventType(event.getSagaId(), event.getEventType().toString());
     DigitalIdEvent digitalIdEvent;
     if (!digitalIdEventOptional.isPresent()) {
       log.info(NO_RECORD_SAGA_ID_EVENT_TYPE, event);
-      DigitalIDEntity entity = mapper.toModel(JsonUtil.getJsonObjectFromString(DigitalID.class, event.getEventPayload()));
-      val optionalDigitalIDEntity = getDigitalIDRepository().findById(entity.getDigitalID());
+      UUID digitalId =  UUID.fromString(event.getEventPayload());
+      val optionalDigitalIDEntity = getDigitalIDRepository().findById(digitalId);
       if (optionalDigitalIDEntity.isPresent()) {
         val attachedEntity = optionalDigitalIDEntity.get();
-        updateValuesInAttachedEntity(entity, attachedEntity);
-        getDigitalIDRepository().save(attachedEntity);
-        event.setEventPayload(JsonUtil.getJsonStringFromObject(attachedEntity));
-        event.setEventOutcome(EventOutcome.DIGITAL_ID_UPDATED);
+        event.setEventPayload(JsonUtil.getJsonStringFromObject(mapper.toStructure(attachedEntity))); //update the event with payload, need to convert to structure MANDATORY otherwise jackson will break.
+        event.setEventOutcome(EventOutcome.DIGITAL_ID_FOUND);
       } else {
         event.setEventOutcome(EventOutcome.DIGITAL_ID_NOT_FOUND);
       }
@@ -93,20 +95,32 @@ public class EventHandlerService {
 
     getDigitalIdEventRepository().save(digitalIdEvent);
   }
-  /**
-   * this method will update the fields with not null values from entity to attached entity.
-   */
-  private void updateValuesInAttachedEntity(DigitalIDEntity entity, DigitalIDEntity attachedEntity) throws IllegalAccessException {
-    for (Field field : attachedEntity.getClass().getDeclaredFields()) {
-      if (!field.isAccessible()) {
-        field.setAccessible(true);
-        Object value = field.get(entity);
-        if (value != null) {
-          field.set(attachedEntity, value);
-        }
+
+  private void handleUpdateDigitalIdEvent(Event event) throws JsonProcessingException {
+    val digitalIdEventOptional = getDigitalIdEventRepository().findBySagaIdAndEventType(event.getSagaId(), event.getEventType().toString());
+    DigitalIdEvent digitalIdEvent;
+    if (!digitalIdEventOptional.isPresent()) {
+      log.info(NO_RECORD_SAGA_ID_EVENT_TYPE, event);
+      DigitalIDEntity entity = mapper.toModel(JsonUtil.getJsonObjectFromString(DigitalID.class, event.getEventPayload()));
+      val optionalDigitalIDEntity = getDigitalIDRepository().findById(entity.getDigitalID());
+      if (optionalDigitalIDEntity.isPresent()) {
+        val attachedEntity = optionalDigitalIDEntity.get();
+        BeanUtils.copyProperties(entity, attachedEntity);
+        attachedEntity.setUpdateDate(LocalDateTime.now());
+        getDigitalIDRepository().save(attachedEntity);
+        event.setEventPayload(JsonUtil.getJsonStringFromObject(mapper.toStructure(attachedEntity)));// need to convert to structure MANDATORY otherwise jackson will break.
+        event.setEventOutcome(EventOutcome.DIGITAL_ID_UPDATED);
+      } else {
+        event.setEventOutcome(EventOutcome.DIGITAL_ID_NOT_FOUND);
       }
+      digitalIdEvent = createDigitalIdEventRecord(event);
+    } else {
+      log.info(RECORD_FOUND_FOR_SAGA_ID_EVENT_TYPE, event);
+      digitalIdEvent = digitalIdEventOptional.get();
+      digitalIdEvent.setEventStatus(DB_COMMITTED.toString());
     }
-    attachedEntity.setUpdateDate(LocalDateTime.now());
+
+    getDigitalIdEventRepository().save(digitalIdEvent);
   }
 
   private void handleDigitalIdOutboxProcessedEvent(String digitalIdEventId) {
