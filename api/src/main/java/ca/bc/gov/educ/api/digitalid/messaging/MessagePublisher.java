@@ -89,7 +89,7 @@ public class MessagePublisher implements Closeable {
       int numOfRetries = 1;
       while (true) {
         try {
-          log.trace("retrying connection as connection was lost :: retrying ::" + numOfRetries);
+          log.trace("retrying connection as connection was lost :: retrying ::" + numOfRetries++);
           connection = connectionFactory.createConnection();
           break;
         } catch (IOException | InterruptedException ex) {
