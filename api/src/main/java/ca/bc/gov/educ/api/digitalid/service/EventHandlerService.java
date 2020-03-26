@@ -32,9 +32,11 @@ import static lombok.AccessLevel.PRIVATE;
 @Slf4j
 public class EventHandlerService {
 
-  public static final String NO_RECORD_SAGA_ID_EVENT_TYPE = "no record found for the saga id and event type combination, processing. {}";
+  public static final String NO_RECORD_SAGA_ID_EVENT_TYPE = "no record found for the saga id and event type combination, processing.";
   public static final String RECORD_FOUND_FOR_SAGA_ID_EVENT_TYPE = "record found for the saga id and event type combination, might be a duplicate or replay," +
-          " just updating the db status so that it will be polled and sent back again. {}";
+          " just updating the db status so that it will be polled and sent back again.";
+  public static final String EVENT_LOG = "event is :: {}";
+  public static final String PAYLOAD_LOG = "Payload is :: ";
   @Getter(PRIVATE)
   private final DigitalIDRepository digitalIDRepository;
   private static final DigitalIDMapper mapper = DigitalIDMapper.mapper;
@@ -52,15 +54,18 @@ public class EventHandlerService {
     try {
       switch (event.getEventType()) {
         case DIGITAL_ID_EVENT_OUTBOX_PROCESSED:
-          log.info("received outbox processed event :: " + event.getEventPayload());
+          log.info("received outbox processed event :: ");
+          log.trace(PAYLOAD_LOG + event.getEventPayload());
           handleDigitalIdOutboxProcessedEvent(event.getEventPayload());
           break;
         case UPDATE_DIGITAL_ID:
-          log.info("received update digital id event :: " + event.getEventPayload());
+          log.info("received update digital id event :: ");
+          log.trace(PAYLOAD_LOG + event.getEventPayload());
           handleUpdateDigitalIdEvent(event);
           break;
         case GET_DIGITAL_ID:
-          log.info("received get digital id event :: " + event.getEventPayload());
+          log.info("received get digital id event :: ");
+          log.trace(PAYLOAD_LOG + event.getEventPayload());
           handleGetDigitalIdEvent(event);
           break;
         default:
@@ -72,12 +77,13 @@ public class EventHandlerService {
     }
   }
 
-  private void handleGetDigitalIdEvent(Event event) throws JsonProcessingException{
+  private void handleGetDigitalIdEvent(Event event) throws JsonProcessingException {
     val digitalIdEventOptional = getDigitalIdEventRepository().findBySagaIdAndEventType(event.getSagaId(), event.getEventType().toString());
     DigitalIdEvent digitalIdEvent;
     if (!digitalIdEventOptional.isPresent()) {
-      log.info(NO_RECORD_SAGA_ID_EVENT_TYPE, event);
-      UUID digitalId =  UUID.fromString(event.getEventPayload());
+      log.info(NO_RECORD_SAGA_ID_EVENT_TYPE);
+      log.trace("Event is {}", event);
+      UUID digitalId = UUID.fromString(event.getEventPayload());
       val optionalDigitalIDEntity = getDigitalIDRepository().findById(digitalId);
       if (optionalDigitalIDEntity.isPresent()) {
         val attachedEntity = optionalDigitalIDEntity.get();
@@ -88,7 +94,8 @@ public class EventHandlerService {
       }
       digitalIdEvent = createDigitalIdEventRecord(event);
     } else {
-      log.info(RECORD_FOUND_FOR_SAGA_ID_EVENT_TYPE, event);
+      log.info(RECORD_FOUND_FOR_SAGA_ID_EVENT_TYPE);
+      log.trace(EVENT_LOG, event);
       digitalIdEvent = digitalIdEventOptional.get();
       digitalIdEvent.setEventStatus(DB_COMMITTED.toString());
     }
@@ -100,7 +107,8 @@ public class EventHandlerService {
     val digitalIdEventOptional = getDigitalIdEventRepository().findBySagaIdAndEventType(event.getSagaId(), event.getEventType().toString());
     DigitalIdEvent digitalIdEvent;
     if (!digitalIdEventOptional.isPresent()) {
-      log.info(NO_RECORD_SAGA_ID_EVENT_TYPE, event);
+      log.info(NO_RECORD_SAGA_ID_EVENT_TYPE);
+      log.trace(EVENT_LOG, event);
       DigitalIDEntity entity = mapper.toModel(JsonUtil.getJsonObjectFromString(DigitalID.class, event.getEventPayload()));
       val optionalDigitalIDEntity = getDigitalIDRepository().findById(entity.getDigitalID());
       if (optionalDigitalIDEntity.isPresent()) {
@@ -115,7 +123,8 @@ public class EventHandlerService {
       }
       digitalIdEvent = createDigitalIdEventRecord(event);
     } else {
-      log.info(RECORD_FOUND_FOR_SAGA_ID_EVENT_TYPE, event);
+      log.info(RECORD_FOUND_FOR_SAGA_ID_EVENT_TYPE);
+      log.trace(EVENT_LOG, event);
       digitalIdEvent = digitalIdEventOptional.get();
       digitalIdEvent.setEventStatus(DB_COMMITTED.toString());
     }
