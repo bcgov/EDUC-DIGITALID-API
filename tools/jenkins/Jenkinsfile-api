@@ -155,19 +155,6 @@ pipeline{
             }
         }
     }
-    stage('Deploy to Test'){
-      steps{
-          deployStage('Test', TEST, TEST_HOST_ROUTE, 'test')
-      } 
-      post {
-        success{
-          echo 'Deployment to Test was successful'
-        }
-        failure{
-          echo 'Deployment to Test failed'
-        }
-      }
-    }
   }
 }
 def deployStage(String stageEnv, String projectEnv, String hostRouteEnv, String tag) {
