@@ -60,9 +60,6 @@ objects:
           - containerPort: ${{CONTAINER_PORT}}
             protocol: TCP
           resources: {}
-          env:
-          - name: TZ
-            value: "America/Vancouver"
         volumes:
           - name: tls-certs
             secret:
