@@ -229,5 +229,10 @@
 			</plugin>
 		</plugins>
 	</build>
-
+<repositories>
+	<repository>
+		<id>oracle-xwiki</id>
+		<url>https://maven.xwiki.org/externals/</url>
+	</repository>
+</repositories>
 </project>
