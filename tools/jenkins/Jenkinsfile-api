@@ -68,10 +68,18 @@ pipeline{
   }
 
   stages{
+    stage('Unit Tests') {
+      steps {
+        script {
+          def pom = readMavenPom file: 'api/pom.xml'
+          VERSION = pom.version
+
+
+        }
+      }
+    }
     stage('Build App') {
       steps {
-        def pom = readMavenPom file: 'api/pom.xml'
-        VERSION = pom.version
         sh '/bin/bash -c "mvn -f ./api/pom.xml -Dmaven.test.skip=true package"'
       }
     }
