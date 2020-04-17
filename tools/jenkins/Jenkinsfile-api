@@ -67,11 +67,11 @@ pipeline{
     PROD_HOST_ROUTE = "${APP_NAME}-${PROD}.${APP_DOMAIN}"
   }
 
-
+  stages{
     stage('Build App') {
       steps {
-       def pom = readMavenPom file: 'api/pom.xml'
-                VERSION = pom.version
+        def pom = readMavenPom file: 'api/pom.xml'
+        VERSION = pom.version
         sh '/bin/bash -c "mvn -f ./api/pom.xml -Dmaven.test.skip=true package"'
       }
     }
