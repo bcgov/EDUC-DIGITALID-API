@@ -64,13 +64,18 @@ public class MessageSubscriber {
    * @param message the string representation of {@link Event} if it not type of event then it will throw exception and will be ignored.
    */
   private void onDigitalIdTopicMessage(Message message) {
-    if (message != null) {
-      try {
-        String eventString = new String(message.getData());
-        Event event = JsonUtil.getJsonObjectFromString(Event.class, eventString);
-        getEventHandlerService().handleEvent(event);
-      } catch (final Exception ex) {
-        log.error("Exception ", ex);
+    if (message != null && message.getData() != null) {
+      String messageData = new String(message.getData());
+      if (messageData.contains("eventType")) {
+        try {
+
+          Event event = JsonUtil.getJsonObjectFromString(Event.class, messageData);
+          getEventHandlerService().handleEvent(event);
+        } catch (final Exception ex) {
+          log.error("Exception ", ex);
+        }
+      } else {
+        log.info("Received Message :: {}", messageData);
       }
     }
   }

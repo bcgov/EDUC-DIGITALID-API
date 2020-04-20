@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -54,8 +55,8 @@ public class MessagePublisher implements Closeable {
       log.error(e.getMessage());
       if (e.getMessage() != null && e.getMessage().contains("stan: connection closed")) {
         executorService.execute(() -> {
-          this.connectionLostHandler(connection, e);
           try {
+            this.connectionLostHandler(connection, e);
             dispatchMessage(subject, message);
           } catch (InterruptedException | TimeoutException | IOException exception) {
             log.error("exception occurred :: ", exception);
@@ -135,7 +136,8 @@ public class MessagePublisher implements Closeable {
   @Scheduled(cron = "1 * * * * *")
   public void sendTestMessage() {
     try {
-      this.dispatchMessage(DIGITAL_ID_API_TOPIC.toString(), "Test Message".getBytes());
+      String ipAddr= InetAddress.getLocalHost().getHostAddress().trim();
+      this.dispatchMessage(DIGITAL_ID_API_TOPIC.toString(), "Test Message :: ".concat(ipAddr).getBytes());
     } catch (InterruptedException | TimeoutException | IOException e) {
       e.printStackTrace();
     }
