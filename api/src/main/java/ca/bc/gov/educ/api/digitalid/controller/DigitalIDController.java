@@ -39,9 +39,8 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 @RestController
 @EnableResourceServer
 @Slf4j
-@SuppressWarnings("squid:ModifiersOrderCheck")
 public class DigitalIDController implements DigitalIDEndpoint {
-  private final static DigitalIDMapper mapper = DigitalIDMapper.mapper;
+  private static final DigitalIDMapper mapper = DigitalIDMapper.mapper;
   @Getter(AccessLevel.PRIVATE)
   private final DigitalIDService service;
 

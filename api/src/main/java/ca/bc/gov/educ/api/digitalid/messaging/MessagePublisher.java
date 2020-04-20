@@ -25,10 +25,11 @@ import static lombok.AccessLevel.PRIVATE;
 
 @Component
 @Slf4j
+@SuppressWarnings("java:S2142")
 public class MessagePublisher implements Closeable {
   private final ExecutorService executorService = Executors.newFixedThreadPool(2);
   private StreamingConnection connection;
-  private StreamingConnectionFactory connectionFactory;
+  private final StreamingConnectionFactory connectionFactory;
 
   @Getter(PRIVATE)
   private final EventHandlerService eventHandlerService;
@@ -46,11 +47,27 @@ public class MessagePublisher implements Closeable {
   }
 
   public void dispatchMessage(String subject, byte[] message) throws InterruptedException, TimeoutException, IOException {
-    AckHandler ackHandler = getAckHandler();
-    connection.publish(subject, message, ackHandler);
+    try {
+      AckHandler ackHandler = getAckHandler();
+      connection.publish(subject, message, ackHandler);
+    } catch (IllegalStateException e) {
+      log.error(e.getMessage());
+      if (e.getMessage() != null && e.getMessage().contains("stan: connection closed")) {
+        executorService.execute(() -> {
+          this.connectionLostHandler(connection, e);
+          try {
+            dispatchMessage(subject, message);
+          } catch (InterruptedException | TimeoutException | IOException exception) {
+            log.error("exception occurred :: ", exception);
+          }
+        });
+      }
+
+    }
+
   }
 
-  @SuppressWarnings("java:S2142")
+
   private AckHandler getAckHandler() {
     return new AckHandler() {
       @Override
@@ -79,13 +96,12 @@ public class MessagePublisher implements Closeable {
 
   public void retryPublish(String subject, byte[] message) throws InterruptedException, TimeoutException, IOException {
     log.trace("retrying...");
-    connection.publish(subject, message, getAckHandler());
+    this.dispatchMessage(subject, message);
   }
 
   /**
    * This method will keep retrying for a connection.
    */
-  @SuppressWarnings("java:S2142")
   private void connectionLostHandler(StreamingConnection streamingConnection, Exception e) {
     if (e != null) {
       int numOfRetries = 1;
