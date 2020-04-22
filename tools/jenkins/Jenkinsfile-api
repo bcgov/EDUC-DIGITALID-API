@@ -174,8 +174,10 @@ pipeline{
     stage('Create/Update Config Maps'){
       steps{
         script{
-          def configVars
-          sh "bash ./update-configmap.sh \"dev\" ${APP_NAME} ${NAMESPACE}"
+          dir('tools/jenkins'){
+            def configVars
+            sh "bash ./update-configmap.sh \"dev\" ${APP_NAME} ${NAMESPACE}"
+          }
         }
       }
     }
