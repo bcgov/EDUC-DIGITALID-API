@@ -74,8 +74,8 @@ pipeline{
         script {
           try{
             sh( script: "oc describe configmaps ${APP_NAME}-config", returnStdout: true)
-             echo 'Config map already exists. Moving to next stage...'
-          } catch{
+            echo 'Config map already exists. Moving to next stage...'
+          } catch(e){
             configProperties = input(
               id: 'configProperties', message: "Please enter the required credentials to allow ${APP_NAME} to run:",
               parameters: [
