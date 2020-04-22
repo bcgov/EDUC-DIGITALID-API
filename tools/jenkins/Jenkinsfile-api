@@ -161,11 +161,13 @@ pipeline{
     }
     stage('Promote to DEV') {
       steps{
-        try{
-          deployStage('Dev', DEV, DEV_HOST_ROUTE, 'dev')
-          echo 'Deployment to dev successful'
-        } catch(e){
-          echo 'Deployment to dev failed'
+        script{
+          try{
+            deployStage('Dev', DEV, DEV_HOST_ROUTE, 'dev')
+            echo 'Deployment to dev successful'
+          } catch(e){
+            echo 'Deployment to dev failed'
+          }
         }
       }
     }
