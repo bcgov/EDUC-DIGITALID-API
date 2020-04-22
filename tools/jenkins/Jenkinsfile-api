@@ -72,8 +72,10 @@ pipeline{
     stage('Create Missing Config Maps'){
       steps {
         script {
-          def exists = sh( script: "oc describe configmaps ${APP_NAME}-config", returnStdout: true).trim()
-          if(exists.contains("Error from server (NotFound)")){
+          try{
+            sh( script: "oc describe configmaps ${APP_NAME}-config", returnStdout: true)
+             echo 'Config map already exists. Moving to next stage...'
+          } catch{
             configProperties = input(
               id: 'configProperties', message: "Please enter the required credentials to allow ${APP_NAME} to run:",
               parameters: [
@@ -88,8 +90,6 @@ pipeline{
                           name: 'DB_PWD_API_DIGITALID'),
               ])
             sh "oc create -n ${NAMESPACE}-tools configmap ${APP_NAME}-config --from-literal=DB_JDBC_CONNECT_STRING=${configProperties.DB_JDBC_CONNECT_STRING} --from-literal=DB_USER_API_DIGITALID=${configProperties.DB_USER_API_DIGITALID} --from-literal=DB_PWD_API_DIGITALID=${configProperties.DB_USER_API_DIGITALID} --dry-run -o yaml | oc apply -f -"
-          } else{
-            echo 'Config map already exists. Moving to next stage...'
           }
         }
       }
