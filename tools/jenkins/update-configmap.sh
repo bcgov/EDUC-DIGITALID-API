@@ -15,6 +15,8 @@ SOAM_KC_LOAD_USER_ADMIN=$(oc -o json get secret sso-admin-${envValue} | sed -n '
 SOAM_KC_LOAD_USER_PASS=$(oc -o json get secret sso-admin-${envValue} | sed -n 's/.*"password": "\(.*\)",/\1/p' | base64 --decode)
 oc project $OPENSHIFT_NAMESPACE-tools
 
+echo SOAM USER: $SOAM_KC_LOAD_USER_ADMIN
+echo SOAM PASS: $SOAM_KC_LOAD_USER_PASS
 
 ###########################################################
 #Fetch the public key
