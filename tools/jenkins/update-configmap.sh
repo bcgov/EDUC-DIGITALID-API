@@ -8,11 +8,18 @@ KCADM_FILE_BIN_FOLDER="/home/jenkins/workspace/${OPENSHIFT_NAMESPACE}-tools/keyc
 DB_JDBC_CONNECT_STRING=$(oc -o json get configmaps ${APP_NAME}-config | sed -n 's/.*"DB_JDBC_CONNECT_STRING": "\(.*\)",/\1/p')
 DB_PWD=$(oc -o json get configmaps ${APP_NAME}-config | sed -n 's/.*"DB_PWD_API_DIGITALID": "\(.*\)",/\1/p')
 DB_USER=$(oc -o json get configmaps ${APP_NAME}-config | sed -n 's/.*"DB_USER_API_DIGITALID": "\(.*\)",/\1/p')
+SOAM_KC=$OPENSHIFT_NAMESPACE-$envValue.pathfinder.gov.bc.ca
+
+oc project $OPENSHIFT_NAMESPACE-$envValue
+SOAM_KC_LOAD_USER_ADMIN=$(oc -o json get secret sso-admin-${envValue} | sed -n 's/.*"username": "\(.*\)",/\1/p' | base64 --decode)
+SOAM_KC_LOAD_USER_PASS=$(oc -o json get secret sso-admin-${envValue} | sed -n 's/.*"password": "\(.*\)",/\1/p' | base64 --decode)
+oc project $OPENSHIFT_NAMESPACE-tools
 
 
 ###########################################################
 #Fetch the public key
 ###########################################################
+$KCADM_FILE_BIN_FOLDER/kcadm.sh config credentials --server https://$SOAM_KC/auth --realm $SOAM_KC_REALM_ID --user $SOAM_KC_LOAD_USER_ADMIN --password $SOAM_KC_LOAD_USER_PASS
 getPublicKey(){
     executorID= $KCADM_FILE_BIN_FOLDER/kcadm.sh get keys -r $SOAM_KC_REALM_ID | grep -Po 'publicKey" : "\K([^"]*)'
 }
