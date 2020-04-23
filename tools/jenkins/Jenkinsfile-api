@@ -89,11 +89,21 @@ pipeline{
                           description: "Password for ${APP_NAME} to connect to the database",
                           name: 'DB_PWD_API_DIGITALID'),
               ])
-            sh "oc create -n ${NAMESPACE}-tools configmap ${APP_NAME}-config --from-literal=DB_JDBC_CONNECT_STRING=${configProperties.DB_JDBC_CONNECT_STRING} --from-literal=DB_USER_API_DIGITALID=${configProperties.DB_USER_API_DIGITALID} --from-literal=DB_PWD_API_DIGITALID=${configProperties.DB_USER_API_DIGITALID} --dry-run -o yaml | oc apply -f -"
+            sh "oc create -n ${NAMESPACE}-tools configmap ${APP_NAME}-config --from-literal=DB_JDBC_CONNECT_STRING=${configProperties.DB_JDBC_CONNECT_STRING} --from-literal=DB_USER_API_DIGITALID=${configProperties.DB_USER_API_DIGITALID} --from-literal=DB_PWD_API_DIGITALID=${configProperties.DB_PWD_API_DIGITALID} --dry-run -o yaml | oc apply -f -"
           }
         }
       }
     }
+    stage('Download setup files'){
+            agent any
+            steps{
+                script{
+                    dir('tools/jenkins'){
+                        sh "bash ./download-kc.sh \"${NAMESPACE}\""
+                    }
+                }
+            }
+        }
     stage('Unit Tests') {
       steps {
         script {
