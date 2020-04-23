@@ -44,11 +44,10 @@ pipeline{
   }
 
   environment{
-    NAMESPACE='c2mvws'
-    TOOLS = "${NAMESPACE}-tools"
-    DEV = "${NAMESPACE}-dev"
-    TEST = "${NAMESPACE}-test"
-    PROD = "${NAMESPACE}-prod"
+    TOOLS = 'c2mvws-tools'
+    DEV = 'c2mvws-dev'
+    TEST = 'c2mvws-test'
+    PROD = 'c2mvws-prod'
 
     REPO_NAME = 'educ-digitalid-api'
     OWNER = 'bcgov'
@@ -69,31 +68,6 @@ pipeline{
   }
 
   stages{
-    stage('Create Missing Config Maps'){
-      steps {
-        script {
-          def exists = sh( script: "oc describe configmaps ${APP_NAME}-config", returnStdout: true).trim()
-          if(exists.contains("Error from server (NotFound)")){
-            configProperties = input(
-              id: 'configProperties', message: "Please enter the required credentials to allow ${APP_NAME} to run:",
-              parameters: [
-                  string(defaultValue: "",
-                          description: 'JDBC connect string for database',
-                          name: 'DB_JDBC_CONNECT_STRING'),
-                  string(defaultValue: "",
-                          description: "Username for ${APP_NAME} to connect to the database",
-                          name: 'DB_USER_API_DIGITALID'),
-                  string(defaultValue: "",
-                          description: "Password for ${APP_NAME} to connect to the database",
-                          name: 'DB_PWD_API_DIGITALID'),
-              ])
-            sh "oc create -n ${NAMESPACE}-tools configmap ${APP_NAME}-config --from-literal=DB_JDBC_CONNECT_STRING=${configProperties.DB_JDBC_CONNECT_STRING} --from-literal=DB_USER_API_DIGITALID=${configProperties.DB_USER_API_DIGITALID} --from-literal=DB_PWD_API_DIGITALID=${configProperties.DB_USER_API_DIGITALID} --dry-run -o yaml | oc apply -f -"
-          } else{
-            echo 'Config map already exists. Moving to next stage...'
-          }
-        }
-      }
-    }
     stage('Unit Tests') {
       steps {
         script {
@@ -169,14 +143,6 @@ pipeline{
         }
         failure{
           echo 'Deployment to Dev failed'
-        }
-      }
-    }
-    stage('Create/Update Config Maps'){
-      steps{
-        script{
-          def configVars
-          sh "bash ./update-configmap.sh \"dev\" ${APP_NAME} ${NAMESPACE}"
         }
       }
     }
