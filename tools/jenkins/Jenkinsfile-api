@@ -95,15 +95,14 @@ pipeline{
       }
     }
     stage('Download setup files'){
-            agent any
-            steps{
-                script{
-                    dir('tools/jenkins'){
-                        sh "bash ./download-kc.sh \"${NAMESPACE}\""
-                    }
-                }
-            }
-        }
+      steps{
+          script{
+              dir('tools/jenkins'){
+                  sh "bash ./download-kc.sh \"${NAMESPACE}\""
+              }
+          }
+      }
+    }
     stage('Unit Tests') {
       steps {
         script {
