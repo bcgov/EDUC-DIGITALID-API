@@ -9,6 +9,9 @@ DB_JDBC_CONNECT_STRING=$(oc -o json get configmaps ${APP_NAME}-config | sed -n '
 DB_PWD=$(oc -o json get configmaps ${APP_NAME}-config | sed -n 's/.*"DB_PWD_API_DIGITALID": "\(.*\)",/\1/p')
 DB_USER=$(oc -o json get configmaps ${APP_NAME}-config | sed -n 's/.*"DB_USER_API_DIGITALID": "\(.*\)"/\1/p')
 SOAM_KC=$OPENSHIFT_NAMESPACE-$envValue.pathfinder.gov.bc.ca
+NATS_CLUSTER=educ_pen_nats_cluster
+NATS_URL=nats://nats.mvubjx-dev.svc.cluster.local:4222
+oc -o json get secret sso-admin-${envValue} | sed -n 's/.*"password": "\(.*\)",/\1/p' | base64 --decode
 
 oc project $OPENSHIFT_NAMESPACE-$envValue
 SOAM_KC_LOAD_USER_ADMIN=$(oc -o json get secret sso-admin-${envValue} | sed -n 's/.*"username": "\(.*\)"/\1/p' | base64 --decode)
@@ -37,7 +40,7 @@ formattedPublicKey="${soamFullPublicKey:0:26}${newline}${soamFullPublicKey:27:64
 ###########################################################
 echo
 echo Creating config map $APP_NAME-config-map 
-oc create -n $OPENSHIFT_NAMESPACE-$envValue configmap $APP_NAME-config-map --from-literal=TZ=$TZVALUE --from-literal=JDBC_URL=$DB_JDBC_CONNECT_STRING --from-literal=ORACLE_USERNAME="$DB_USER" --from-literal=ORACLE_PASSWORD="$DB_PWD" --from-literal=KEYCLOAK_PUBLIC_KEY="$soamFullPublicKey" --from-literal=SPRING_SECURITY_LOG_LEVEL=INFO --from-literal=SPRING_WEB_LOG_LEVEL=INFO --from-literal=APP_LOG_LEVEL=INFO --from-literal=SPRING_BOOT_AUTOCONFIG_LOG_LEVEL=INFO --from-literal=SPRING_SHOW_REQUEST_DETAILS=false --dry-run -o yaml | oc apply -f -
+oc create -n $OPENSHIFT_NAMESPACE-$envValue configmap $APP_NAME-config-map --from-literal=TZ=$TZVALUE --from-literal=NATS_URL=$NATS_URL --from-literal=NATS_CLUSTER=$NATS_CLUSTER --from-literal=JDBC_URL=$DB_JDBC_CONNECT_STRING --from-literal=ORACLE_USERNAME="$DB_USER" --from-literal=ORACLE_PASSWORD="$DB_PWD" --from-literal=KEYCLOAK_PUBLIC_KEY="$soamFullPublicKey" --from-literal=SPRING_SECURITY_LOG_LEVEL=INFO --from-literal=SPRING_WEB_LOG_LEVEL=INFO --from-literal=APP_LOG_LEVEL=INFO --from-literal=SPRING_BOOT_AUTOCONFIG_LOG_LEVEL=INFO --from-literal=SPRING_SHOW_REQUEST_DETAILS=false --dry-run -o yaml | oc apply -f -
 echo
 echo Setting environment variables for $APP_NAME-$SOAM_KC_REALM_ID application
 oc project $OPENSHIFT_NAMESPACE-$envValue
