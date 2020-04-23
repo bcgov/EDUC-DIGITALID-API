@@ -7,11 +7,11 @@ SOAM_KC_REALM_ID="master"
 KCADM_FILE_BIN_FOLDER="/home/jenkins/workspace/${OPENSHIFT_NAMESPACE}-tools/keycloak-9.0.3/bin"
 DB_JDBC_CONNECT_STRING=$(oc -o json get configmaps ${APP_NAME}-config | sed -n 's/.*"DB_JDBC_CONNECT_STRING": "\(.*\)",/\1/p')
 DB_PWD=$(oc -o json get configmaps ${APP_NAME}-config | sed -n 's/.*"DB_PWD_API_DIGITALID": "\(.*\)",/\1/p')
-DB_USER=$(oc -o json get configmaps ${APP_NAME}-config | sed -n 's/.*"DB_USER_API_DIGITALID": "\(.*\)",/\1/p')
+DB_USER=$(oc -o json get configmaps ${APP_NAME}-config | sed -n 's/.*"DB_USER_API_DIGITALID": "\(.*\)"/\1/p')
 SOAM_KC=$OPENSHIFT_NAMESPACE-$envValue.pathfinder.gov.bc.ca
 
 oc project $OPENSHIFT_NAMESPACE-$envValue
-SOAM_KC_LOAD_USER_ADMIN=$(oc -o json get secret sso-admin-${envValue} | sed -n 's/.*"username": "\(.*\)",/\1/p' | base64 --decode)
+SOAM_KC_LOAD_USER_ADMIN=$(oc -o json get secret sso-admin-${envValue} | sed -n 's/.*"username": "\(.*\)"/\1/p' | base64 --decode)
 SOAM_KC_LOAD_USER_PASS=$(oc -o json get secret sso-admin-${envValue} | sed -n 's/.*"password": "\(.*\)",/\1/p' | base64 --decode)
 oc project $OPENSHIFT_NAMESPACE-tools
 
