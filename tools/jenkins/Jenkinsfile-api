@@ -80,6 +80,9 @@ pipeline{
               id: 'configProperties', message: "Please enter the required credentials to allow ${APP_NAME} to run:",
               parameters: [
                   string(defaultValue: "",
+                          description: 'Environment to deploy to (dev, test, or prod)',
+                          name: 'TARGET_ENV'),
+                  string(defaultValue: "",
                           description: 'JDBC connect string for database',
                           name: 'DB_JDBC_CONNECT_STRING'),
                   string(defaultValue: "",
@@ -89,7 +92,7 @@ pipeline{
                           description: "Password for ${APP_NAME} to connect to the database",
                           name: "DB_PWD_${APP_NAME}"),
               ])
-            sh "oc create -n ${NAMESPACE}-tools configmap ${APP_NAME}-config --from-literal=DB_JDBC_CONNECT_STRING=${configProperties.DB_JDBC_CONNECT_STRING} --from-literal=DB_USER_${APP_NAME}=${configProperties.DB_USER_${APP_NAME}} --from-literal=DB_PWD_${APP_NAME}=${configProperties.DB_PWD_${APP_NAME}} --dry-run -o yaml | oc apply -f -"
+            sh "oc create -n ${NAMESPACE}-tools configmap ${APP_NAME}-${TARGET_ENV}-config --from-literal=DB_JDBC_CONNECT_STRING=${configProperties.DB_JDBC_CONNECT_STRING} --from-literal=DB_USER_${APP_NAME}=${configProperties.DB_USER_${APP_NAME}} --from-literal=DB_PWD_${APP_NAME}=${configProperties.DB_PWD_${APP_NAME}} --dry-run -o yaml | oc apply -f -"
           }
         }
       }
