@@ -11,7 +11,6 @@ DB_USER=$(oc -o json get configmaps ${APP_NAME}-${envValue}-config | sed -n "s/.
 SOAM_KC=$OPENSHIFT_NAMESPACE-$envValue.pathfinder.gov.bc.ca
 NATS_CLUSTER=educ_pen_nats_cluster
 NATS_URL="nats://nats.${OPENSHIFT_NAMESPACE}-${envValue}.svc.cluster.local:4222"
-oc -o json get secret sso-admin-${envValue} | sed -n 's/.*"password": "\(.*\)",/\1/p' | base64 --decode
 
 oc project $OPENSHIFT_NAMESPACE-$envValue
 SOAM_KC_LOAD_USER_ADMIN=$(oc -o json get secret sso-admin-${envValue} | sed -n 's/.*"username": "\(.*\)"/\1/p' | base64 --decode)
