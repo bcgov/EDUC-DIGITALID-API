@@ -6,8 +6,8 @@ TZVALUE="America/Vancouver"
 SOAM_KC_REALM_ID="master"
 KCADM_FILE_BIN_FOLDER="/home/jenkins/workspace/${OPENSHIFT_NAMESPACE}-tools/keycloak-9.0.3/bin"
 DB_JDBC_CONNECT_STRING=$(oc -o json get configmaps ${APP_NAME}-config | sed -n 's/.*"DB_JDBC_CONNECT_STRING": "\(.*\)",/\1/p')
-DB_PWD=$(oc -o json get configmaps ${APP_NAME}-config | sed -n 's/.*"DB_PWD_API_DIGITALID": "\(.*\)",/\1/p')
-DB_USER=$(oc -o json get configmaps ${APP_NAME}-config | sed -n 's/.*"DB_USER_API_DIGITALID": "\(.*\)"/\1/p')
+DB_PWD=$(oc -o json get configmaps ${APP_NAME}-config | sed -n "s/.*\"DB_PWD_${APP_NAME}\": \"\(.*\)\",/\1/p")
+DB_USER=$(oc -o json get configmaps ${APP_NAME}-config | sed -n "s/.*\"DB_USER_${APP_NAME}\": \"\(.*\)\"/\1/p")
 SOAM_KC=$OPENSHIFT_NAMESPACE-$envValue.pathfinder.gov.bc.ca
 NATS_CLUSTER=educ_pen_nats_cluster
 NATS_URL="nats://nats.${OPENSHIFT_NAMESPACE}-${envValue}.svc.cluster.local:4222"
@@ -36,7 +36,7 @@ formattedPublicKey="${soamFullPublicKey:0:26}${newline}${soamFullPublicKey:27:64
 
 
 ###########################################################
-#Setup for digitalid-api-config-map
+#Setup for config-map
 ###########################################################
 echo
 echo Creating config map $APP_NAME-config-map 
