@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -153,5 +155,14 @@ public class DigitalIDService {
 
   private Map<String, IdentityTypeCodeEntity> loadAllIdentityTypeCodes() {
     return getIdentityTypeCodesList().stream().collect(Collectors.toMap(IdentityTypeCodeEntity::getIdentityTypeCode, identityTypeCodeEntity -> identityTypeCodeEntity));
+  }
+
+  @Transactional(propagation = Propagation.MANDATORY)
+  public void deleteAll(){
+    getDigitalIDRepository().deleteAll();
+  }
+  @Transactional(propagation = Propagation.MANDATORY)
+  public void deleteById(UUID id){
+    getDigitalIDRepository().deleteById(id);
   }
 }
