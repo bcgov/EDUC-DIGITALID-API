@@ -16,7 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,9 +41,8 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 @RestController
 @EnableResourceServer
 @Slf4j
-@SuppressWarnings("squid:ModifiersOrderCheck")
 public class DigitalIDController implements DigitalIDEndpoint {
-  private final static DigitalIDMapper mapper = DigitalIDMapper.mapper;
+  private static final DigitalIDMapper mapper = DigitalIDMapper.mapper;
   @Getter(AccessLevel.PRIVATE)
   private final DigitalIDService service;
 
@@ -96,6 +97,20 @@ public class DigitalIDController implements DigitalIDEndpoint {
   @Override
   public String health() {
     return "OK";
+  }
+
+  @Override
+  @Transactional
+  public ResponseEntity<Void> deleteAll() {
+    getService().deleteAll();
+    return ResponseEntity.noContent().build();
+  }
+
+  @Override
+  @Transactional
+  public ResponseEntity<Void> deleteById(final UUID id) {
+    getService().deleteById(id);
+    return ResponseEntity.noContent().build();
   }
 
   private void setAuditColumns(DigitalID digitalID) {

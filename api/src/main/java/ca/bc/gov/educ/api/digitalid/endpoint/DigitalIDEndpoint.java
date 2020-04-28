@@ -1,7 +1,9 @@
 package ca.bc.gov.educ.api.digitalid.endpoint;
 
 import java.util.List;
+import java.util.UUID;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -55,5 +57,15 @@ public interface DigitalIDEndpoint {
   @GetMapping("/health")
   @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR.")})
   String health();
+
+  @DeleteMapping
+  @PreAuthorize("#oauth2.hasScope('DELETE_DIGITALID')")
+  @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "NO CONTENT"), @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR.")})
+  ResponseEntity<Void> deleteAll();
+
+  @DeleteMapping("/{id}")
+  @PreAuthorize("#oauth2.hasScope('DELETE_DIGITALID')")
+  @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "NO CONTENT"),  @ApiResponse(responseCode = "404", description = "NOT FOUND."), @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR.")})
+  ResponseEntity<Void> deleteById(@PathVariable UUID id);
 
 }
