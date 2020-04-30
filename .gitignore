@@ -13,3 +13,4 @@ application-devlocal.properties
 /api/src/main/resources/keystore/
 ojdbc8.jar
 .idea
+/api/src/main/resources/application-local.properties
