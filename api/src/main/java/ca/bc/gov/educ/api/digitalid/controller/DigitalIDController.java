@@ -19,10 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -56,11 +52,11 @@ public class DigitalIDController implements DigitalIDEndpoint {
     this.service = digitalIDService;
   }
 
-  public DigitalID searchDigitalID(@RequestParam(value = "identitytype", required = false) String typeCode, @RequestParam("identityvalue") String typeValue) {
+  public DigitalID searchDigitalID(String typeCode, String typeValue) {
     return mapper.toStructure(service.searchDigitalId(typeCode, typeValue));
   }
 
-  public DigitalID retrieveDigitalID(@PathVariable String id) {
+  public DigitalID retrieveDigitalID(String id) {
     return mapper.toStructure(service.retrieveDigitalID(UUID.fromString(id)));
   }
 
@@ -72,7 +68,7 @@ public class DigitalIDController implements DigitalIDEndpoint {
     return service.getIdentityTypeCodesList().stream().map(mapper::toStructure).collect(Collectors.toList());
   }
 
-  public DigitalID createDigitalID(@Validated @RequestBody DigitalID digitalID) {
+  public DigitalID createDigitalID(DigitalID digitalID) {
     val validationResult = getPayloadValidator().validatePayload(digitalID, true);
     if (!validationResult.isEmpty()) {
       ApiError error = ApiError.builder().timestamp(LocalDateTime.now()).message("Payload contains invalid data.").status(BAD_REQUEST).build();
@@ -83,7 +79,7 @@ public class DigitalIDController implements DigitalIDEndpoint {
     return mapper.toStructure(service.createDigitalID(mapper.toModel(digitalID)));
   }
 
-  public DigitalID updateDigitalID(@Validated @RequestBody DigitalID digitalID) {
+  public DigitalID updateDigitalID(DigitalID digitalID) {
     val validationResult = getPayloadValidator().validatePayload(digitalID, false);
     if (!validationResult.isEmpty()) {
       ApiError error = ApiError.builder().timestamp(LocalDateTime.now()).message("Payload contains invalid data.").status(BAD_REQUEST).build();
@@ -92,11 +88,6 @@ public class DigitalIDController implements DigitalIDEndpoint {
     }
     setAuditColumns(digitalID);
     return mapper.toStructure(service.updateDigitalID(mapper.toModel(digitalID)));
-  }
-
-  @Override
-  public String health() {
-    return "OK";
   }
 
   @Override

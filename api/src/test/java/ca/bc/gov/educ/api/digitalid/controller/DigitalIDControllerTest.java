@@ -26,11 +26,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -82,11 +82,6 @@ public class DigitalIDControllerTest {
             .updateDate(LocalDateTime.now()).createUser("TEST").updateUser("TEST").build();
   }
 
-  @Test
-  public void testHealth_GivenServerIsRunning_ShouldReturnOK() throws Exception {
-    this.mockMvc.perform(get("/health")).andDo(print()).andExpect(status().isOk())
-            .andExpect(content().string(containsString("OK")));
-  }
 
   @Test
   @WithMockOAuth2Scope(scope = "READ_DIGITALID")
