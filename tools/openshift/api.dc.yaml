@@ -61,9 +61,9 @@ objects:
             protocol: TCP
           resources:
             requests:
-              cpu: "100m"
-            limits:
               cpu: "150m"
+            limits:
+              cpu: "300m"
         volumes:
           - name: tls-certs
             secret:
