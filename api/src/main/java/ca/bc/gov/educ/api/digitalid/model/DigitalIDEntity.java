@@ -42,7 +42,6 @@ public class DigitalIDEntity {
   @Column(name = "identity_value")
   String identityValue;
 
-  @PastOrPresent
   @Column(name = "last_access_date")
   LocalDateTime lastAccessDate;
 
