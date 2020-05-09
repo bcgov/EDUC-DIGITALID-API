@@ -14,8 +14,8 @@ public abstract class DigitalIDDecorator implements DigitalIDMapper {
   @Override
   public DigitalIDEntity toModel(DigitalID struct) {
     DigitalIDEntity entity = delegate.toModel(struct);
-    entity.setIdentityTypeCode(entity.getIdentityTypeCode().toUpperCase());
-    entity.setIdentityValue(entity.getIdentityValue().toUpperCase());
+    entity.setIdentityTypeCode(entity.getIdentityTypeCode() == null ? null : entity.getIdentityTypeCode().toUpperCase());
+    entity.setIdentityValue(entity.getIdentityValue() == null ? null:entity.getIdentityValue().toUpperCase());
     return entity;
   }
 

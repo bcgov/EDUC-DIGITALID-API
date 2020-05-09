@@ -74,12 +74,7 @@ pipeline{
           def pom = readMavenPom file: 'api/pom.xml'
           VERSION = pom.version
 
-          //Env variable is to fix issue where special characters in password were not being escaped properly
-          def command = $//bin/bash -c "mvn -f ./api/pom.xml clean test"/$
-          sh """
-            set +x
-            $command
-          """
+
         }
       }
     }
