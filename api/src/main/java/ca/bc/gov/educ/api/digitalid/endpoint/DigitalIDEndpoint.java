@@ -1,11 +1,5 @@
 package ca.bc.gov.educ.api.digitalid.endpoint;
 
-import java.util.List;
-
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import ca.bc.gov.educ.api.digitalid.struct.AccessChannelCode;
 import ca.bc.gov.educ.api.digitalid.struct.DigitalID;
 import ca.bc.gov.educ.api.digitalid.struct.IdentityTypeCode;
@@ -14,6 +8,13 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
@@ -51,9 +52,15 @@ public interface DigitalIDEndpoint {
   @PreAuthorize("#oauth2.hasScope('READ_DIGITALID_CODETABLE')")
   @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
   List<IdentityTypeCode> retrieveIdentityTypeCodes();
-  
-  @GetMapping("/health")
-  @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR.")})
-  String health();
+
+  @DeleteMapping
+  @PreAuthorize("#oauth2.hasScope('DELETE_DIGITALID')")
+  @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "NO CONTENT"), @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR.")})
+  ResponseEntity<Void> deleteAll();
+
+  @DeleteMapping("/{id}")
+  @PreAuthorize("#oauth2.hasScope('DELETE_DIGITALID')")
+  @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "NO CONTENT"),  @ApiResponse(responseCode = "404", description = "NOT FOUND."), @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR.")})
+  ResponseEntity<Void> deleteById(@PathVariable UUID id);
 
 }

@@ -10,11 +10,17 @@ import ca.bc.gov.educ.api.digitalid.repository.IdentityTypeCodeTableRepository;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -153,5 +159,17 @@ public class DigitalIDService {
 
   private Map<String, IdentityTypeCodeEntity> loadAllIdentityTypeCodes() {
     return getIdentityTypeCodesList().stream().collect(Collectors.toMap(IdentityTypeCodeEntity::getIdentityTypeCode, identityTypeCodeEntity -> identityTypeCodeEntity));
+  }
+
+  @Transactional(propagation = Propagation.MANDATORY)
+  public void deleteAll() {
+    getDigitalIDRepository().deleteAll();
+  }
+
+  @Transactional(propagation = Propagation.MANDATORY)
+  public void deleteById(UUID id) {
+    val entityOptional = digitalIDRepository.findById(id);
+    val entity = entityOptional.orElseThrow(() -> new EntityNotFoundException(DigitalIDEntity.class, DIGITAL_ID_ATTRIBUTE, id.toString()));
+    digitalIDRepository.delete(entity);
   }
 }
