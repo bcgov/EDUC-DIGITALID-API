@@ -1,7 +1,7 @@
 envValue=$1
 APP_NAME=$2
 OPENSHIFT_NAMESPACE=$3
-APP_NAME_UPPER = sh(script: '$(tr [a-z] [A-Z] <<< "$APP_NAME")', returnStdout: true)
+APP_NAME_UPPER =tr [a-z] [A-Z] <<< "$APP_NAME"
 
 TZVALUE="America/Vancouver"
 SOAM_KC_REALM_ID="master"
