@@ -34,5 +34,19 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-      - run: mvn -f pom.xml clean package
-      
+      - name: Run unit tests
+        run: mvn -f pom.xml clean test
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+      - name: Run Sonar Analysis
+        run: mvn -f pom.xml sonar:sonar
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+          -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.organization=bcgov-sonarcloud
+          -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+        env:
+          # Needed to get some information about the pull request, if any. Could be empty
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
