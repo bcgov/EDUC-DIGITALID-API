@@ -1,7 +1,7 @@
 envValue=$1
 APP_NAME=$2
 OPENSHIFT_NAMESPACE=$3
-APP_NAME_UPPER=echo "$APP_NAME" | tr '[:lower:]' '[:upper:]'
+APP_NAME_UPPER=${APP_NAME^^}
 
 TZVALUE="America/Vancouver"
 SOAM_KC_REALM_ID="master"
