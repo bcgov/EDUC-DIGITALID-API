@@ -47,6 +47,3 @@ jobs:
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.organization=bcgov-sonarcloud
           -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-        env:
-          # Needed to get some information about the pull request, if any. Could be empty
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
