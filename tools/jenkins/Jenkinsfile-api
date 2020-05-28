@@ -1,7 +1,8 @@
 pipeline{
    agent any
    environment{
-      NAMESPACE='c2mvws'
+     DEBUG_OUTPUT = 'false'
+      NAMESPACE='mvubjx'
       TOOLS = "${NAMESPACE}-tools"
       DEV = "${NAMESPACE}-dev"
       TEST = "${NAMESPACE}-test"
@@ -25,21 +26,38 @@ pipeline{
       PROD_HOST_ROUTE = "${APP_NAME}-${PROD}.${APP_DOMAIN}"
   }
   stages{
-    stage('Build App') {
-       steps {
+    stage('Initialize') {
+      steps {
         script {
-          def pom = readMavenPom file: './api/pom.xml'
-          VERSION = pom.version
-        }
-        sh '/bin/bash -c "mvn -f ./api/pom.xml -Dmaven.test.skip=true package"'
-        script {
-          openshift.withCluster() {
-            if (!openshift.selector("bc", "${REPO_NAME}-${JOB_NAME}").exists()){
-              openshift.newBuild("--name=${REPO_NAME}-${JOB_NAME}", "--image-stream=redhat-openjdk18-openshift:1.1", "--binary")
-            }
-            openshift.selector("bc", "${REPO_NAME}-${JOB_NAME}").startBuild("--from-file=./api/target/digitalid-api-${VERSION}.jar", "--wait")
+          if(DEBUG_OUTPUT.equalsIgnoreCase('true')) {
+            // Force OpenShift Plugin directives to be verbose
+            openshift.logLevel(1)
+
+            // Print all environment variables
+            echo 'DEBUG - All pipeline environment variables:'
+            echo sh(returnStdout: true, script: 'env')
           }
         }
+      }
+    }
+    stage('Build App') {
+       steps {
+         script {
+           openshift.withCluster() {
+             openshift.withProject(TOOLS) {
+               try {
+                 echo "Building API..."
+                 def bcBackend = openshift.process('-f', 'tools/openshift/api.bc.yaml', "REPO_NAME=${REPO_NAME}", "JOB_NAME=${JOB_NAME}", "SOURCE_REPO_URL=${SOURCE_REPO_URL}", "SOURCE_REPO_REF=${SOURCE_REPO_REF}")
+                 openshift.apply(bcBackend).narrow('bc').startBuild('-w').logs('-f')
+
+                 openshift.tag("${REPO_NAME}:latest", "${REPO_NAME}:${JOB_NAME}")
+               } catch (e) {
+                 echo "API build failed"
+                 throw e
+               }
+             }
+           }
+         }
       }
       post {
         success {
