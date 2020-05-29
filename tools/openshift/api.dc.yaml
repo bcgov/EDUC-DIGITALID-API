@@ -41,17 +41,17 @@ objects:
           readinessProbe:
             tcpSocket:
               port: 8080
-            initialDelaySeconds: 180
+            initialDelaySeconds: 60
             periodSeconds: 30
-            timeoutSeconds: 2
-            failureThreshold: 3
+            timeoutSeconds: 5
+            failureThreshold: 5
             successThreshold: 1
           livenessProbe:
             httpGet:
               path: /actuator/health
               port: 8080
             initialDelaySeconds: 300
-            periodSeconds: 15
+            periodSeconds: 30
             timeoutSeconds: 5
             failureThreshold: 3
             successThreshold: 1
@@ -61,7 +61,7 @@ objects:
             protocol: TCP
           resources:
             requests:
-              cpu: "150m"
+              cpu: "50m"
             limits:
               cpu: "300m"
         volumes:

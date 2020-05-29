@@ -1,116 +1,63 @@
 pipeline{
-  agent {
-    kubernetes {
-      label 'mavenPod-DigitalIdApi'
-      cloud 'openshift'
-      defaultContainer 'jnlp'
-      serviceAccount 'jenkins'
-      yaml """
-        kind: Pod
-        metadata:
-          name: jenkins-slave
-        spec:
-          containers:
-          - name: jnlp
-            image: registry.access.redhat.com/openshift3/jenkins-agent-maven-35-rhel7
-            privileged: false
-            alwaysPullImage: false
-            workingDir: /tmp
-            ttyEnabled: false
-            resourceRequestCpu: 3
-            resourceRequestMemory: 2Gi
-            resourceLimitCpu: 3
-            resourceLimitMemory: 2Gi
-            env:
-            - name: SONARQUBE_HOSTNAME
-              valueFrom:
-                secretKeyRef:
-                  name: 'digitalid-api-secrets'
-                  key: sonarqube-host
-            - name: SONARQUBE_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: 'digitalid-api-secrets'
-                  key: sonarqube-token
-            volumeMounts:
-            - mountPath: '/home/jenkins/.m2'
-              name: pvc
-          volumes:
-          - name: pvc
-            persistentVolumeClaim:
-              claimName: 'maven-slave-pvc'      
-      """
-    }
+   agent any
+   environment{
+     DEBUG_OUTPUT = 'false'
+      NAMESPACE='mvubjx'
+      TOOLS = "${NAMESPACE}-tools"
+      DEV = "${NAMESPACE}-dev"
+      TEST = "${NAMESPACE}-test"
+      PROD = "${NAMESPACE}-prod"
+
+      REPO_NAME = 'educ-digitalid-api'
+      OWNER = 'bcgov'
+      JOB_NAME = 'master'
+      TAG = 'dev'
+
+      APP_NAME = 'digitalid-api'
+      APP_DOMAIN = 'pathfinder.gov.bc.ca'
+
+      SOURCE_REPO_RAW = 'https://github.com/${OWNER}/${REPO_NAME}/master'
+      SOURCE_REPO_REF = 'master'
+      SOURCE_REPO_URL = 'https://github.com/${OWNER}/${REPO_NAME}.git'
+
+      TOOLS_HOST_ROUTE = "${APP_NAME}-${TOOLS}.${APP_DOMAIN}"
+      DEV_HOST_ROUTE = "${APP_NAME}-${DEV}.${APP_DOMAIN}"
+      TEST_HOST_ROUTE = "${APP_NAME}-${TEST}.${APP_DOMAIN}"
+      PROD_HOST_ROUTE = "${APP_NAME}-${PROD}.${APP_DOMAIN}"
   }
-
-  environment{
-    TOOLS = 'c2mvws-tools'
-    DEV = 'c2mvws-dev'
-    TEST = 'c2mvws-test'
-    PROD = 'c2mvws-prod'
-
-    REPO_NAME = 'educ-digitalid-api'
-    OWNER = 'bcgov'
-    JOB_NAME = 'master'
-    TAG = 'dev'
-    
-    APP_NAME = 'digitalid-api'
-    APP_DOMAIN = 'pathfinder.gov.bc.ca'
-
-    SOURCE_REPO_RAW = 'https://github.com/${OWNER}/${REPO_NAME}/master'
-    SOURCE_REPO_REF = 'master'
-    SOURCE_REPO_URL = 'https://github.com/${OWNER}/${REPO_NAME}.git'
-
-    TOOLS_HOST_ROUTE = "${APP_NAME}-${TOOLS}.${APP_DOMAIN}"
-    DEV_HOST_ROUTE = "${APP_NAME}-${DEV}.${APP_DOMAIN}"
-    TEST_HOST_ROUTE = "${APP_NAME}-${TEST}.${APP_DOMAIN}"
-    PROD_HOST_ROUTE = "${APP_NAME}-${PROD}.${APP_DOMAIN}"
-  }
-
   stages{
-    stage('Unit Tests') {
+    stage('Initialize') {
       steps {
         script {
-          def pom = readMavenPom file: 'api/pom.xml'
-          VERSION = pom.version
+          if(DEBUG_OUTPUT.equalsIgnoreCase('true')) {
+            // Force OpenShift Plugin directives to be verbose
+            openshift.logLevel(1)
 
-          //Env variable is to fix issue where special characters in password were not being escaped properly
-          def command = $//bin/bash -c "mvn -f ./api/pom.xml clean test"/$
-          sh """
-            set +x
-            $command
-          """
+            // Print all environment variables
+            echo 'DEBUG - All pipeline environment variables:'
+            echo sh(returnStdout: true, script: 'env')
+          }
         }
       }
     }
     stage('Build App') {
-      steps {
-        sh '/bin/bash -c "mvn -f ./api/pom.xml -Dmaven.test.skip=true package"'
-      }
-    }
-    stage('Create Image Builder') {
-      when {
-        expression {
-          openshift.withCluster() {
-            return !openshift.selector("bc", "educ-digitalid-api-master").exists();
-          }
-        }
-      }
-      steps {
-        script {
-          openshift.withCluster() {
-            openshift.newBuild("--name=educ-digitalid-api-master", "--image-stream=redhat-openjdk18-openshift:1.1", "--binary")
-          }
-        }
-      }
-    }
-    stage('Build Image') {
-      steps {
-        script {
-          openshift.withCluster() {
-            openshift.selector("bc", "educ-digitalid-api-master").startBuild("--from-file=./api/target/digitalid-api-${VERSION}.jar", "--wait")
-          }
-        }
+       steps {
+         script {
+           openshift.withCluster() {
+             openshift.withProject(TOOLS) {
+               try {
+                 echo "Building API..."
+                 def bcBackend = openshift.process('-f', 'tools/openshift/api.bc.yaml', "REPO_NAME=${REPO_NAME}", "JOB_NAME=${JOB_NAME}", "SOURCE_REPO_URL=${SOURCE_REPO_URL}", "SOURCE_REPO_REF=${SOURCE_REPO_REF}")
+                 openshift.apply(bcBackend).narrow('bc').startBuild('-w').logs('-f')
+
+                 openshift.tag("${REPO_NAME}:latest", "${REPO_NAME}:${JOB_NAME}")
+               } catch (e) {
+                 echo "API build failed"
+                 throw e
+               }
+             }
+           }
+         }
       }
       post {
         success {
@@ -133,7 +80,7 @@ pipeline{
         }
       }
     }
-    stage('Promote to DEV') {
+	stage('Promote to DEV') {
       steps{
         deployStage('Dev', DEV, DEV_HOST_ROUTE, 'dev')
       }
@@ -146,17 +93,61 @@ pipeline{
         }
       }
     }
-    stage('Report to SonarQube') {
-        steps {
-            script{
-                dir('api'){
-                    sh '/bin/bash -c "mvn sonar:sonar -Dsonar.host.url=${SONARQUBE_HOSTNAME} -Dsonar.login=${SONARQUBE_TOKEN}"'
-                }
+    stage('Create/Update Config Maps'){
+      environment {
+	     APP_NAME = "digitalid-api"
+      }
+      steps{
+        script{
+            dir('tools/jenkins'){
+                sh "bash ./download-kc.sh \"${NAMESPACE}\""
             }
         }
+        configMapSetup("${APP_NAME}","${APP_NAME}".toUpperCase(), NAMESPACE);
+        script{
+          dir('tools/jenkins'){
+            def configVars
+            sh "bash ./update-configmap.sh \"dev\" ${APP_NAME} ${NAMESPACE}"
+          }
+        }
+      }
     }
   }
 }
+
+def configMapSetup(String appName,String appNameUpper, String namespace){
+    script {
+	  
+      try{
+        sh( script: "oc project ${namespace}-dev", returnStdout: true)
+        sh( script: "oc describe configmaps ${appName}-dev-setup-config", returnStdout: true)
+        sh( script: "oc project ${namespace}-tools", returnStdout: true)
+        echo 'Config map already exists. Moving to next stage...'
+      } catch(e){
+          configProperties = input(
+          id: 'configProperties', message: "Please enter the required credentials to allow ${appName} to run:",
+          parameters: [
+              string(defaultValue: "",
+                      description: 'JDBC connect string for database',
+                      name: 'DB_JDBC_CONNECT_STRING'),
+              string(defaultValue: "",
+                      description: "Username for ${appName} to connect to the database",
+                      name: "DB_USER"),
+              password(defaultValue: "",
+                      description: "Password for ${appName} to connect to the database",
+                      name: "DB_PWD"),
+          ])
+		sh """
+		  set +x
+		  echo Running curl command...
+		  oc create -n ${namespace}-dev configmap ${appName}-dev-setup-config --from-literal=DB_JDBC_CONNECT_STRING=${configProperties.DB_JDBC_CONNECT_STRING} --from-literal=DB_USER_${appNameUpper}=${configProperties.DB_USER} --from-literal=DB_PWD_${appNameUpper}=${configProperties.DB_PWD} --dry-run -o yaml | oc apply -f -
+		  oc project ${namespace}-tools
+		"""
+      }
+    }
+}
+
+
 def deployStage(String stageEnv, String projectEnv, String hostRouteEnv, String tag) {
 
   if (!stageEnv.equalsIgnoreCase('Dev')) {
@@ -179,12 +170,6 @@ def deployStage(String stageEnv, String projectEnv, String hostRouteEnv, String 
 
       echo "Applying Deployment ${REPO_NAME}"
       def dc = openshift.apply(dcTemplate).narrow('dc')
-
-      echo "Waiting for deployment to roll out"
-      // Wait for deployments to roll out
-      timeout(10) {
-        dc.rollout().status('--watch=true')
-      }
     }
   }
 }
