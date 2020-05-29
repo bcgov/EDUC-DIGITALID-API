@@ -47,10 +47,10 @@ pipeline{
              openshift.withProject(TOOLS) {
                try {
                  echo "Building API..."
-                 def bcBackend = openshift.process('-f', 'tools/openshift/api.bc.yaml', "REPO_NAME=${REPO_NAME}", "JOB_NAME=${JOB_NAME}", "SOURCE_REPO_URL=${SOURCE_REPO_URL}", "SOURCE_REPO_REF=${SOURCE_REPO_REF}")
+                 def bcBackend = openshift.process('-f', 'tools/openshift/api.bc.yaml', "REPO_NAME=${REPO_NAME}-${JOB_NAME}", "JOB_NAME=${JOB_NAME}", "SOURCE_REPO_URL=${SOURCE_REPO_URL}", "SOURCE_REPO_REF=${SOURCE_REPO_REF}")
                  openshift.apply(bcBackend).narrow('bc').startBuild('-w').logs('-f')
 
-                 openshift.tag("${REPO_NAME}:latest", "${REPO_NAME}:${JOB_NAME}")
+                 openshift.tag("${REPO_NAME}-${JOB_NAME}:latest", "${REPO_NAME}-${JOB_NAME}:${JOB_NAME}")
                } catch (e) {
                  echo "API build failed"
                  throw e
