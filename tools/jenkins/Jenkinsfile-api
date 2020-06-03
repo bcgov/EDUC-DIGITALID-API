@@ -24,6 +24,12 @@ pipeline{
       DEV_HOST_ROUTE = "${APP_NAME}-${DEV}.${APP_DOMAIN}"
       TEST_HOST_ROUTE = "${APP_NAME}-${TEST}.${APP_DOMAIN}"
       PROD_HOST_ROUTE = "${APP_NAME}-${PROD}.${APP_DOMAIN}"
+      MIN_REPLICAS = "1"
+      MAX_REPLICAS = "1"
+      MIN_CPU = "30m"
+      MAX_CPU = "300m"
+      MIN_MEM = "650Mi"
+      MAX_MEM = "750Mi"    
   }
   stages{
     stage('Initialize') {
@@ -165,7 +171,13 @@ def deployStage(String stageEnv, String projectEnv, String hostRouteEnv, String 
         "NAMESPACE=${projectEnv}",
         "APP_NAME=${APP_NAME}",
         "HOST_ROUTE=${hostRouteEnv}",
-        "TAG=${tag}"
+        "TAG=${tag}",
+		"MIN_REPLICAS=${MIN_REPLICAS}",
+		"MAX_REPLICAS=${MAX_REPLICAS}",
+        "MIN_CPU=${MIN_CPU}",
+		"MAX_CPU=${MAX_CPU}",
+        "MIN_MEM=${MIN_MEM}",
+		"MAX_MEM=${MAX_MEM}"
       )
 
       echo "Applying Deployment ${REPO_NAME}"

@@ -13,7 +13,7 @@ objects:
       app: "${APP_NAME}-${JOB_NAME}"
     name: "${APP_NAME}-${JOB_NAME}"
   spec:
-    replicas: 2
+    replicas: ${{MIN_REPLICAS}}
     selector:
       app: "${APP_NAME}-${JOB_NAME}"
       deploymentConfig: "${APP_NAME}-${JOB_NAME}"
@@ -61,9 +61,11 @@ objects:
             protocol: TCP
           resources:
             requests:
-              cpu: "50m"
+              cpu: "${MIN_CPU}"
+              memory: "${MIN_MEM}"
             limits:
-              cpu: "300m"
+              cpu: "${MAX_CPU}"
+              memory: "${MAX_MEM}"
         volumes:
           - name: tls-certs
             secret:
@@ -125,8 +127,8 @@ objects:
       kind: DeploymentConfig
       name: "${APP_NAME}-${JOB_NAME}"
       subresource: scale
-    minReplicas: 3
-    maxReplicas: 5
+    minReplicas: ${{MIN_REPLICAS}}
+    maxReplicas: ${{MAX_REPLICAS}}
     metrics:
       - type: Resource
         resource:
@@ -159,3 +161,21 @@ parameters:
   description: The path appended to the HOST_ROUTE where the root of this project will be served
   value: "/"
   required: false
+- name: MIN_REPLICAS
+  description: The minimum amount of replicas
+  required: true
+- name: MAX_REPLICAS
+  description: The maximum amount of replicas
+  required: true
+- name: MIN_CPU
+  description: The minimum amount of cpu
+  required: true
+- name: MAX_CPU
+  description: The maximum amount of cpu
+  required: true
+- name: MIN_MEM
+  description: The minimum amount of memory
+  required: true
+- name: MAX_MEM
+  description: The maximum amount of memory
+  required: true
