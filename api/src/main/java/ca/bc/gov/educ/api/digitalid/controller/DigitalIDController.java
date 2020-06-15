@@ -92,13 +92,6 @@ public class DigitalIDController implements DigitalIDEndpoint {
 
   @Override
   @Transactional
-  public ResponseEntity<Void> deleteAll() {
-    getService().deleteAll();
-    return ResponseEntity.noContent().build();
-  }
-
-  @Override
-  @Transactional
   public ResponseEntity<Void> deleteById(final UUID id) {
     getService().deleteById(id);
     return ResponseEntity.noContent().build();
