@@ -53,11 +53,6 @@ public interface DigitalIDEndpoint {
   @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
   List<IdentityTypeCode> retrieveIdentityTypeCodes();
 
-  @DeleteMapping
-  @PreAuthorize("#oauth2.hasScope('DELETE_DIGITALID')")
-  @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "NO CONTENT"), @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR.")})
-  ResponseEntity<Void> deleteAll();
-
   @DeleteMapping("/{id}")
   @PreAuthorize("#oauth2.hasScope('DELETE_DIGITALID')")
   @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "NO CONTENT"),  @ApiResponse(responseCode = "404", description = "NOT FOUND."), @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR.")})
