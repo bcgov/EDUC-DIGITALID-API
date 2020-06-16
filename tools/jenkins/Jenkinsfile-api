@@ -56,8 +56,8 @@ pipeline{
              openshift.withProject(TOOLS) {
                try {
                  echo "Building API..."
-                 mvn -f ./api/pom.xml -Dmaven.test.skip=true package
-                 mkdir -p ./api/target/dependency && (cd ./api/target/dependency; jar -xf ../*.jar)
+                 sh "mvn -f ./api/pom.xml -Dmaven.test.skip=true package"
+                 sh "mkdir -p ./api/target/dependency && (cd ./api/target/dependency; jar -xf ../*.jar)"
                  def bcBackend = openshift.process('-f', 'tools/openshift/api.bc.yaml', "REPO_NAME=${REPO_NAME}-${JOB_NAME}", "JOB_NAME=${JOB_NAME}", "SOURCE_REPO_URL=${SOURCE_REPO_URL}", "SOURCE_REPO_REF=${SOURCE_REPO_REF}")
                  openshift.apply(bcBackend).narrow('bc').startBuild('-w').logs('-f')
 
