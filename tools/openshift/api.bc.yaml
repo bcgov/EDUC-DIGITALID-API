@@ -37,14 +37,6 @@ objects:
           kind: ImageStreamTag
           name: "${REPO_NAME}:latest"
       postCommit: {}
-      resources:
-        requests:
-          cpu: 300m
-          memory: 2Gi
-        limits:
-          cpu: 8000m
-          memory: 4Gi
-        runPolicy: SerialLatestOnly
       source:
         git:
           ref: "${SOURCE_REPO_REF}"
