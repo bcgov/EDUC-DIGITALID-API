@@ -1,8 +1,8 @@
 FROM maven:3-jdk-11 as build
-WORKDIR /workspace/app
+WORKDIR api
 
 RUN ls -l
-COPY ./api/target ./target
+COPY ./target ./target
 
 FROM openjdk:11-jdk
 RUN useradd -ms /bin/bash spring
