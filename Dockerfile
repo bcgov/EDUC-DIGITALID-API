@@ -1,6 +1,11 @@
 FROM maven:3-jdk-11 as build
 WORKDIR /workspace/app
 
+COPY api/pom.xml .
+COPY api/src src
+RUN mvn package -DskipTests
+RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
+
 FROM openjdk:11-jdk
 RUN useradd -ms /bin/bash spring
 USER spring

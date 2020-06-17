@@ -1,8 +1,5 @@
 pipeline{
    agent any
-   tools {
-     jdk 'openjdk-11'
-   }
    environment{
      DEBUG_OUTPUT = 'false'
       NAMESPACE='mvubjx'
@@ -32,7 +29,7 @@ pipeline{
       MIN_CPU = "30m"
       MAX_CPU = "300m"
       MIN_MEM = "650Mi"
-      MAX_MEM = "750Mi"    
+      MAX_MEM = "750Mi"
   }
   stages{
     stage('Initialize') {
@@ -56,8 +53,6 @@ pipeline{
              openshift.withProject(TOOLS) {
                try {
                  echo "Building API..."
-                 sh "mvn -f ./api/pom.xml -Dmaven.test.skip=true package"
-                 sh "mkdir -p ./api/target/dependency && (cd ./api/target/dependency; jar -xf ../*.jar)"
                  def bcBackend = openshift.process('-f', 'tools/openshift/api.bc.yaml', "REPO_NAME=${REPO_NAME}-${JOB_NAME}", "JOB_NAME=${JOB_NAME}", "SOURCE_REPO_URL=${SOURCE_REPO_URL}", "SOURCE_REPO_REF=${SOURCE_REPO_REF}")
                  openshift.apply(bcBackend).narrow('bc').startBuild('-w').logs('-f')
 
