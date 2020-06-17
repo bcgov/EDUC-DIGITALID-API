@@ -1,7 +1,7 @@
 FROM maven:3-jdk-11 as build
 WORKDIR /workspace/app
 
-COPY api/target target
+COPY /api/target target
 
 FROM openjdk:11-jdk
 RUN useradd -ms /bin/bash spring
