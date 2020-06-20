@@ -19,8 +19,7 @@
 		<sonar.exclusions>src/main/resources/**,
 			src/main/java/ca/bc/gov/educ/api/digitalid/mappers/**,src/main/java/ca/bc/gov/educ/api/digitalid/exception/**,src/main/java/ca/bc/gov/educ/api/digitalid/model/**,src/main/java/ca/bc/gov/educ/api/digitalid/struct/**
 		</sonar.exclusions>
-		<java.version>1.8</java.version>
-
+		<java.version>11</java.version>
 		<maven.compiler.version>3.8.0</maven.compiler.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
@@ -56,6 +55,10 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.oracle.jdbc</groupId>
@@ -133,25 +136,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>io.nats</groupId>
-			<artifactId>java-nats-streaming</artifactId>
-			<version>2.2.3</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/net.javacrumbs.shedlock/shedlock-spring -->
-		<dependency>
-			<groupId>net.javacrumbs.shedlock</groupId>
-			<artifactId>shedlock-spring</artifactId>
-			<version>4.5.1</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/net.javacrumbs.shedlock/shedlock-provider-jdbc-template -->
-		<dependency>
-			<groupId>net.javacrumbs.shedlock</groupId>
-			<artifactId>shedlock-provider-jdbc-template</artifactId>
-			<version>4.5.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.retry</groupId>
-			<artifactId>spring-retry</artifactId>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-indexer</artifactId>
+			<optional>true</optional>
 		</dependency>
 	</dependencies>
 
@@ -174,6 +161,11 @@
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
 							<version>${lombok.version}</version>
+						</path>
+						<path>
+							<groupId>org.springframework</groupId>
+							<artifactId>spring-context-indexer</artifactId>
+							<version>${spring-framework.version}</version>
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
