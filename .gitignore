@@ -14,3 +14,4 @@ application-devlocal.properties
 ojdbc8.jar
 .idea
 /api/src/main/resources/application-local.properties
+/api/src/test/resources/application-local.properties

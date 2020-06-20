@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -24,6 +25,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "digital_identity")
 @Data
+@DynamicUpdate
 public class DigitalIDEntity {
 
   @Id
