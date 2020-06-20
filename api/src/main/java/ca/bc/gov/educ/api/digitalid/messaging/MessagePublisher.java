@@ -9,19 +9,16 @@ import io.nats.streaming.StreamingConnectionFactory;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static ca.bc.gov.educ.api.digitalid.constants.Topics.DIGITAL_ID_API_TOPIC;
 import static lombok.AccessLevel.PRIVATE;
 
 @Component
@@ -130,16 +127,6 @@ public class MessagePublisher implements Closeable {
   public void close() {
     if (!executorService.isShutdown()) {
       executorService.shutdown();
-    }
-  }
-
-  @Scheduled(cron = "1 * * * * *")
-  public void sendTestMessage() {
-    try {
-      String ipAddr= InetAddress.getLocalHost().getHostAddress().trim();
-      this.dispatchMessage(DIGITAL_ID_API_TOPIC.toString(), "Test Message :: ".concat(ipAddr).getBytes());
-    } catch (InterruptedException | TimeoutException | IOException e) {
-      e.printStackTrace();
     }
   }
 }

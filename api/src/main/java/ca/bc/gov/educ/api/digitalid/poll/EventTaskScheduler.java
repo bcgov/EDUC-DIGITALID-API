@@ -39,9 +39,9 @@ public class EventTaskScheduler {
     this.digitalIdEventRepository = digitalIdEventRepository;
   }
 
-/*  @Scheduled(cron = "0/1 * * * * *")
+  @Scheduled(cron = "0/1 * * * * *")
   @SchedulerLock(name = "EventTablePoller",
-          lockAtLeastFor = "900ms", lockAtMostFor = "950ms")*/
+          lockAtLeastFor = "900ms", lockAtMostFor = "950ms")
   public void pollEventTableAndPublish() throws InterruptedException, IOException, TimeoutException {
     List<DigitalIdEvent> events = getDigitalIdEventRepository().findByEventStatus(DB_COMMITTED.toString());
     if (!events.isEmpty()) {

@@ -40,9 +40,9 @@ public class DigitalIDApiResourceApplication {
               "/swagger-ui/**", "/health");
     }
   }
-/*  @Bean
+  @Bean
   public LockProvider lockProvider(@Autowired JdbcTemplate jdbcTemplate, @Autowired PlatformTransactionManager transactionManager) {
-    return new JdbcTemplateLockProvider(jdbcTemplate, transactionManager, "digital_id_shedlock");
-  }*/
+    return new JdbcTemplateLockProvider(jdbcTemplate, transactionManager, "DIGITAL_ID_SHEDLOCK");
+  }
 }
 
