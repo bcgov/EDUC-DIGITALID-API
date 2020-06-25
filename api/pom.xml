@@ -254,10 +254,14 @@
 			</plugin>
 		</plugins>
 	</build>
-<repositories>
-	<repository>
-		<id>oracle-xwiki</id>
-		<url>https://maven.xwiki.org/externals/</url>
-	</repository>
-</repositories>
+  <repositories>
+    <repository>
+      <id>central</id>
+      <url>https://repo1.maven.org/maven2</url>
+    </repository>
+    <repository>
+      <id>oracle-xwiki</id>
+      <url>https://maven.xwiki.org/externals/</url>
+    </repository>
+  </repositories>
 </project>
