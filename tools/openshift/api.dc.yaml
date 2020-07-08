@@ -43,10 +43,10 @@ objects:
           readinessProbe:
             tcpSocket:
               port: 8080
-            initialDelaySeconds: 60
-            periodSeconds: 30
+            initialDelaySeconds: 30
+            periodSeconds: 10
             timeoutSeconds: 5
-            failureThreshold: 5
+            failureThreshold: 20
             successThreshold: 1
           livenessProbe:
             httpGet:
