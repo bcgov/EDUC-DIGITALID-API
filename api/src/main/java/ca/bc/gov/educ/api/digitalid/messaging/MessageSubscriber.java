@@ -70,6 +70,7 @@ public class MessageSubscriber {
         try {
 
           Event event = JsonUtil.getJsonObjectFromString(Event.class, messageData);
+          log.info("received event for event type :: {} and saga ID :: {}", event.getEventType(), event.getSagaId());
           getEventHandlerService().handleEvent(event);
         } catch (final Exception ex) {
           log.error("Exception ", ex);
