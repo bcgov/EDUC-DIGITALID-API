@@ -107,6 +107,7 @@ public class MessagePublisher implements Closeable {
         try {
           log.trace("retrying connection as connection was lost :: retrying ::" + numOfRetries++);
           connection = connectionFactory.createConnection();
+          log.info("successfully reconnected after {} attempts", numOfRetries);
           break;
         } catch (IOException | InterruptedException ex) {
           log.error("exception occurred", ex);

@@ -93,6 +93,7 @@ public class MessageSubscriber {
           log.trace("retrying connection as connection was lost :: retrying ::" + numOfRetries++);
           connection = connectionFactory.createConnection();
           this.subscribe();
+          log.info("successfully reconnected after {} attempts", numOfRetries);
           break;
         } catch (IOException | InterruptedException | TimeoutException ex) {
           log.error("exception occurred", ex);
