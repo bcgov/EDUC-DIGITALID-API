@@ -5,15 +5,17 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 @Component
 public class DigitalIdRequestInterceptor extends HandlerInterceptorAdapter {
 
-    private static final Logger log = LoggerFactory.getLogger(DigitalIdRequestInterceptor.class);
+  private static final Logger log = LoggerFactory.getLogger(DigitalIdRequestInterceptor.class);
+  public static final String RESPONSE_STATUS = "RESPONSE STATUS: {}";
 
-    @Override
+  @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         if (request.getMethod() != null && request.getRequestURL() != null)
             log.info("{} {}", request.getMethod(), request.getRequestURL());
@@ -25,10 +27,13 @@ public class DigitalIdRequestInterceptor extends HandlerInterceptorAdapter {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         int status = response.getStatus();
-        if(status >= 200 && status < 300) {
-            log.info("RESPONSE STATUS: {}", status);
+        if(status == HttpStatus.NOT_FOUND.value()){
+          log.debug(RESPONSE_STATUS, status);
+        }
+        else if(status >= 200 && status < 300) {
+            log.info(RESPONSE_STATUS, status);
         } else {
-            log.error("RESPONSE STATUS: {}", status);
+            log.error(RESPONSE_STATUS, status);
         }
     }
 }
