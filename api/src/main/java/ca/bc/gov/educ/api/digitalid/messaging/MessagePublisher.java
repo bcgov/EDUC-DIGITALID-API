@@ -35,7 +35,7 @@ public class MessagePublisher implements Closeable {
   @Autowired
   public MessagePublisher(final ApplicationProperties applicationProperties, final EventHandlerService eventHandlerService) throws IOException, InterruptedException {
     this.eventHandlerService = eventHandlerService;
-    Options options = new Options.Builder().maxPingsOut(100)
+    Options options = new Options.Builder()
             .natsUrl(applicationProperties.getNatsUrl())
             .clusterId(applicationProperties.getNatsClusterId())
             .connectionLostHandler(this::connectionLostHandler)

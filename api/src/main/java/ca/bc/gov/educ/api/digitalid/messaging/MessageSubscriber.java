@@ -33,21 +33,22 @@ import static lombok.AccessLevel.PRIVATE;
  */
 @Component
 @Slf4j
+@SuppressWarnings("java:S2142")
 public class MessageSubscriber {
 
   @Getter(PRIVATE)
   private final EventHandlerService eventHandlerService;
   private StreamingConnection connection;
-  private StreamingConnectionFactory connectionFactory;
+  private final StreamingConnectionFactory connectionFactory;
 
   @Autowired
   public MessageSubscriber(final ApplicationProperties applicationProperties, final EventHandlerService eventHandlerService) throws IOException, InterruptedException {
     this.eventHandlerService = eventHandlerService;
-    Options options = new Options.Builder().maxPingsOut(100)
-            .natsUrl(applicationProperties.getNatsUrl())
-            .clusterId(applicationProperties.getNatsClusterId())
-            .clientId("digital-id-api-subscriber" + UUID.randomUUID().toString())
-            .connectionLostHandler(this::connectionLostHandler).build();
+    Options options = new Options.Builder()
+        .natsUrl(applicationProperties.getNatsUrl())
+        .clusterId(applicationProperties.getNatsClusterId())
+        .clientId("digital-id-api-subscriber" + UUID.randomUUID().toString())
+        .connectionLostHandler(this::connectionLostHandler).build();
     connectionFactory = new StreamingConnectionFactory(options);
     connection = connectionFactory.createConnection();
   }
@@ -85,28 +86,51 @@ public class MessageSubscriber {
   /**
    * This method will keep retrying for a connection.
    */
-  @SuppressWarnings("java:S2142")
+
   private void connectionLostHandler(StreamingConnection streamingConnection, Exception e) {
     if (e != null) {
       int numOfRetries = 1;
-      while (true) {
-        try {
-          log.trace("retrying connection as connection was lost :: retrying ::" + numOfRetries++);
-          connection = connectionFactory.createConnection();
-          this.subscribe();
-          log.info("successfully reconnected after {} attempts", numOfRetries);
-          break;
-        } catch (IOException | InterruptedException | TimeoutException ex) {
-          log.error("exception occurred", ex);
-          try {
-            double sleepTime = (2 * numOfRetries);
-            TimeUnit.SECONDS.sleep((long) sleepTime);
-          } catch (InterruptedException exc) {
-            log.error("exception occurred", exc);
-          }
+      numOfRetries = retryConnection(numOfRetries);
+      retrySubscription(numOfRetries);
+    }
+  }
 
+  private void retrySubscription(int numOfRetries) {
+    while (true) {
+      try {
+        log.trace("retrying subscription as connection was lost :: retrying ::" + numOfRetries++);
+        this.subscribe();
+        log.info("successfully resubscribed after {} attempts", numOfRetries);
+        break;
+      } catch (InterruptedException | TimeoutException | IOException exception) {
+        log.error("exception occurred while retrying subscription", exception);
+        try {
+          double sleepTime = (2 * numOfRetries);
+          TimeUnit.SECONDS.sleep((long) sleepTime);
+        } catch (InterruptedException exc) {
+          log.error("InterruptedException occurred while retrying subscription", exc);
         }
       }
     }
+  }
+
+  private int retryConnection(int numOfRetries) {
+    while (true) {
+      try {
+        log.trace("retrying connection as connection was lost :: retrying ::" + numOfRetries++);
+        connection = connectionFactory.createConnection();
+        log.info("successfully reconnected after {} attempts", numOfRetries);
+        break;
+      } catch (IOException | InterruptedException ex) {
+        log.error("exception occurred", ex);
+        try {
+          double sleepTime = (2 * numOfRetries);
+          TimeUnit.SECONDS.sleep((long) sleepTime);
+        } catch (InterruptedException exc) {
+          log.error("exception occurred", exc);
+        }
+      }
+    }
+    return numOfRetries;
   }
 }
