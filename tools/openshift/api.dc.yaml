@@ -114,17 +114,6 @@ objects:
             configMap:
               name: "${APP_NAME}-flb-sc-config-map"
     test: false
-    triggers:
-    - type: ConfigChange
-    - imageChangeParams:
-        automatic: true
-        containerNames: 
-        - "${APP_NAME}-${JOB_NAME}"
-        from:
-          kind: ImageStreamTag
-          name: "${REPO_NAME}-${JOB_NAME}:${TAG}"
-          namespace: "${NAMESPACE}"
-      type: ImageChange
 - apiVersion: v1
   kind: Service
   metadata:
