@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -34,7 +35,7 @@ import static lombok.AccessLevel.PRIVATE;
 @Component
 @Slf4j
 @SuppressWarnings("java:S2142")
-public class MessageSubscriber {
+public class MessageSubscriber implements Closeable {
 
   @Getter(PRIVATE)
   private final EventHandlerService eventHandlerService;
@@ -132,5 +133,17 @@ public class MessageSubscriber {
       }
     }
     return numOfRetries;
+  }
+  @Override
+  public void close() {
+    if(connection != null){
+      log.info("closing nats connection in the subscriber...");
+      try {
+        connection.close();
+      } catch (IOException | TimeoutException | InterruptedException e) {
+        log.error("error while closing nats connection in the subscriber...", e);
+      }
+      log.info("nats connection closed in the subscriber...");
+    }
   }
 }
