@@ -33,7 +33,7 @@ objects:
       spec:
         containers:
         - image: docker-registry.default.svc:5000/${NAMESPACE}/${REPO_NAME}-${JOB_NAME}:${TAG}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           volumeMounts:
             - name: tls-certs
               mountPath: "/etc/tls-certs"
@@ -70,7 +70,7 @@ objects:
               memory: "${MAX_MEM}"
         - image: fluent/fluent-bit
           name: "${APP_NAME}-${JOB_NAME}-fluent-bit-sidecar"
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           volumeMounts:
             - name: log-storage
               mountPath: /mnt/log
