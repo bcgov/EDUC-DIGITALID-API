@@ -1,4 +1,4 @@
-FROM maven:3-jdk-11 as build
+FROM api-base-spring-boot-2.3.2-template:latest as build
 WORKDIR /workspace/app
 
 COPY api/pom.xml .
