@@ -1,4 +1,4 @@
-FROM docker-registry.default.svc:5000/mvubjx-tools/api-base-spring-boot-2.3.2-template:latest as build
+FROM maven:3-jdk-11 as build
 WORKDIR /workspace/app
 
 COPY api/pom.xml .
