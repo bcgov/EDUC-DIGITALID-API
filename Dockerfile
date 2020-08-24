@@ -3,7 +3,7 @@ WORKDIR /workspace/app
 
 COPY api/pom.xml .
 COPY api/src src
-RUN mvn package -DskipTests
+RUN mvn clean package -DskipTests
 RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
 FROM openjdk:11-jdk
