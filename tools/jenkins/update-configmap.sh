@@ -44,11 +44,8 @@ $KCADM_FILE_BIN_FOLDER/kcadm.sh create client-scopes -r $SOAM_KC_REALM_ID --body
 ###########################################################
 #Setup for config-map
 ###########################################################
-SPLUNK_URL=""
-if [ "$envValue" != "prod" ]
-then
-  SPLUNK_URL="dev.splunk.educ.gov.bc.ca"
-  FLB_CONFIG="[SERVICE]
+SPLUNK_URL="gww.splunk.educ.gov.bc.ca"
+FLB_CONFIG="[SERVICE]
    Flush        1
    Daemon       Off
    Log_Level    debug
@@ -76,27 +73,6 @@ then
    Message_Key $APP_NAME
    Splunk_Token $SPLUNK_TOKEN
 "
-else
-  FLB_CONFIG="[SERVICE]
-   Flush        1
-   Daemon       Off
-   Log_Level    debug
-   HTTP_Server   On
-   HTTP_Listen   0.0.0.0
-   HTTP_Port     2020
-[INPUT]
-   Name   tail
-   Path   /mnt/log/*
-   Mem_Buf_Limit 20MB
-[FILTER]
-   Name record_modifier
-   Match *
-   Record hostname \${HOSTNAME}
-[OUTPUT]
-   Name   stdout
-   Match  *
-"
-fi
 
 echo
 echo Creating config map "$APP_NAME"-config-map
