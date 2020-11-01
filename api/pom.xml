@@ -9,15 +9,12 @@
 	<version>0.0.1-SNAPSHOT</version>
 
 	<properties>
-		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-		<sonar.surefire.reportsPath>${project.build.directory}/surefire-reports</sonar.surefire.reportsPath>
-		<sonar.jacoco.reportPaths>${project.build.directory}/coverage-reports/jacoco.exec</sonar.jacoco.reportPaths>
-		<sonar.projectVersion>${project.version}</sonar.projectVersion>
-		<!-- Enable language to disable other language analysis -->
 		<sonar.language>java</sonar.language>
-		<!-- Exclude few packages from sonar -->
 		<sonar.exclusions>src/main/resources/**,
-			src/main/java/ca/bc/gov/educ/api/digitalid/mappers/**,src/main/java/ca/bc/gov/educ/api/digitalid/exception/**,src/main/java/ca/bc/gov/educ/api/digitalid/model/**,src/main/java/ca/bc/gov/educ/api/digitalid/struct/**
+			src/main/java/ca/bc/gov/educ/api/digitalid/mappers/**,
+      src/main/java/ca/bc/gov/educ/api/digitalid/exception/**,
+      src/main/java/ca/bc/gov/educ/api/digitalid/model/**,
+      src/main/java/ca/bc/gov/educ/api/digitalid/struct/**
 		</sonar.exclusions>
 		<java.version>11</java.version>
 		<maven.compiler.version>3.8.0</maven.compiler.version>
