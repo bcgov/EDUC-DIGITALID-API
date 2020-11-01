@@ -14,7 +14,9 @@
 			src/main/java/ca/bc/gov/educ/api/digitalid/mappers/**,
       src/main/java/ca/bc/gov/educ/api/digitalid/exception/**,
       src/main/java/ca/bc/gov/educ/api/digitalid/model/**,
-      src/main/java/ca/bc/gov/educ/api/digitalid/struct/**
+      src/main/java/ca/bc/gov/educ/api/digitalid/struct/**,
+      src/main/java/ca/bc/gov/educ/api/digitalid/endpoint/**,
+      src/main/java/ca/bc/gov/educ/api/digitalid/messaging/**
 		</sonar.exclusions>
 		<java.version>11</java.version>
 		<maven.compiler.version>3.8.0</maven.compiler.version>
