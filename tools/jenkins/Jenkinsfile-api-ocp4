@@ -1,0 +1,107 @@
+pipeline{
+   agent any
+   environment{
+      extJSHelper = '';
+      DEBUG_OUTPUT = 'false'
+
+      NAMESPACE='mvubjx'
+      TOOLS = "${NAMESPACE}-tools"
+      DEV = "${NAMESPACE}-dev"
+
+      APP_NAME = 'digitalid-api'
+      REPO_NAME = "educ-${APP_NAME}"
+      OWNER = 'bcgov'
+      JOB_NAME = 'master'
+      TAG = 'latest'
+      TARGET_ENV = 'dev'
+      STAGING_ENV = 'Dev'
+      TARGET_ENVIRONMENT = "${NAMESPACE}-${TARGET_ENV}"
+
+      APP_DOMAIN = 'pathfinder.gov.bc.ca'
+      SOURCE_REPO_REF = 'master'
+      SOURCE_REPO_URL = 'https://github.com/${OWNER}/${REPO_NAME}.git'
+      DC_URL = "https://raw.githubusercontent.com/${OWNER}/${REPO_NAME}/master/tools/openshift/api.dc.ocp4.yaml"
+      MIN_REPLICAS = "1"
+      MAX_REPLICAS = "1"
+      MIN_CPU = "50m"
+      MAX_CPU = "300m"
+      MIN_MEM = "650Mi"
+      MAX_MEM = "750Mi"
+  }
+  stages{
+    stage('Initialize') {
+      steps {
+        script {
+          if(DEBUG_OUTPUT.equalsIgnoreCase('true')) {
+            // Force OpenShift Plugin directives to be verbose
+            openshift.logLevel(1)
+
+            // Print all environment variables
+            echo 'DEBUG - All pipeline environment variables:'
+            echo sh(returnStdout: true, script: 'env')
+          }
+
+          sh "wget -O - https://raw.githubusercontent.com/bcgov/EDUC-INFRA-COMMON/master/openshift/common-deployment/deployHelpers.js > deployHelpers.js"
+          extJSHelper = evaluate readFile('deployHelpers.js')
+        }
+      }
+    }
+    stage('Build App') {
+      steps {
+        script {
+          openshift.withCluster() {
+            openshift.withProject(TOOLS) {
+              try {
+                echo "Building API..."
+                def bcBackend = openshift.process('-f', 'https://raw.githubusercontent.com/${OWNER}/${REPO_NAME}/master/tools/openshift/api.bc.yaml', "REPO_NAME=${REPO_NAME}-${JOB_NAME}", "JOB_NAME=${JOB_NAME}", "SOURCE_REPO_URL=${SOURCE_REPO_URL}", "SOURCE_REPO_REF=${SOURCE_REPO_REF}")
+                openshift.apply(bcBackend).narrow('bc').startBuild('-w').logs('-f')
+
+                openshift.tag("${REPO_NAME}-${JOB_NAME}:latest", "${REPO_NAME}-${JOB_NAME}:${JOB_NAME}")
+              } catch (e) {
+                echo "API build failed"
+                throw e
+              }
+            }
+          }
+        }
+      }
+      post {
+        success {
+          echo 'Cleanup BuildConfigs'
+          script {
+              openshift.withCluster() {
+                openshift.withProject(TOOLS) {
+                  def bcApi = openshift.selector('bc', "${REPO_NAME}-${JOB_NAME}")
+
+                  if(bcApi.exists()) {
+                      echo "Removing BuildConfig ${REPO_NAME}-${JOB_NAME}"
+                      bcApi.delete()
+                  }
+                }
+              }
+            }
+        }
+        failure {
+          echo 'Build stage failed'
+        }
+      }
+    }
+	stage('Promote and configure DEV') {
+      steps{
+        script{
+            extJSHelper.performApiDeploy(STAGING_ENV, TARGET_ENVIRONMENT, REPO_NAME, APP_NAME, JOB_NAME, TAG, TOOLS, TARGET_ENVIRONMENT, APP_DOMAIN, DC_URL, MIN_REPLICAS, MAX_REPLICAS, MIN_CPU, MAX_CPU, MIN_MEM, MAX_MEM, TARGET_ENV, NAMESPACE)
+        }
+      }
+      post{
+        success{
+          echo 'Deployment to Dev was successful'
+        }
+        failure{
+          echo 'Deployment to Dev failed'
+        }
+      }
+    }
+  }
+}
+
+
