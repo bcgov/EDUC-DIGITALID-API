@@ -17,7 +17,7 @@ pipeline{
       STAGING_ENV = 'Dev'
       TARGET_ENVIRONMENT = "${NAMESPACE}-${TARGET_ENV}"
 
-      APP_DOMAIN = 'pathfinder.gov.bc.ca'
+      APP_DOMAIN = 'apps.silver.devops.gov.bc.ca'
       SOURCE_REPO_REF = 'master'
       SOURCE_REPO_URL = 'https://github.com/${OWNER}/${REPO_NAME}.git'
       DC_URL = "https://raw.githubusercontent.com/${OWNER}/${REPO_NAME}/master/tools/openshift/api.dc.ocp4.yaml"

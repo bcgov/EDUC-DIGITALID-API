@@ -52,7 +52,7 @@ export repo_url=https://github.com/bcgov/EDUC-PEN
 #### Application details
 ```sh
 export app_name=PEN
-export app_domain=pathfinder.gov.bc.ca
+export app_domain=apps.silver.devops.gov.bc.ca
 ```
 
 ### Login to OpenShift
