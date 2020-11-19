@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.TimeoutException;
 
 import static ca.bc.gov.educ.api.digitalid.constants.EventStatus.DB_COMMITTED;
 import static ca.bc.gov.educ.api.digitalid.constants.EventType.DIGITAL_ID_EVENT_OUTBOX_PROCESSED;
@@ -29,29 +28,29 @@ import static lombok.AccessLevel.PRIVATE;
 public class EventTaskScheduler {
 
   @Getter(PRIVATE)
-  private final MessagePublisher messagePubSub;
+  private final MessagePublisher messagePublisher;
   @Getter(PRIVATE)
   private final DigitalIdEventRepository digitalIdEventRepository;
 
   @Autowired
-  public EventTaskScheduler(MessagePublisher messagePubSub, DigitalIdEventRepository digitalIdEventRepository) {
-    this.messagePubSub = messagePubSub;
+  public EventTaskScheduler(MessagePublisher messagePublisher, DigitalIdEventRepository digitalIdEventRepository) {
+    this.messagePublisher = messagePublisher;
     this.digitalIdEventRepository = digitalIdEventRepository;
   }
 
   @Scheduled(cron = "0/1 * * * * *")
   @SchedulerLock(name = "EventTablePoller",
           lockAtLeastFor = "900ms", lockAtMostFor = "950ms")
-  public void pollEventTableAndPublish() throws InterruptedException, IOException, TimeoutException {
+  public void pollEventTableAndPublish() throws IOException {
     List<DigitalIdEvent> events = getDigitalIdEventRepository().findByEventStatus(DB_COMMITTED.toString());
     if (!events.isEmpty()) {
       for (DigitalIdEvent event : events) {
         try {
           if (event.getReplyChannel() != null) {
-            getMessagePubSub().dispatchMessage(event.getReplyChannel(), digitalIdEventProcessed(event));
+            getMessagePublisher().dispatchMessage(event.getReplyChannel(), digitalIdEventProcessed(event));
           }
-          getMessagePubSub().dispatchMessage(DIGITAL_ID_API_TOPIC.toString(), createOutboxEvent(event));
-        } catch (InterruptedException | TimeoutException | IOException e) {
+          getMessagePublisher().dispatchMessage(DIGITAL_ID_API_TOPIC.toString(), createOutboxEvent(event));
+        } catch (IOException e) {
           log.error("exception occurred", e);
           throw e;
         }

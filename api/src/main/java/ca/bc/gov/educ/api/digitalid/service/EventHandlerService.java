@@ -5,7 +5,6 @@ import ca.bc.gov.educ.api.digitalid.mappers.DigitalIDMapper;
 import ca.bc.gov.educ.api.digitalid.model.DigitalIDEntity;
 import ca.bc.gov.educ.api.digitalid.model.DigitalIdEvent;
 import ca.bc.gov.educ.api.digitalid.repository.DigitalIDRepository;
-
 import ca.bc.gov.educ.api.digitalid.repository.DigitalIdEventRepository;
 import ca.bc.gov.educ.api.digitalid.struct.DigitalID;
 import ca.bc.gov.educ.api.digitalid.struct.Event;
@@ -16,11 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -50,6 +49,7 @@ public class EventHandlerService {
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @Async("subscriberExecutor")
   public void handleEvent(Event event) {
     try {
       switch (event.getEventType()) {
