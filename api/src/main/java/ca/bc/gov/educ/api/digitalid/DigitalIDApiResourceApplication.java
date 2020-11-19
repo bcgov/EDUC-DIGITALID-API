@@ -17,6 +17,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.concurrent.Executor;
@@ -39,6 +40,15 @@ public class DigitalIDApiResourceApplication {
   @Configuration
   static
   class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+    /**
+     * Instantiates a new Web security configuration.
+     * This makes sure that security context is propagated to async threads as well.
+     */
+    public WebSecurityConfiguration() {
+      super();
+      SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+    }
 
     @Override
     public void configure(WebSecurity web) {
