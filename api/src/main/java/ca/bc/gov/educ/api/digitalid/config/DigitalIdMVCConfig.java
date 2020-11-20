@@ -20,6 +20,6 @@ public class DigitalIdMVCConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(digitalIdRequestInterceptor).addPathPatterns("/**/**/");
+        registry.addInterceptor(digitalIdRequestInterceptor).addPathPatterns("/**");
     }
 }

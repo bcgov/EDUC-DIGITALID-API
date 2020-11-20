@@ -1,5 +1,6 @@
 package ca.bc.gov.educ.api.digitalid;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.javacrumbs.shedlock.core.LockProvider;
 import net.javacrumbs.shedlock.provider.jdbctemplate.JdbcTemplateLockProvider;
 import net.javacrumbs.shedlock.spring.annotation.EnableSchedulerLock;
@@ -11,11 +12,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.PlatformTransactionManager;
+
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 @SpringBootApplication
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -23,6 +30,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @EnableScheduling
 @EnableSchedulerLock(defaultLockAtMostFor = "1s")
 @EnableRetry
+@EnableAsync
 public class DigitalIDApiResourceApplication {
 
   public static void main(String[] args) {
@@ -32,6 +40,15 @@ public class DigitalIDApiResourceApplication {
   @Configuration
   static
   class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+    /**
+     * Instantiates a new Web security configuration.
+     * This makes sure that security context is propagated to async threads as well.
+     */
+    public WebSecurityConfiguration() {
+      super();
+      SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+    }
 
     @Override
     public void configure(WebSecurity web) {
@@ -43,6 +60,17 @@ public class DigitalIDApiResourceApplication {
   @Bean
   public LockProvider lockProvider(@Autowired JdbcTemplate jdbcTemplate, @Autowired PlatformTransactionManager transactionManager) {
     return new JdbcTemplateLockProvider(jdbcTemplate, transactionManager, "DIGITAL_ID_SHEDLOCK");
+  }
+  /**
+   * Thread pool task executor executor.
+   *
+   * @return the executor
+   */
+  @Bean(name = "subscriberExecutor")
+  public Executor threadPoolTaskExecutor() {
+    ThreadFactory namedThreadFactory =
+        new ThreadFactoryBuilder().setNameFormat("message-subscriber-%d").build();
+    return Executors.newFixedThreadPool(2, namedThreadFactory);
   }
 }
 
