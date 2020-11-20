@@ -68,9 +68,11 @@ objects:
             limits:
               cpu: "${MAX_CPU}"
               memory: "${MAX_MEM}"
-        - image: fluent/fluent-bit
+        - image: docker-remote.artifacts.developer.gov.bc.ca/fluent/fluent-bit
           name: "${APP_NAME}-${JOB_NAME}-fluent-bit-sidecar"
           imagePullPolicy: Always
+          imagePullSecrets:
+            - name: artifactory-creds
           volumeMounts:
             - name: log-storage
               mountPath: /mnt/log

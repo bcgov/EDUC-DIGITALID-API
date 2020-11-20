@@ -52,6 +52,8 @@ objects:
         type: Git
       strategy:
         dockerStrategy:
+          pullSecret:
+            name: artifactory-creds
           env:
             - name: BUILD_LOGLEVEL
               value: '2'
