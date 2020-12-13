@@ -23,7 +23,7 @@ public class AsyncConfiguration {
   public Executor threadPoolTaskExecutor() {
     ThreadFactory namedThreadFactory =
       new ThreadFactoryBuilder().setNameFormat("message-subscriber-%d").build();
-    return Executors.newFixedThreadPool(1, namedThreadFactory);
+    return Executors.newFixedThreadPool(5, namedThreadFactory);
   }
 
 }
