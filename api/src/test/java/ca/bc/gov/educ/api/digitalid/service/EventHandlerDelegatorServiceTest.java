@@ -24,8 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static ca.bc.gov.educ.api.digitalid.constants.EventOutcome.DIGITAL_ID_NOT_FOUND;
-import static ca.bc.gov.educ.api.digitalid.constants.EventOutcome.DIGITAL_ID_UPDATED;
+import static ca.bc.gov.educ.api.digitalid.constants.EventOutcome.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -83,7 +82,22 @@ public class EventHandlerDelegatorServiceTest {
     eventHandlerDelegatorService.handleEvent(event);
     verify(messagePublisher, atLeastOnce()).dispatchMessage(eq("PROFILE_REQUEST_SAGA_TOPIC"), eventCaptor.capture());
     var natsResponse = new String(eventCaptor.getValue());
-    assertThat(natsResponse.contains(DIGITAL_ID_UPDATED.toString())).isEqualTo(true);
+    assertThat(natsResponse.contains(DIGITAL_ID_UPDATED.toString())).isTrue();
+  }
+
+  @Test
+  public void handleEventUpdateDigitalID_givenReplayScenarioAndDBOperationSuccess_shouldSendResponseMessageToNATS() throws JsonProcessingException {
+    Event event = Event.builder()
+      .eventType(EventType.UPDATE_DIGITAL_ID)
+      .eventPayload(createDidUpdatePayload("BCEID"))
+      .replyTo("PROFILE_REQUEST_SAGA_TOPIC")
+      .sagaId(UUID.randomUUID())
+      .build();
+    eventHandlerDelegatorService.handleEvent(event);
+    eventHandlerDelegatorService.handleEvent(event);
+    verify(messagePublisher, atLeast(2)).dispatchMessage(eq("PROFILE_REQUEST_SAGA_TOPIC"), eventCaptor.capture());
+    var natsResponse = new String(eventCaptor.getValue());
+    assertThat(natsResponse.contains(DIGITAL_ID_UPDATED.toString())).isTrue();
   }
 
   @Test
@@ -99,7 +113,7 @@ public class EventHandlerDelegatorServiceTest {
     eventHandlerDelegatorService.handleEvent(event);
     verify(messagePublisher, atLeastOnce()).dispatchMessage(eq("PROFILE_REQUEST_SAGA_TOPIC"), eventCaptor.capture());
     var natsResponse = new String(eventCaptor.getValue());
-    assertThat(natsResponse.contains(DIGITAL_ID_NOT_FOUND.toString())).isEqualTo(true);
+    assertThat(natsResponse.contains(DIGITAL_ID_NOT_FOUND.toString())).isTrue();
   }
 
   @Test
@@ -125,7 +139,22 @@ public class EventHandlerDelegatorServiceTest {
     eventHandlerDelegatorService.handleEvent(event);
     verify(messagePublisher, atLeastOnce()).dispatchMessage(eq("PROFILE_REQUEST_SAGA_TOPIC"), eventCaptor.capture());
     var natsResponse = new String(eventCaptor.getValue());
-    assertThat(natsResponse.contains(DIGITAL_ID_NOT_FOUND.toString())).isEqualTo(true);
+    assertThat(natsResponse.contains(DIGITAL_ID_NOT_FOUND.toString())).isTrue();
+  }
+
+  @Test
+  public void handleEventGetDigitalID_givenReplayScenarioAndDBOperationSuccess_shouldSendResponseMessageToNATS() {
+    Event event = Event.builder()
+      .eventType(EventType.GET_DIGITAL_ID)
+      .eventPayload(did.toString())
+      .replyTo("PROFILE_REQUEST_SAGA_TOPIC")
+      .sagaId(UUID.randomUUID())
+      .build();
+    eventHandlerDelegatorService.handleEvent(event);
+    eventHandlerDelegatorService.handleEvent(event);
+    verify(messagePublisher, atLeast(2)).dispatchMessage(eq("PROFILE_REQUEST_SAGA_TOPIC"), eventCaptor.capture());
+    var natsResponse = new String(eventCaptor.getValue());
+    assertThat(natsResponse.contains(DIGITAL_ID_FOUND.toString())).isTrue();
   }
 
   private String createDidUpdatePayload(String identityTypeCode) throws JsonProcessingException {
