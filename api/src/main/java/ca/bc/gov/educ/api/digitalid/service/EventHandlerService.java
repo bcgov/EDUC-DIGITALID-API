@@ -46,7 +46,7 @@ public class EventHandlerService {
     this.digitalIdEventRepository = digitalIdEventRepository;
   }
 
-  @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public byte[] handleGetDigitalIdEvent(Event event) throws JsonProcessingException {
     val digitalIdEventOptional = getDigitalIdEventRepository().findBySagaIdAndEventType(event.getSagaId(), event.getEventType().toString());
     DigitalIdEvent digitalIdEvent;
