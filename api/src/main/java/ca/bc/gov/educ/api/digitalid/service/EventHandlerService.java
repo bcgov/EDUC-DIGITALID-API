@@ -1,6 +1,7 @@
 package ca.bc.gov.educ.api.digitalid.service;
 
 import ca.bc.gov.educ.api.digitalid.constants.EventOutcome;
+import ca.bc.gov.educ.api.digitalid.constants.EventType;
 import ca.bc.gov.educ.api.digitalid.mappers.DigitalIDMapper;
 import ca.bc.gov.educ.api.digitalid.model.DigitalIDEntity;
 import ca.bc.gov.educ.api.digitalid.model.DigitalIdEvent;
@@ -15,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static ca.bc.gov.educ.api.digitalid.constants.EventStatus.DB_COMMITTED;
 import static ca.bc.gov.educ.api.digitalid.constants.EventStatus.MESSAGE_PUBLISHED;
 import static lombok.AccessLevel.PRIVATE;
 
@@ -35,7 +34,6 @@ public class EventHandlerService {
   public static final String RECORD_FOUND_FOR_SAGA_ID_EVENT_TYPE = "record found for the saga id and event type combination, might be a duplicate or replay," +
           " just updating the db status so that it will be polled and sent back again.";
   public static final String EVENT_LOG = "event is :: {}";
-  public static final String PAYLOAD_LOG = "Payload is :: ";
   @Getter(PRIVATE)
   private final DigitalIDRepository digitalIDRepository;
   private static final DigitalIDMapper mapper = DigitalIDMapper.mapper;
@@ -48,39 +46,11 @@ public class EventHandlerService {
     this.digitalIdEventRepository = digitalIdEventRepository;
   }
 
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
-  @Async("subscriberExecutor")
-  public void handleEvent(Event event) {
-    try {
-      switch (event.getEventType()) {
-        case DIGITAL_ID_EVENT_OUTBOX_PROCESSED:
-          log.info("received outbox processed event :: ");
-          log.trace(PAYLOAD_LOG + event.getEventPayload());
-          handleDigitalIdOutboxProcessedEvent(event.getEventPayload());
-          break;
-        case UPDATE_DIGITAL_ID:
-          log.info("received update digital id event :: ");
-          log.trace(PAYLOAD_LOG + event.getEventPayload());
-          handleUpdateDigitalIdEvent(event);
-          break;
-        case GET_DIGITAL_ID:
-          log.info("received get digital id event :: ");
-          log.trace(PAYLOAD_LOG + event.getEventPayload());
-          handleGetDigitalIdEvent(event);
-          break;
-        default:
-          log.info("silently ignoring other events.");
-          break;
-      }
-    } catch (final Exception e) {
-      log.error("Exception", e);
-    }
-  }
-
-  private void handleGetDigitalIdEvent(Event event) throws JsonProcessingException {
+  @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+  public byte[] handleGetDigitalIdEvent(Event event) throws JsonProcessingException {
     val digitalIdEventOptional = getDigitalIdEventRepository().findBySagaIdAndEventType(event.getSagaId(), event.getEventType().toString());
     DigitalIdEvent digitalIdEvent;
-    if (!digitalIdEventOptional.isPresent()) {
+    if (digitalIdEventOptional.isEmpty()) {
       log.info(NO_RECORD_SAGA_ID_EVENT_TYPE);
       log.trace("Event is {}", event);
       UUID digitalId = UUID.fromString(event.getEventPayload());
@@ -97,16 +67,18 @@ public class EventHandlerService {
       log.info(RECORD_FOUND_FOR_SAGA_ID_EVENT_TYPE);
       log.trace(EVENT_LOG, event);
       digitalIdEvent = digitalIdEventOptional.get();
-      digitalIdEvent.setEventStatus(DB_COMMITTED.toString());
+      digitalIdEvent.setUpdateDate(LocalDateTime.now());
     }
 
     getDigitalIdEventRepository().save(digitalIdEvent);
+    return createResponseEvent(digitalIdEvent);
   }
 
-  private void handleUpdateDigitalIdEvent(Event event) throws JsonProcessingException {
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  public byte[] handleUpdateDigitalIdEvent(Event event) throws JsonProcessingException {
     val digitalIdEventOptional = getDigitalIdEventRepository().findBySagaIdAndEventType(event.getSagaId(), event.getEventType().toString());
     DigitalIdEvent digitalIdEvent;
-    if (!digitalIdEventOptional.isPresent()) {
+    if (digitalIdEventOptional.isEmpty()) {
       log.info(NO_RECORD_SAGA_ID_EVENT_TYPE);
       log.trace(EVENT_LOG, event);
       DigitalIDEntity entity = mapper.toModel(JsonUtil.getJsonObjectFromString(DigitalID.class, event.getEventPayload()));
@@ -126,19 +98,19 @@ public class EventHandlerService {
       log.info(RECORD_FOUND_FOR_SAGA_ID_EVENT_TYPE);
       log.trace(EVENT_LOG, event);
       digitalIdEvent = digitalIdEventOptional.get();
-      digitalIdEvent.setEventStatus(DB_COMMITTED.toString());
+      digitalIdEvent.setUpdateDate(LocalDateTime.now());
     }
-
     getDigitalIdEventRepository().save(digitalIdEvent);
+    return createResponseEvent(digitalIdEvent);
   }
 
-  private void handleDigitalIdOutboxProcessedEvent(String digitalIdEventId) {
-    val digitalIdEvent = getDigitalIdEventRepository().findById(UUID.fromString(digitalIdEventId));
-    if (digitalIdEvent.isPresent()) {
-      val digIdEvent = digitalIdEvent.get();
-      digIdEvent.setEventStatus(MESSAGE_PUBLISHED.toString());
-      getDigitalIdEventRepository().save(digIdEvent);
-    }
+  private byte[] createResponseEvent(DigitalIdEvent digitalIdEvent) throws JsonProcessingException {
+    Event responseEvent = Event.builder()
+      .sagaId(digitalIdEvent.getSagaId())
+      .eventType(EventType.valueOf(digitalIdEvent.getEventType()))
+      .eventOutcome(EventOutcome.valueOf(digitalIdEvent.getEventOutcome()))
+      .eventPayload(digitalIdEvent.getEventPayload()).build();
+    return JsonUtil.getJsonSBytesFromObject(responseEvent);
   }
 
 
@@ -151,7 +123,7 @@ public class EventHandlerService {
             .eventPayload(event.getEventPayload())
             .eventType(event.getEventType().toString())
             .sagaId(event.getSagaId())
-            .eventStatus(DB_COMMITTED.toString())
+            .eventStatus(MESSAGE_PUBLISHED.toString())
             .eventOutcome(event.getEventOutcome().toString())
             .replyChannel(event.getReplyTo())
             .build();

@@ -38,7 +38,7 @@ public class DigitalIDEntity {
   @Column(name = "student_id", unique = true, columnDefinition = "BINARY(16)")
   UUID studentID;
 
-  @Column(name = "identity_type_code")
+  @Column(name = "identity_type_code", length = 10)
   String identityTypeCode;
 
   @Column(name = "identity_value")
@@ -47,17 +47,17 @@ public class DigitalIDEntity {
   @Column(name = "last_access_date")
   LocalDateTime lastAccessDate;
 
-  @Column(name = "last_access_channel_code")
+  @Column(name = "last_access_channel_code", length = 10)
   String lastAccessChannelCode;
 
-  @Column(name = "create_user", updatable = false)
+  @Column(name = "create_user", updatable = false, length = 32)
   String createUser;
 
   @PastOrPresent
   @Column(name = "create_date", updatable = false)
   LocalDateTime createDate;
 
-  @Column(name = "update_user")
+  @Column(name = "update_user", length = 32)
   String updateUser;
 
   @PastOrPresent

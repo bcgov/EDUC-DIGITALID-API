@@ -3,7 +3,6 @@ package ca.bc.gov.educ.api.digitalid.support;
 
 import ca.bc.gov.educ.api.digitalid.messaging.MessagePublisher;
 import ca.bc.gov.educ.api.digitalid.messaging.MessageSubscriber;
-import ca.bc.gov.educ.api.digitalid.poll.EventTaskScheduler;
 import io.nats.client.Connection;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
@@ -24,12 +23,6 @@ public class MockConfiguration {
   @Primary
   public MessageSubscriber messageSubscriber() {
     return Mockito.mock(MessageSubscriber.class);
-  }
-
-  @Bean
-  @Primary
-  public EventTaskScheduler eventTaskScheduler() {
-    return Mockito.mock(EventTaskScheduler.class);
   }
 
   @Bean

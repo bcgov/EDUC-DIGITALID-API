@@ -1,6 +1,6 @@
 package ca.bc.gov.educ.api.digitalid.messaging;
 
-import ca.bc.gov.educ.api.digitalid.service.EventHandlerService;
+import ca.bc.gov.educ.api.digitalid.service.EventHandlerDelegatorService;
 import ca.bc.gov.educ.api.digitalid.struct.Event;
 import ca.bc.gov.educ.api.digitalid.utils.JsonUtil;
 import io.nats.client.Connection;
@@ -19,11 +19,11 @@ import static ca.bc.gov.educ.api.digitalid.constants.Topics.DIGITAL_ID_API_TOPIC
 @Slf4j
 public class MessageSubscriber extends MessagePubSub {
 
-  private final EventHandlerService eventHandlerService;
+  private final EventHandlerDelegatorService eventHandlerDelegatorService;
 
   @Autowired
-  public MessageSubscriber(final Connection con, EventHandlerService eventHandlerService) {
-    this.eventHandlerService = eventHandlerService;
+  public MessageSubscriber(final Connection con, EventHandlerDelegatorService eventHandlerDelegatorService) {
+    this.eventHandlerDelegatorService = eventHandlerDelegatorService;
     super.connection = con;
   }
 
@@ -46,12 +46,10 @@ public class MessageSubscriber extends MessagePubSub {
   private MessageHandler onMessage() {
     return (Message message) -> {
       if (message != null) {
-        log.info("Message received is :: {} ", message);
         try {
           var eventString = new String(message.getData());
           var event = JsonUtil.getJsonObjectFromString(Event.class, eventString);
-          eventHandlerService.handleEvent(event);
-          log.debug("Event is :: {}", event);
+          eventHandlerDelegatorService.handleEvent(event);
         } catch (final Exception e) {
           log.error("Exception ", e);
         }

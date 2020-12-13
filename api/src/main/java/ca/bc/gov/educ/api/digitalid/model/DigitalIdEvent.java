@@ -30,14 +30,14 @@ public class DigitalIdEvent {
   private UUID eventId;
 
   @NotNull(message = "eventPayload cannot be null")
-  @Column(name = "EVENT_PAYLOAD")
+  @Column(name = "EVENT_PAYLOAD", length = 4000)
   private String eventPayload;
 
   @NotNull(message = "eventStatus cannot be null")
-  @Column(name = "EVENT_STATUS")
+  @Column(name = "EVENT_STATUS", length = 50)
   private String eventStatus;
   @NotNull(message = "eventType cannot be null")
-  @Column(name = "EVENT_TYPE")
+  @Column(name = "EVENT_TYPE", length = 100)
   private String eventType;
   @Column(name = "CREATE_USER", updatable = false)
   String createUser;
@@ -52,8 +52,8 @@ public class DigitalIdEvent {
   @Column(name = "SAGA_ID", updatable = false)
   private UUID sagaId;
   @NotNull(message = "eventOutcome cannot be null.")
-  @Column(name = "EVENT_OUTCOME")
+  @Column(name = "EVENT_OUTCOME", length = 100, nullable = false)
   private String eventOutcome;
-  @Column(name = "REPLY_CHANNEL")
+  @Column(name = "REPLY_CHANNEL", length = 100)
   private String replyChannel;
 }
