@@ -27,14 +27,14 @@ public class EventHandlerDelegatorService {
     try {
       switch (event.getEventType()) {
         case UPDATE_DIGITAL_ID:
-          log.info("received update digital id event :: ");
+          log.info("received update digital id event :: {}", event.getSagaId());
           log.trace(PAYLOAD_LOG + event.getEventPayload());
           response = eventHandlerService.handleUpdateDigitalIdEvent(event);
           log.info("responding back to NATS on {} channel ", event.getReplyTo());
           messagePublisher.dispatchMessage(event.getReplyTo(), response);
           break;
         case GET_DIGITAL_ID:
-          log.info("received get digital id event :: ");
+          log.info("received get digital id event :: {}", event.getSagaId());
           log.trace(PAYLOAD_LOG + event.getEventPayload());
           response = eventHandlerService.handleGetDigitalIdEvent(event);
           log.info("responding back to NATS on {} channel ", event.getReplyTo());
