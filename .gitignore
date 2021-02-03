@@ -8,7 +8,7 @@
 /api/digitalid-api.iml
 .project
 .classpath
-application-devlocal.properties
+application-dev*.properties
 *.jks
 /api/src/main/resources/keystore/
 ojdbc8.jar

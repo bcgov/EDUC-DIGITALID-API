@@ -10,12 +10,13 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-public class MessagePublisher extends MessagePubSub {
+public class MessagePublisher {
 
+  private final Connection connection;
 
   @Autowired
   public MessagePublisher(final Connection con) {
-    super.connection = con;
+    this.connection = con;
   }
 
   /**
