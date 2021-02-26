@@ -17,7 +17,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,7 +34,6 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
  */
 
 @RestController
-@EnableResourceServer
 @Slf4j
 public class DigitalIDController implements DigitalIDEndpoint {
   private static final DigitalIDMapper mapper = DigitalIDMapper.mapper;

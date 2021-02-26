@@ -23,38 +23,38 @@ import static org.springframework.http.HttpStatus.CREATED;
 public interface DigitalIDEndpoint {
 
   @GetMapping
-  @PreAuthorize("#oauth2.hasScope('READ_DIGITALID')")
+  @PreAuthorize("hasAuthority('SCOPE_READ_DIGITALID')")
   @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "NOT FOUND.")})
   DigitalID searchDigitalID(@RequestParam("identitytype") String typeCode, @RequestParam("identityvalue") String typeValue);
 
   @GetMapping("/{id}")
-  @PreAuthorize("#oauth2.hasScope('READ_DIGITALID')")
+  @PreAuthorize("hasAuthority('SCOPE_READ_DIGITALID')")
   @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "NOT FOUND.")})
   DigitalID retrieveDigitalID(@PathVariable String id);
 
   @PostMapping
-  @PreAuthorize("#oauth2.hasScope('WRITE_DIGITALID')")
+  @PreAuthorize("hasAuthority('SCOPE_WRITE_DIGITALID')")
   @ApiResponses(value = {@ApiResponse(responseCode = "400", description = "BAD REQUEST"), @ApiResponse(responseCode = "201", description = "CREATED.")})
   @ResponseStatus(code = CREATED)
   DigitalID createDigitalID(@Validated @RequestBody DigitalID digitalID);
 
   @PutMapping
-  @PreAuthorize("#oauth2.hasScope('WRITE_DIGITALID')")
+  @PreAuthorize("hasAuthority('SCOPE_WRITE_DIGITALID')")
   @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "NOT FOUND.")})
   DigitalID updateDigitalID(@Validated @RequestBody DigitalID digitalID);
 
   @GetMapping("/accessChannelCodes")
-  @PreAuthorize("#oauth2.hasScope('READ_DIGITALID_CODETABLE')")
+  @PreAuthorize("hasAuthority('SCOPE_READ_DIGITALID_CODETABLE')")
   @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
   List<AccessChannelCode> retrieveAccessChannelCodes();
   
   @GetMapping("/identityTypeCodes")
-  @PreAuthorize("#oauth2.hasScope('READ_DIGITALID_CODETABLE')")
+  @PreAuthorize("hasAuthority('SCOPE_READ_DIGITALID_CODETABLE')")
   @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
   List<IdentityTypeCode> retrieveIdentityTypeCodes();
 
   @DeleteMapping("/{id}")
-  @PreAuthorize("#oauth2.hasScope('DELETE_DIGITALID')")
+  @PreAuthorize("hasAuthority('SCOPE_DELETE_DIGITALID')")
   @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "NO CONTENT"),  @ApiResponse(responseCode = "404", description = "NOT FOUND."), @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR.")})
   ResponseEntity<Void> deleteById(@PathVariable UUID id);
 
