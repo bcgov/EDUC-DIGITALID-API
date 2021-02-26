@@ -21,9 +21,9 @@ public class AsyncConfiguration {
    */
   @Bean(name = "subscriberExecutor")
   public Executor threadPoolTaskExecutor() {
-    ThreadFactory namedThreadFactory =
-      new ThreadFactoryBuilder().setNameFormat("message-subscriber-%d").build();
-    return Executors.newFixedThreadPool(5, namedThreadFactory);
+    return new EnhancedQueueExecutor.Builder()
+            .setThreadFactory(new ThreadFactoryBuilder().setNameFormat("message-subscriber-%d").build())
+            .setCorePoolSize(5).setMaximumPoolSize(10).setKeepAliveTime(Duration.ofSeconds(60)).build();
   }
 
 }
