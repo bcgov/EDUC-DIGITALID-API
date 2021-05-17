@@ -1,6 +1,6 @@
 package ca.bc.gov.educ.api.digitalid.repository;
 
-import ca.bc.gov.educ.api.digitalid.model.DigitalIdEvent;
+import ca.bc.gov.educ.api.digitalid.model.v1.DigitalIdEvent;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

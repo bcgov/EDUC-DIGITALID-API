@@ -1,14 +1,14 @@
-package ca.bc.gov.educ.api.digitalid.service;
+package ca.bc.gov.educ.api.digitalid.service.v1;
 
 import ca.bc.gov.educ.api.digitalid.constants.EventOutcome;
 import ca.bc.gov.educ.api.digitalid.constants.EventType;
 import ca.bc.gov.educ.api.digitalid.mappers.DigitalIDMapper;
-import ca.bc.gov.educ.api.digitalid.model.DigitalIDEntity;
-import ca.bc.gov.educ.api.digitalid.model.DigitalIdEvent;
+import ca.bc.gov.educ.api.digitalid.model.v1.DigitalIDEntity;
+import ca.bc.gov.educ.api.digitalid.model.v1.DigitalIdEvent;
 import ca.bc.gov.educ.api.digitalid.repository.DigitalIDRepository;
 import ca.bc.gov.educ.api.digitalid.repository.DigitalIdEventRepository;
-import ca.bc.gov.educ.api.digitalid.struct.DigitalID;
-import ca.bc.gov.educ.api.digitalid.struct.Event;
+import ca.bc.gov.educ.api.digitalid.struct.v1.DigitalID;
+import ca.bc.gov.educ.api.digitalid.struct.v1.Event;
 import ca.bc.gov.educ.api.digitalid.utils.JsonUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.Getter;
@@ -47,14 +47,14 @@ public class EventHandlerService {
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public byte[] handleGetDigitalIdEvent(Event event) throws JsonProcessingException {
-    val digitalIdEventOptional = getDigitalIdEventRepository().findBySagaIdAndEventType(event.getSagaId(), event.getEventType().toString());
-    DigitalIdEvent digitalIdEvent;
+  public byte[] handleGetDigitalIdEvent(final Event event) throws JsonProcessingException {
+    val digitalIdEventOptional = this.getDigitalIdEventRepository().findBySagaIdAndEventType(event.getSagaId(), event.getEventType().toString());
+    final DigitalIdEvent digitalIdEvent;
     if (digitalIdEventOptional.isEmpty()) {
       log.info(NO_RECORD_SAGA_ID_EVENT_TYPE);
       log.trace("Event is {}", event);
-      UUID digitalId = UUID.fromString(event.getEventPayload());
-      val optionalDigitalIDEntity = getDigitalIDRepository().findById(digitalId);
+      val digitalId = UUID.fromString(event.getEventPayload());
+      val optionalDigitalIDEntity = this.getDigitalIDRepository().findById(digitalId);
       if (optionalDigitalIDEntity.isPresent()) {
         val attachedEntity = optionalDigitalIDEntity.get();
         event.setEventPayload(JsonUtil.getJsonStringFromObject(mapper.toStructure(attachedEntity))); //update the event with payload, need to convert to structure MANDATORY otherwise jackson will break.
@@ -62,7 +62,7 @@ public class EventHandlerService {
       } else {
         event.setEventOutcome(EventOutcome.DIGITAL_ID_NOT_FOUND);
       }
-      digitalIdEvent = createDigitalIdEventRecord(event);
+      digitalIdEvent = this.createDigitalIdEventRecord(event);
     } else {
       log.info(RECORD_FOUND_FOR_SAGA_ID_EVENT_TYPE);
       log.trace(EVENT_LOG, event);
@@ -70,42 +70,42 @@ public class EventHandlerService {
       digitalIdEvent.setUpdateDate(LocalDateTime.now());
     }
 
-    getDigitalIdEventRepository().save(digitalIdEvent);
-    return createResponseEvent(digitalIdEvent);
+    this.getDigitalIdEventRepository().save(digitalIdEvent);
+    return this.createResponseEvent(digitalIdEvent);
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public byte[] handleUpdateDigitalIdEvent(Event event) throws JsonProcessingException {
-    val digitalIdEventOptional = getDigitalIdEventRepository().findBySagaIdAndEventType(event.getSagaId(), event.getEventType().toString());
-    DigitalIdEvent digitalIdEvent;
+  public byte[] handleUpdateDigitalIdEvent(final Event event) throws JsonProcessingException {
+    val digitalIdEventOptional = this.getDigitalIdEventRepository().findBySagaIdAndEventType(event.getSagaId(), event.getEventType().toString());
+    final DigitalIdEvent digitalIdEvent;
     if (digitalIdEventOptional.isEmpty()) {
       log.info(NO_RECORD_SAGA_ID_EVENT_TYPE);
       log.trace(EVENT_LOG, event);
-      DigitalIDEntity entity = mapper.toModel(JsonUtil.getJsonObjectFromString(DigitalID.class, event.getEventPayload()));
-      val optionalDigitalIDEntity = getDigitalIDRepository().findById(entity.getDigitalID());
+      final DigitalIDEntity entity = mapper.toModel(JsonUtil.getJsonObjectFromString(DigitalID.class, event.getEventPayload()));
+      val optionalDigitalIDEntity = this.getDigitalIDRepository().findById(entity.getDigitalID());
       if (optionalDigitalIDEntity.isPresent()) {
         val attachedEntity = optionalDigitalIDEntity.get();
         BeanUtils.copyProperties(entity, attachedEntity);
         attachedEntity.setUpdateDate(LocalDateTime.now());
-        getDigitalIDRepository().save(attachedEntity);
+        this.getDigitalIDRepository().save(attachedEntity);
         event.setEventPayload(JsonUtil.getJsonStringFromObject(mapper.toStructure(attachedEntity)));// need to convert to structure MANDATORY otherwise jackson will break.
         event.setEventOutcome(EventOutcome.DIGITAL_ID_UPDATED);
       } else {
         event.setEventOutcome(EventOutcome.DIGITAL_ID_NOT_FOUND);
       }
-      digitalIdEvent = createDigitalIdEventRecord(event);
+      digitalIdEvent = this.createDigitalIdEventRecord(event);
     } else {
       log.info(RECORD_FOUND_FOR_SAGA_ID_EVENT_TYPE);
       log.trace(EVENT_LOG, event);
       digitalIdEvent = digitalIdEventOptional.get();
       digitalIdEvent.setUpdateDate(LocalDateTime.now());
     }
-    getDigitalIdEventRepository().save(digitalIdEvent);
-    return createResponseEvent(digitalIdEvent);
+    this.getDigitalIdEventRepository().save(digitalIdEvent);
+    return this.createResponseEvent(digitalIdEvent);
   }
 
-  private byte[] createResponseEvent(DigitalIdEvent digitalIdEvent) throws JsonProcessingException {
-    Event responseEvent = Event.builder()
+  private byte[] createResponseEvent(final DigitalIdEvent digitalIdEvent) throws JsonProcessingException {
+    val responseEvent = Event.builder()
       .sagaId(digitalIdEvent.getSagaId())
       .eventType(EventType.valueOf(digitalIdEvent.getEventType()))
       .eventOutcome(EventOutcome.valueOf(digitalIdEvent.getEventOutcome()))
@@ -114,7 +114,7 @@ public class EventHandlerService {
   }
 
 
-  private DigitalIdEvent createDigitalIdEventRecord(Event event) {
+  private DigitalIdEvent createDigitalIdEventRecord(final Event event) {
     return DigitalIdEvent.builder()
             .createDate(LocalDateTime.now())
             .updateDate(LocalDateTime.now())

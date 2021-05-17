@@ -1,4 +1,4 @@
-package ca.bc.gov.educ.api.digitalid.struct;
+package ca.bc.gov.educ.api.digitalid.struct.v1;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -15,7 +15,6 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
-@SuppressWarnings("squid:S1700")
 public class DigitalID {
   private String digitalID;
   private String studentID;

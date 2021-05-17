@@ -1,4 +1,4 @@
-package ca.bc.gov.educ.api.digitalid.model;
+package ca.bc.gov.educ.api.digitalid.model.v1;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

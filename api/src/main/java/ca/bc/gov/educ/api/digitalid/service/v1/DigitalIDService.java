@@ -1,9 +1,9 @@
-package ca.bc.gov.educ.api.digitalid.service;
+package ca.bc.gov.educ.api.digitalid.service.v1;
 
 import ca.bc.gov.educ.api.digitalid.exception.EntityNotFoundException;
-import ca.bc.gov.educ.api.digitalid.model.AccessChannelCodeEntity;
-import ca.bc.gov.educ.api.digitalid.model.DigitalIDEntity;
-import ca.bc.gov.educ.api.digitalid.model.IdentityTypeCodeEntity;
+import ca.bc.gov.educ.api.digitalid.model.v1.AccessChannelCodeEntity;
+import ca.bc.gov.educ.api.digitalid.model.v1.DigitalIDEntity;
+import ca.bc.gov.educ.api.digitalid.model.v1.IdentityTypeCodeEntity;
 import ca.bc.gov.educ.api.digitalid.repository.AccessChannelCodeTableRepository;
 import ca.bc.gov.educ.api.digitalid.repository.DigitalIDRepository;
 import ca.bc.gov.educ.api.digitalid.repository.IdentityTypeCodeTableRepository;
@@ -11,12 +11,14 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -45,7 +47,7 @@ public class DigitalIDService {
 
 
   @Autowired
-  DigitalIDService(final DigitalIDRepository digitalIDRepository, final AccessChannelCodeTableRepository accessChannelCodeTableRepo, final IdentityTypeCodeTableRepository identityTypeCodeTableRepo) {
+  public DigitalIDService(final DigitalIDRepository digitalIDRepository, final AccessChannelCodeTableRepository accessChannelCodeTableRepo, final IdentityTypeCodeTableRepository identityTypeCodeTableRepo) {
     this.digitalIDRepository = digitalIDRepository;
     this.accessChannelCodeTableRepo = accessChannelCodeTableRepo;
     this.identityTypeCodeTableRepo = identityTypeCodeTableRepo;
@@ -59,7 +61,7 @@ public class DigitalIDService {
    */
   @Cacheable("accessChannelCodes")
   public List<AccessChannelCodeEntity> getAccessChannelCodesList() {
-    return accessChannelCodeTableRepo.findAll();
+    return this.accessChannelCodeTableRepo.findAll();
   }
 
   /**
@@ -69,15 +71,15 @@ public class DigitalIDService {
    */
   @Cacheable("identityTypeCodes")
   public List<IdentityTypeCodeEntity> getIdentityTypeCodesList() {
-    return identityTypeCodeTableRepo.findAll();
+    return this.identityTypeCodeTableRepo.findAll();
   }
 
-  public Optional<AccessChannelCodeEntity> findAccessChannelCode(String accessChannelCode) {
-    return Optional.ofNullable(loadAllAccessChannelCodes().get(accessChannelCode));
+  public Optional<AccessChannelCodeEntity> findAccessChannelCode(final String accessChannelCode) {
+    return Optional.ofNullable(this.loadAllAccessChannelCodes().get(accessChannelCode));
   }
 
-  public Optional<IdentityTypeCodeEntity> findIdentityTypeCode(String identityTypeCode) {
-    return Optional.ofNullable(loadAllIdentityTypeCodes().get(identityTypeCode));
+  public Optional<IdentityTypeCodeEntity> findIdentityTypeCode(final String identityTypeCode) {
+    return Optional.ofNullable(this.loadAllIdentityTypeCodes().get(identityTypeCode));
   }
 
   /**
@@ -88,9 +90,9 @@ public class DigitalIDService {
    * @return DigitalIDEntity if found.
    * @throws EntityNotFoundException if not
    */
-  public DigitalIDEntity searchDigitalId(String typeCode, String typeValue) {
+  public DigitalIDEntity searchDigitalId(final String typeCode, final String typeValue) {
 
-    Optional<DigitalIDEntity> result = getDigitalIDRepository().findByIdentityTypeCodeAndIdentityValue(typeCode.toUpperCase(), typeValue.toUpperCase());
+    final Optional<DigitalIDEntity> result = this.getDigitalIDRepository().findByIdentityTypeCodeAndIdentityValue(typeCode.toUpperCase(), typeValue.toUpperCase());
 
     if (result.isPresent()) {
       return result.get();
@@ -106,8 +108,8 @@ public class DigitalIDService {
    * @return {@link DigitalIDEntity} if found.
    * @throws EntityNotFoundException if not found by the guid.
    */
-  public DigitalIDEntity retrieveDigitalID(UUID id) {
-    Optional<DigitalIDEntity> result = getDigitalIDRepository().findById(id);
+  public DigitalIDEntity retrieveDigitalID(final UUID id) {
+    final Optional<DigitalIDEntity> result = this.getDigitalIDRepository().findById(id);
     if (result.isPresent()) {
       return result.get();
     } else {
@@ -121,55 +123,48 @@ public class DigitalIDService {
    * @param digitalID the digitalID entity object to be persisted.
    * @return the persisted object.
    */
-  public DigitalIDEntity createDigitalID(DigitalIDEntity digitalID) {
-    return digitalIDRepository.save(digitalID);
+  public DigitalIDEntity createDigitalID(final DigitalIDEntity digitalID) {
+    return this.digitalIDRepository.save(digitalID);
   }
 
   /**
    * Updates a DigitalIDEntity
    *
    * @param digitalID the entity to be updated.
+   * @param id        the PK
    * @return updated {@link DigitalIDEntity}
    * @throws EntityNotFoundException if not found by the {@link DigitalIDEntity#getDigitalID()}
    */
-  public DigitalIDEntity updateDigitalID(DigitalIDEntity digitalID) {
-    Optional<DigitalIDEntity> curDigitalID = digitalIDRepository.findById(digitalID.getDigitalID());
+  public DigitalIDEntity updateDigitalID(final DigitalIDEntity digitalID, final UUID id) {
+    final Optional<DigitalIDEntity> curDigitalID = this.digitalIDRepository.findById(id);
     if (curDigitalID.isPresent()) {
-      DigitalIDEntity newDigitalID = curDigitalID.get();
-      newDigitalID.setStudentID(digitalID.getStudentID());
-      newDigitalID.setIdentityTypeCode(digitalID.getIdentityTypeCode());
-      newDigitalID.setIdentityValue(digitalID.getIdentityValue());
-      newDigitalID.setLastAccessDate(digitalID.getLastAccessDate());
-      newDigitalID.setLastAccessChannelCode(digitalID.getLastAccessChannelCode());
-      newDigitalID.setIdentityTypeCode(digitalID.getIdentityTypeCode());
-      newDigitalID.setIdentityValue(digitalID.getIdentityValue());
-      newDigitalID.setUpdateDate(digitalID.getUpdateDate());
-      newDigitalID.setUpdateUser(digitalID.getUpdateUser());
-      newDigitalID = digitalIDRepository.save(newDigitalID);
-      return newDigitalID;
+      final DigitalIDEntity newDigitalID = curDigitalID.get();
+      BeanUtils.copyProperties(digitalID, newDigitalID, "createUser", "createDate");
+      newDigitalID.setUpdateDate(LocalDateTime.now());
+      return this.digitalIDRepository.save(newDigitalID);
     } else {
-      throw new EntityNotFoundException(DigitalIDEntity.class, DIGITAL_ID_ATTRIBUTE, digitalID.getDigitalID().toString());
+      throw new EntityNotFoundException(DigitalIDEntity.class, DIGITAL_ID_ATTRIBUTE, id.toString());
     }
   }
 
   private Map<String, AccessChannelCodeEntity> loadAllAccessChannelCodes() {
-    return getAccessChannelCodesList().stream().collect(Collectors.toMap(AccessChannelCodeEntity::getAccessChannelCode, accessChannel -> accessChannel));
+    return this.getAccessChannelCodesList().stream().collect(Collectors.toMap(AccessChannelCodeEntity::getAccessChannelCode, accessChannel -> accessChannel));
   }
 
 
   private Map<String, IdentityTypeCodeEntity> loadAllIdentityTypeCodes() {
-    return getIdentityTypeCodesList().stream().collect(Collectors.toMap(IdentityTypeCodeEntity::getIdentityTypeCode, identityTypeCodeEntity -> identityTypeCodeEntity));
+    return this.getIdentityTypeCodesList().stream().collect(Collectors.toMap(IdentityTypeCodeEntity::getIdentityTypeCode, identityTypeCodeEntity -> identityTypeCodeEntity));
   }
 
   @Transactional(propagation = Propagation.MANDATORY)
   public void deleteAll() {
-    getDigitalIDRepository().deleteAll();
+    this.getDigitalIDRepository().deleteAll();
   }
 
   @Transactional(propagation = Propagation.MANDATORY)
-  public void deleteById(UUID id) {
-    val entityOptional = digitalIDRepository.findById(id);
+  public void deleteById(final UUID id) {
+    val entityOptional = this.digitalIDRepository.findById(id);
     val entity = entityOptional.orElseThrow(() -> new EntityNotFoundException(DigitalIDEntity.class, DIGITAL_ID_ATTRIBUTE, id.toString()));
-    digitalIDRepository.delete(entity);
+    this.digitalIDRepository.delete(entity);
   }
 }

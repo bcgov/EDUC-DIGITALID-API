@@ -1,4 +1,4 @@
-package ca.bc.gov.educ.api.digitalid.struct;
+package ca.bc.gov.educ.api.digitalid.struct.v1;
 
 import ca.bc.gov.educ.api.digitalid.constants.EventOutcome;
 import ca.bc.gov.educ.api.digitalid.constants.EventType;

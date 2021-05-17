@@ -1,7 +1,7 @@
 package ca.bc.gov.educ.api.digitalid.messaging;
 
-import ca.bc.gov.educ.api.digitalid.service.EventHandlerDelegatorService;
-import ca.bc.gov.educ.api.digitalid.struct.Event;
+import ca.bc.gov.educ.api.digitalid.service.v1.EventHandlerDelegatorService;
+import ca.bc.gov.educ.api.digitalid.struct.v1.Event;
 import ca.bc.gov.educ.api.digitalid.utils.JsonUtil;
 import io.nats.client.Connection;
 import io.nats.client.Message;
@@ -23,7 +23,7 @@ public class MessageSubscriber {
   private final Connection connection;
 
   @Autowired
-  public MessageSubscriber(final Connection con, EventHandlerDelegatorService eventHandlerDelegatorService) {
+  public MessageSubscriber(final Connection con, final EventHandlerDelegatorService eventHandlerDelegatorService) {
     this.eventHandlerDelegatorService = eventHandlerDelegatorService;
     this.connection = con;
   }
@@ -34,8 +34,8 @@ public class MessageSubscriber {
    */
   @PostConstruct
   public void subscribe() {
-    String queue = DIGITAL_ID_API_TOPIC.toString().replace("_", "-");
-    var dispatcher = connection.createDispatcher(onMessage());
+    final String queue = DIGITAL_ID_API_TOPIC.toString().replace("_", "-");
+    final var dispatcher = this.connection.createDispatcher(this.onMessage());
     dispatcher.subscribe(DIGITAL_ID_API_TOPIC.toString(), queue);
   }
 
@@ -48,9 +48,9 @@ public class MessageSubscriber {
     return (Message message) -> {
       if (message != null) {
         try {
-          var eventString = new String(message.getData());
-          var event = JsonUtil.getJsonObjectFromString(Event.class, eventString);
-          eventHandlerDelegatorService.handleEvent(event);
+          final var eventString = new String(message.getData());
+          final var event = JsonUtil.getJsonObjectFromString(Event.class, eventString);
+          this.eventHandlerDelegatorService.handleEvent(event);
         } catch (final Exception e) {
           log.error("Exception ", e);
         }
