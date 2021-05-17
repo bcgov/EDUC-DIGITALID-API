@@ -1,21 +1,19 @@
 package ca.bc.gov.educ.api.digitalid.mappers;
 
 import ca.bc.gov.educ.api.digitalid.mappers.decorator.DigitalIDDecorator;
+import ca.bc.gov.educ.api.digitalid.model.v1.AccessChannelCodeEntity;
+import ca.bc.gov.educ.api.digitalid.model.v1.DigitalIDEntity;
+import ca.bc.gov.educ.api.digitalid.model.v1.IdentityTypeCodeEntity;
+import ca.bc.gov.educ.api.digitalid.struct.v1.AccessChannelCode;
+import ca.bc.gov.educ.api.digitalid.struct.v1.DigitalID;
+import ca.bc.gov.educ.api.digitalid.struct.v1.IdentityTypeCode;
 import org.mapstruct.DecoratedWith;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-import ca.bc.gov.educ.api.digitalid.model.AccessChannelCodeEntity;
-import ca.bc.gov.educ.api.digitalid.model.DigitalIDEntity;
-import ca.bc.gov.educ.api.digitalid.model.IdentityTypeCodeEntity;
-import ca.bc.gov.educ.api.digitalid.struct.AccessChannelCode;
-import ca.bc.gov.educ.api.digitalid.struct.DigitalID;
-import ca.bc.gov.educ.api.digitalid.struct.IdentityTypeCode;
-
 @Mapper(uses = {UUIDMapper.class, LocalDateTimeMapper.class})
 @DecoratedWith(DigitalIDDecorator.class)
-@SuppressWarnings("squid:S1214")
 public interface DigitalIDMapper {
 
   DigitalIDMapper mapper = Mappers.getMapper(DigitalIDMapper.class);

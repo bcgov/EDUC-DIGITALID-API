@@ -1,4 +1,4 @@
-package ca.bc.gov.educ.api.digitalid.struct;
+package ca.bc.gov.educ.api.digitalid.struct.v1;
 
 import lombok.Builder;
 import lombok.Data;
@@ -7,8 +7,8 @@ import java.io.Serializable;
 
 @Data
 @Builder
-@SuppressWarnings("squid:S1700")
 public class IdentityTypeCode implements Serializable {
+  private static final long serialVersionUID = -4159285091218911030L;
   String identityTypeCode;
   String label;
   String description;

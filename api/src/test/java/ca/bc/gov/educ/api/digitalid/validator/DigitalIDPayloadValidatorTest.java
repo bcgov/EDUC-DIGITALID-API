@@ -1,9 +1,9 @@
 package ca.bc.gov.educ.api.digitalid.validator;
 
-import ca.bc.gov.educ.api.digitalid.model.AccessChannelCodeEntity;
-import ca.bc.gov.educ.api.digitalid.model.IdentityTypeCodeEntity;
-import ca.bc.gov.educ.api.digitalid.service.DigitalIDService;
-import ca.bc.gov.educ.api.digitalid.struct.DigitalID;
+import ca.bc.gov.educ.api.digitalid.model.v1.AccessChannelCodeEntity;
+import ca.bc.gov.educ.api.digitalid.model.v1.IdentityTypeCodeEntity;
+import ca.bc.gov.educ.api.digitalid.service.v1.DigitalIDService;
+import ca.bc.gov.educ.api.digitalid.struct.v1.DigitalID;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

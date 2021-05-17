@@ -1,10 +1,12 @@
 package ca.bc.gov.educ.api.digitalid.service;
 
 import ca.bc.gov.educ.api.digitalid.exception.EntityNotFoundException;
-import ca.bc.gov.educ.api.digitalid.model.DigitalIDEntity;
+import ca.bc.gov.educ.api.digitalid.model.v1.DigitalIDEntity;
 import ca.bc.gov.educ.api.digitalid.repository.AccessChannelCodeTableRepository;
 import ca.bc.gov.educ.api.digitalid.repository.DigitalIDRepository;
 import ca.bc.gov.educ.api.digitalid.repository.IdentityTypeCodeTableRepository;
+import ca.bc.gov.educ.api.digitalid.service.v1.DigitalIDService;
+import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,7 +55,7 @@ public class DigitalIDServiceTest {
 
   @Test
   public void testSearchDigitalID_WhenGivenPathParamsMatch_ShouldReturnTheMatchedObject() {
-    DigitalIDEntity digitalID = new DigitalIDEntity();
+    final DigitalIDEntity digitalID = new DigitalIDEntity();
     digitalID.setIdentityTypeCode("BCSC");
     digitalID.setIdentityValue("REALVALUE123");
     digitalID.setLastAccessChannelCode("OSPR");
@@ -72,25 +74,26 @@ public class DigitalIDServiceTest {
 
   @Test
   public void testRetrieveDigitalID_WhenGivenDigitalIDExist_ShouldReturnTheObject() {
-    DigitalIDEntity digitalID = new DigitalIDEntity();
+    final DigitalIDEntity digitalID = new DigitalIDEntity();
     digitalID.setIdentityTypeCode("BCSC");
     digitalID.setIdentityValue("realValue123");
     digitalID.setLastAccessChannelCode("OSPR");
     digitalID.setLastAccessDate(LocalDateTime.now());
-    UUID id = service.createDigitalID(digitalID).getDigitalID();
+    final UUID id = service.createDigitalID(digitalID).getDigitalID();
 
     assertNotNull(service.retrieveDigitalID(id));
   }
 
   @Test
   public void testRetrieveDigitalID_WhenGivenDigitalIDDoesNotExist_ShouldThrowEntityNotFoundException() {
-    assertThrows(EntityNotFoundException.class, () -> service.retrieveDigitalID(UUID.fromString("00000000-8000-0000-000e-000000000000")));
+    val guid = UUID.randomUUID();
+    assertThrows(EntityNotFoundException.class, () -> service.retrieveDigitalID(guid));
   }
 
   @Test
   public void testUpdateDigitalID_WhenGivenValidPayload_ShouldUpdateTheObject() {
 
-    DigitalIDEntity digitalID = new DigitalIDEntity();
+    final DigitalIDEntity digitalID = new DigitalIDEntity();
     digitalID.setIdentityTypeCode("BCSC");
     digitalID.setIdentityValue("realValue123");
     digitalID.setLastAccessChannelCode("OSPR");
@@ -103,7 +106,7 @@ public class DigitalIDServiceTest {
     newDigitalID.setIdentityValue("newValue123");
     newDigitalID.setLastAccessChannelCode("OSPR");
     newDigitalID.setLastAccessDate(LocalDateTime.now());
-    newDigitalID = service.updateDigitalID(newDigitalID);
+    newDigitalID = service.updateDigitalID(newDigitalID, digitalID.getDigitalID());
 
     assertTrue("newValue123".equalsIgnoreCase(newDigitalID.getIdentityValue()));
   }
