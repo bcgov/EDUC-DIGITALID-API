@@ -64,14 +64,18 @@ public class EventHandlerService {
       }
       digitalIdEvent = this.createDigitalIdEventRecord(event);
     } else {
-      log.info(RECORD_FOUND_FOR_SAGA_ID_EVENT_TYPE);
-      log.trace(EVENT_LOG, event);
-      digitalIdEvent = digitalIdEventOptional.get();
-      digitalIdEvent.setUpdateDate(LocalDateTime.now());
+      digitalIdEvent = this.getExistingDigitalIdEvent(event, digitalIdEventOptional.get());
     }
 
     this.getDigitalIdEventRepository().save(digitalIdEvent);
     return this.createResponseEvent(digitalIdEvent);
+  }
+
+  private DigitalIdEvent getExistingDigitalIdEvent(final Event event, final DigitalIdEvent digitalIdEvent) {
+    log.info(RECORD_FOUND_FOR_SAGA_ID_EVENT_TYPE);
+    log.trace(EVENT_LOG, event);
+    digitalIdEvent.setUpdateDate(LocalDateTime.now());
+    return digitalIdEvent;
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -95,10 +99,7 @@ public class EventHandlerService {
       }
       digitalIdEvent = this.createDigitalIdEventRecord(event);
     } else {
-      log.info(RECORD_FOUND_FOR_SAGA_ID_EVENT_TYPE);
-      log.trace(EVENT_LOG, event);
-      digitalIdEvent = digitalIdEventOptional.get();
-      digitalIdEvent.setUpdateDate(LocalDateTime.now());
+      digitalIdEvent = this.getExistingDigitalIdEvent(event, digitalIdEventOptional.get());
     }
     this.getDigitalIdEventRepository().save(digitalIdEvent);
     return this.createResponseEvent(digitalIdEvent);
