@@ -33,9 +33,6 @@ public class DigitalIDPayloadValidator {
     if (isCreateOperation && digitalID.getDigitalID() != null) {
       apiValidationErrors.add(this.createFieldError(digitalID.getDigitalID(), "digitalID should be null for post operation.", "digitalID"));
     }
-    if (LocalDateTime.now().isBefore(LocalDateTime.parse(digitalID.getLastAccessDate()))) {
-      apiValidationErrors.add(this.createFieldError(digitalID.getLastAccessDate(), "Last Access Date should be past or present", "lastAccessDate"));
-    }
     this.validateIdentityTypeCode(digitalID, apiValidationErrors);
     this.validateLastAccessChannelCode(digitalID, apiValidationErrors);
     return apiValidationErrors;
@@ -43,7 +40,7 @@ public class DigitalIDPayloadValidator {
 
   protected void validateIdentityTypeCode(final DigitalID digitalID, final List<FieldError> apiValidationErrors) {
     final Optional<IdentityTypeCodeEntity> identityTypeCodeEntity = this.digitalIDService.findIdentityTypeCode(digitalID.getIdentityTypeCode());
-    if (!identityTypeCodeEntity.isPresent()) {
+    if (identityTypeCodeEntity.isEmpty()) {
       apiValidationErrors.add(this.createFieldError(digitalID.getIdentityTypeCode(), "Invalid Identity Type Code.", IDENTITY_TYPE_CODE));
     } else if (identityTypeCodeEntity.get().getEffectiveDate() != null && identityTypeCodeEntity.get().getEffectiveDate().isAfter(LocalDateTime.now())) {
       apiValidationErrors.add(this.createFieldError(digitalID.getIdentityTypeCode(), "Identity Type Code provided is not yet effective.", IDENTITY_TYPE_CODE));
@@ -54,7 +51,7 @@ public class DigitalIDPayloadValidator {
 
   protected void validateLastAccessChannelCode(final DigitalID digitalID, final List<FieldError> apiValidationErrors) {
     final Optional<AccessChannelCodeEntity> accessChannelCodeEntity = this.digitalIDService.findAccessChannelCode(digitalID.getLastAccessChannelCode());
-    if (!accessChannelCodeEntity.isPresent()) {
+    if (accessChannelCodeEntity.isEmpty()) {
       apiValidationErrors.add(this.createFieldError(digitalID.getLastAccessChannelCode(), "Invalid Last Access Channel Code.", LAST_ACCESS_CHANNEL_CODE));
     } else if (accessChannelCodeEntity.get().getEffectiveDate() != null && accessChannelCodeEntity.get().getEffectiveDate().isAfter(LocalDateTime.now())) {
       apiValidationErrors.add(this.createFieldError(digitalID.getLastAccessChannelCode(), "Last Access Channel Code provided is not yet effective.", LAST_ACCESS_CHANNEL_CODE));

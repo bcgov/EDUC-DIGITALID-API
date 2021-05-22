@@ -157,12 +157,6 @@ public class DigitalIDControllerTest {
                     .createUser("TEST").updateUser("TEST").identityValue("Test1").lastAccessDate("2020-01-0119:40:09").build()))).andDo(print()).andExpect(status().isBadRequest());
   }
   @Test
-  public void testCreateDigitalId_GivenLADInFuture_ShouldReturnStatusBadRequest() throws Exception {
-    this.mockMvc.perform(post(BASE_URL).with(jwt().jwt((jwt) -> jwt.claim("scope", "WRITE_DIGITALID"))).contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON).content(asJsonString(DigitalID.builder().identityTypeCode("BCSC").lastAccessChannelCode("AC")
-                    .createUser("TEST").updateUser("TEST").identityValue("Test1").lastAccessDate("2199-01-01T19:40:09").build()))).andDo(print()).andExpect(status().isBadRequest());
-  }
-  @Test
   public void testCreateDigitalId_GivenLACIsNull_ShouldReturnStatusBadRequest() throws Exception {
     this.mockMvc.perform(post(BASE_URL).with(jwt().jwt((jwt) -> jwt.claim("scope", "WRITE_DIGITALID"))).contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON).content(asJsonString(DigitalID.builder().identityTypeCode("BCSC").lastAccessChannelCode(null)
