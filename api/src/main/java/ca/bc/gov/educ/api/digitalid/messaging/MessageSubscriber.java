@@ -1,5 +1,6 @@
 package ca.bc.gov.educ.api.digitalid.messaging;
 
+import ca.bc.gov.educ.api.digitalid.helpers.LogHelper;
 import ca.bc.gov.educ.api.digitalid.service.v1.EventHandlerDelegatorService;
 import ca.bc.gov.educ.api.digitalid.struct.v1.Event;
 import ca.bc.gov.educ.api.digitalid.utils.JsonUtil;
@@ -49,6 +50,7 @@ public class MessageSubscriber {
       if (message != null) {
         try {
           final var eventString = new String(message.getData());
+          LogHelper.logMessagingEventDetails(eventString);
           final var event = JsonUtil.getJsonObjectFromString(Event.class, eventString);
           this.eventHandlerDelegatorService.handleEvent(event);
         } catch (final Exception e) {

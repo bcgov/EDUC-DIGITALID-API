@@ -11,15 +11,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class DigitalIdMVCConfig implements WebMvcConfigurer {
 
     @Getter(AccessLevel.PRIVATE)
-    private final DigitalIdRequestInterceptor digitalIdRequestInterceptor;
+    private final RequestResponseInterceptor requestResponseInterceptor;
 
     @Autowired
-    public DigitalIdMVCConfig(final DigitalIdRequestInterceptor digitalIdRequestInterceptor){
-        this.digitalIdRequestInterceptor = digitalIdRequestInterceptor;
+    public DigitalIdMVCConfig(final RequestResponseInterceptor requestResponseInterceptor){
+        this.requestResponseInterceptor = requestResponseInterceptor;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(digitalIdRequestInterceptor).addPathPatterns("/**");
+        registry.addInterceptor(requestResponseInterceptor).addPathPatterns("/**");
     }
 }
