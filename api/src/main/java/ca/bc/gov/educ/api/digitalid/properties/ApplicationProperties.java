@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 @Setter
 public final class ApplicationProperties {
   public static final String API_NAME = "DIGITAL_ID_API";
+  public static final String CORRELATION_ID = "correlationID";
 
   @Value("${nats.server}")
   private String server;
