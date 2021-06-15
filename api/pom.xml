@@ -19,7 +19,7 @@
       src/main/java/ca/bc/gov/educ/api/digitalid/messaging/**,
       src/main/java/ca/bc/gov/educ/api/digitalid/poll/**,
       src/main/java/ca/bc/gov/educ/api/digitalid/properties/**,
-      src/main/java/ca/bc/gov/educ/api/digitalid/config/**
+      src/main/java/ca/bc/gov/educ/api/digitalid/config/**,
       src/main/java/ca/bc/gov/educ/api/digitalid/helper/LogHelper.java
     </sonar.exclusions>
     <java.version>11</java.version>

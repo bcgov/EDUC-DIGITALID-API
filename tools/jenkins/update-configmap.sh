@@ -60,6 +60,7 @@ FLB_CONFIG="[SERVICE]
 [INPUT]
    Name   tail
    Path   /mnt/log/*
+   Exclude_Path *.gz,*.zip
    Parser docker
    Mem_Buf_Limit 20MB
 [FILTER]
