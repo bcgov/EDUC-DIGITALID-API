@@ -34,7 +34,7 @@
     <nats.version>2.11.0</nats.version>
     <ojdbc.version>12.2.0.1</ojdbc.version>
     <guava.version>30.1.1-jre</guava.version>
-    <log4j2.version>2.15.0</log4j2.version>
+    <log4j2.version>2.16.0</log4j2.version>
   </properties>
 
   <parent>
