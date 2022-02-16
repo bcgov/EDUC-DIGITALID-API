@@ -56,6 +56,15 @@ public class DigitalIDController implements DigitalIDEndpoint {
   }
 
   @Override
+  public List<DigitalID> searchDigitalIDs(String studentID) {
+    if (studentID.isEmpty()) {
+      final ApiError error = ApiError.builder().timestamp(LocalDateTime.now()).message("Missing studentID value.").status(BAD_REQUEST).build();
+      throw new InvalidPayloadException(error);
+    }
+    return this.service.searchDigitalIds(studentID).stream().map(mapper::toStructure).collect(Collectors.toList());
+  }
+
+  @Override
   public DigitalID retrieveDigitalID(final String id) {
     return mapper.toStructure(this.service.retrieveDigitalID(UUID.fromString(id)));
   }

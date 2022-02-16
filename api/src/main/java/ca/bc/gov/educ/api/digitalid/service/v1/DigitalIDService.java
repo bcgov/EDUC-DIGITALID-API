@@ -19,10 +19,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -99,6 +96,16 @@ public class DigitalIDService {
     } else {
       throw new EntityNotFoundException(DigitalIDEntity.class, "identityTypeCode", typeCode, "identityTypeValue", typeValue);
     }
+  }
+
+  /**
+   * Search for DigitalIDEntity by student ID
+   *
+   * @param studentID
+   * @return List of DigitalIDEntity if found, empty list otherwise
+   */
+  public List<DigitalIDEntity> searchDigitalIds(final String studentID) {
+    return this.getDigitalIDRepository().findAllByStudentID(UUID.fromString(studentID));
   }
 
   /**
