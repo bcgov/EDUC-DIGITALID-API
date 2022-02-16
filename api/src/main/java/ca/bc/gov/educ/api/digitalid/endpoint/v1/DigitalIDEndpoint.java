@@ -28,7 +28,7 @@ public interface DigitalIDEndpoint {
   @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "NOT FOUND.")})
   DigitalID searchDigitalID(@RequestParam("identitytype") String typeCode, @RequestParam("identityvalue") String typeValue);
 
-  @GetMapping
+  @GetMapping(URL.LIST)
   @PreAuthorize("hasAuthority('SCOPE_READ_DIGITALID')")
   @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "NOT FOUND.")})
   List<DigitalID> searchDigitalIDs(@RequestParam(name = "studentID", required = false) String studentID);
