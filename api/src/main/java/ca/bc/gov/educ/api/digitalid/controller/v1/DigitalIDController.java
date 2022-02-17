@@ -57,7 +57,7 @@ public class DigitalIDController implements DigitalIDEndpoint {
 
   @Override
   public List<DigitalID> searchDigitalIDs(String studentID) {
-    if (studentID.isEmpty()) {
+    if (StringUtils.isEmpty(studentID)) {
       final ApiError error = ApiError.builder().timestamp(LocalDateTime.now()).message("Missing studentID value.").status(BAD_REQUEST).build();
       throw new InvalidPayloadException(error);
     }

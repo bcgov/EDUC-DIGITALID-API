@@ -210,6 +210,13 @@ public class DigitalIDControllerTest {
       .accept(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(1)));
   }
 
+  @Test
+  public void testSearchDigitalId_GivenStudentIDValueErrorInDB_ShouldReturnStatus400() throws Exception {
+    var randGUID = UUID.randomUUID();
+    this.mockMvc.perform(get(BASE_URL + LIST).with(jwt().jwt((jwt) -> jwt.claim("scope", "READ_DIGITALID"))).contentType(MediaType.APPLICATION_JSON)
+      .accept(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isBadRequest());
+  }
+
   private DigitalIDEntity createDigitalIDMockData() {
     return DigitalIDEntity.builder().identityTypeCode("BCSC").identityValue("123").lastAccessChannelCode("ABC").createUser("TEST").lastAccessDate(LocalDateTime.now()).updateUser("TEST").build();
   }
