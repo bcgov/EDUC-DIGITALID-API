@@ -85,7 +85,6 @@ public class DigitalIDControllerTest {
             .updateDate(LocalDateTime.now()).createUser("TEST").updateUser("TEST").build();
   }
 
-
   @Test
   public void testRetrieveDigitalId_GivenRandomID_ShouldThrowEntityNotFoundException() throws Exception {
     this.mockMvc.perform(get(BASE_URL + UUID.randomUUID()).with(jwt().jwt((jwt) -> jwt.claim("scope", "READ_DIGITALID")))).andDo(print()).andExpect(status().isNotFound());
@@ -201,6 +200,22 @@ public class DigitalIDControllerTest {
             .accept(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$.identityValue").value("123"));
   }
 
+  @Test
+  public void testSearchDigitalId_GivenStudentIDValueExistInDB_ShouldReturnStatusOK() throws Exception {
+    var digitalID = this.createDigitalIDMockData();
+    var randGUID = UUID.randomUUID();
+    digitalID.setStudentID(randGUID);
+    final DigitalIDEntity entity = this.service.createDigitalID(digitalID);
+    this.mockMvc.perform(get(BASE_URL + LIST).with(jwt().jwt((jwt) -> jwt.claim("scope", "READ_DIGITALID"))).param("studentID", entity.getStudentID().toString()).contentType(MediaType.APPLICATION_JSON)
+      .accept(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(1)));
+  }
+
+  @Test
+  public void testSearchDigitalId_GivenStudentIDValueErrorInDB_ShouldReturnStatus400() throws Exception {
+    var randGUID = UUID.randomUUID();
+    this.mockMvc.perform(get(BASE_URL + LIST).with(jwt().jwt((jwt) -> jwt.claim("scope", "READ_DIGITALID"))).contentType(MediaType.APPLICATION_JSON)
+      .accept(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isBadRequest());
+  }
 
   private DigitalIDEntity createDigitalIDMockData() {
     return DigitalIDEntity.builder().identityTypeCode("BCSC").identityValue("123").lastAccessChannelCode("ABC").createUser("TEST").lastAccessDate(LocalDateTime.now()).updateUser("TEST").build();

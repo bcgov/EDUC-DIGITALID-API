@@ -17,6 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -52,6 +53,31 @@ public class DigitalIDServiceTest {
     assertNotNull(digitalID.getDigitalID());
   }
 
+  @Test
+  public void testSearchDigitalID_WhenGivenPathParamsMatch_ShouldReturnTheMatchedStudentIDObject() {
+    final DigitalIDEntity digitalID = new DigitalIDEntity();
+    var guid = UUID.randomUUID();
+    digitalID.setIdentityTypeCode("BCSC");
+    digitalID.setIdentityValue("REALVALUE123");
+    digitalID.setIdentityValue("REALVALUE123");
+    digitalID.setLastAccessChannelCode("OSPR");
+    digitalID.setStudentID(guid);
+    digitalID.setCreateUser("UNIT-TEST");
+    digitalID.setUpdateUser("UNIT-TEST");
+    digitalID.setLastAccessDate(LocalDateTime.now());
+    service.createDigitalID(digitalID);
+    var digitalIDList = service.searchDigitalIds(guid.toString());
+    assertEquals(1, digitalIDList.size());
+    assertEquals(guid, digitalIDList.get(0).getStudentID());
+  }
+
+  @Test
+  public void testSearchDigitalID_WhenGivenPathParamsMatch_ShouldReturnEmptyObject() {
+    final DigitalIDEntity digitalID = new DigitalIDEntity();
+    var guid = UUID.randomUUID();
+    var digitalIDList = service.searchDigitalIds(guid.toString());
+    assertEquals(0, digitalIDList.size() );
+  }
 
   @Test
   public void testSearchDigitalID_WhenGivenPathParamsMatch_ShouldReturnTheMatchedObject() {
