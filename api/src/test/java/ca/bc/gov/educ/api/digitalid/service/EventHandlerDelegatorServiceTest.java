@@ -23,6 +23,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static ca.bc.gov.educ.api.digitalid.constants.EventOutcome.*;
@@ -170,6 +172,24 @@ public class EventHandlerDelegatorServiceTest {
     verify(messagePublisher, atLeastOnce()).dispatchMessage(eq("PROFILE_REQUEST_SAGA_TOPIC"), eventCaptor.capture());
     var natsResponse = new String(eventCaptor.getValue());
     assertThat(natsResponse).contains(DIGITAL_ID_LIST_RETURNED.toString());
+  }
+
+  @Test
+  public void handleEventUpdateDigitalIDList_givenRandomIDAndDBOperationSuccess_shouldSendResponseMessageToNATS() throws JsonProcessingException {
+    List<DigitalID> digitalIDList = new ArrayList<>();
+    var digitID = getDigitalID();
+    digitID.setDigitalID(UUID.randomUUID().toString());
+    digitalIDList.add(digitID);
+    Event event = Event.builder()
+      .eventType(EventType.UPDATE_DIGITAL_ID_LIST)
+      .eventPayload(JsonUtil.getJsonStringFromObject(digitalIDList))
+      .replyTo("PROFILE_REQUEST_SAGA_TOPIC")
+      .sagaId(UUID.randomUUID())
+      .build();
+    eventHandlerDelegatorService.handleEvent(event);
+    verify(messagePublisher, atLeastOnce()).dispatchMessage(eq("PROFILE_REQUEST_SAGA_TOPIC"), eventCaptor.capture());
+    var natsResponse = new String(eventCaptor.getValue());
+    assertThat(natsResponse).contains(DIGITAL_ID_LIST_UPDATED.toString());
   }
 
   private String createDidUpdatePayload(String identityTypeCode) throws JsonProcessingException {

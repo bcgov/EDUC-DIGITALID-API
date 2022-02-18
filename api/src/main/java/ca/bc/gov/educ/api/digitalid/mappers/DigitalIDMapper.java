@@ -20,6 +20,8 @@ public interface DigitalIDMapper {
 
   DigitalIDMapper mapper = Mappers.getMapper(DigitalIDMapper.class);
 
+  List<DigitalIDEntity> toModel(List<DigitalID> struct);
+
   List<DigitalID> toStructure(List<DigitalIDEntity> entity);
 
   DigitalID toStructure(DigitalIDEntity entity);
