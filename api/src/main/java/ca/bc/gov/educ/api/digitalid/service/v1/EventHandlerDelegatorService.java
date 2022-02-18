@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 public class EventHandlerDelegatorService {
 
   public static final String PAYLOAD_LOG = "Payload is :: ";
+  public static final String RESPONDING_BACK = "responding back to NATS on {} channel ";
   private final EventHandlerService eventHandlerService;
   private final MessagePublisher messagePublisher;
 
@@ -30,14 +31,21 @@ public class EventHandlerDelegatorService {
           log.info("received update digital id event :: {}", event.getSagaId());
           log.trace(PAYLOAD_LOG + event.getEventPayload());
           response = this.eventHandlerService.handleUpdateDigitalIdEvent(event);
-          log.info("responding back to NATS on {} channel ", event.getReplyTo());
+          log.info(RESPONDING_BACK, event.getReplyTo());
           this.messagePublisher.dispatchMessage(event.getReplyTo(), response);
           break;
         case GET_DIGITAL_ID:
           log.info("received get digital id event :: {}", event.getSagaId());
           log.trace(PAYLOAD_LOG + event.getEventPayload());
           response = this.eventHandlerService.handleGetDigitalIdEvent(event);
-          log.info("responding back to NATS on {} channel ", event.getReplyTo());
+          log.info(RESPONDING_BACK, event.getReplyTo());
+          this.messagePublisher.dispatchMessage(event.getReplyTo(), response);
+          break;
+        case GET_DIGITAL_ID_LIST:
+          log.info("received get digital id event :: {}", event.getSagaId());
+          log.trace(PAYLOAD_LOG + event.getEventPayload());
+          response = this.eventHandlerService.handleGetDigitalIdListEvent(event);
+          log.info(RESPONDING_BACK, event.getReplyTo());
           this.messagePublisher.dispatchMessage(event.getReplyTo(), response);
           break;
         default:

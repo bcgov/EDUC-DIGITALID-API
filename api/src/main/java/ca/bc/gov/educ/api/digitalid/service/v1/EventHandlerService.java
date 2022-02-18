@@ -71,6 +71,27 @@ public class EventHandlerService {
     return this.createResponseEvent(digitalIdEvent);
   }
 
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  public byte[] handleGetDigitalIdListEvent(final Event event) throws JsonProcessingException {
+    val digitalIdEventOptional = this.getDigitalIdEventRepository().findBySagaIdAndEventType(event.getSagaId(), event.getEventType().toString());
+    final DigitalIdEvent digitalIdEvent;
+    if (digitalIdEventOptional.isEmpty()) {
+      log.info(NO_RECORD_SAGA_ID_EVENT_TYPE);
+      log.trace("Event is {}", event);
+      val studentID = UUID.fromString(event.getEventPayload());
+      val digitalIDEntityList = this.getDigitalIDRepository().findAllByStudentID(studentID);
+      event.setEventPayload(JsonUtil.getJsonStringFromObject(mapper.toStructure(digitalIDEntityList))); //update the event with payload, need to convert to structure MANDATORY otherwise jackson will break.
+      event.setEventOutcome(EventOutcome.DIGITAL_ID_LIST_RETURNED);
+
+      digitalIdEvent = this.createDigitalIdEventRecord(event);
+    } else {
+      digitalIdEvent = this.getExistingDigitalIdEvent(event, digitalIdEventOptional.get());
+    }
+
+    this.getDigitalIdEventRepository().save(digitalIdEvent);
+    return this.createResponseEvent(digitalIdEvent);
+  }
+
   private DigitalIdEvent getExistingDigitalIdEvent(final Event event, final DigitalIdEvent digitalIdEvent) {
     log.info(RECORD_FOUND_FOR_SAGA_ID_EVENT_TYPE);
     log.trace(EVENT_LOG, event);
