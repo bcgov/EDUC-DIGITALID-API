@@ -83,7 +83,7 @@ public class EventHandlerDelegatorServiceTest {
     eventHandlerDelegatorService.handleEvent(event);
     verify(messagePublisher, atLeastOnce()).dispatchMessage(eq("PROFILE_REQUEST_SAGA_TOPIC"), eventCaptor.capture());
     var natsResponse = new String(eventCaptor.getValue());
-    assertThat(natsResponse.contains(DIGITAL_ID_UPDATED.toString())).isTrue();
+    assertThat(natsResponse).contains(DIGITAL_ID_UPDATED.toString());
   }
 
   @Test
@@ -98,7 +98,7 @@ public class EventHandlerDelegatorServiceTest {
     eventHandlerDelegatorService.handleEvent(event);
     verify(messagePublisher, atLeast(2)).dispatchMessage(eq("PROFILE_REQUEST_SAGA_TOPIC"), eventCaptor.capture());
     var natsResponse = new String(eventCaptor.getValue());
-    assertThat(natsResponse.contains(DIGITAL_ID_UPDATED.toString())).isTrue();
+    assertThat(natsResponse).contains(DIGITAL_ID_UPDATED.toString());
   }
 
   @Test
@@ -114,7 +114,7 @@ public class EventHandlerDelegatorServiceTest {
     eventHandlerDelegatorService.handleEvent(event);
     verify(messagePublisher, atLeastOnce()).dispatchMessage(eq("PROFILE_REQUEST_SAGA_TOPIC"), eventCaptor.capture());
     var natsResponse = new String(eventCaptor.getValue());
-    assertThat(natsResponse.contains(DIGITAL_ID_NOT_FOUND.toString())).isTrue();
+    assertThat(natsResponse).contains(DIGITAL_ID_NOT_FOUND.toString());
   }
 
   @Test
@@ -140,7 +140,7 @@ public class EventHandlerDelegatorServiceTest {
     eventHandlerDelegatorService.handleEvent(event);
     verify(messagePublisher, atLeastOnce()).dispatchMessage(eq("PROFILE_REQUEST_SAGA_TOPIC"), eventCaptor.capture());
     var natsResponse = new String(eventCaptor.getValue());
-    assertThat(natsResponse.contains(DIGITAL_ID_NOT_FOUND.toString())).isTrue();
+    assertThat(natsResponse).contains(DIGITAL_ID_NOT_FOUND.toString());
   }
 
   @Test
@@ -155,7 +155,21 @@ public class EventHandlerDelegatorServiceTest {
     eventHandlerDelegatorService.handleEvent(event);
     verify(messagePublisher, atLeast(2)).dispatchMessage(eq("PROFILE_REQUEST_SAGA_TOPIC"), eventCaptor.capture());
     var natsResponse = new String(eventCaptor.getValue());
-    assertThat(natsResponse.contains(DIGITAL_ID_FOUND.toString())).isTrue();
+    assertThat(natsResponse).contains(DIGITAL_ID_FOUND.toString());
+  }
+
+  @Test
+  public void handleEventGetDigitalIDList_givenRandomIDAndDBOperationSuccess_shouldSendResponseMessageToNATS() {
+    Event event = Event.builder()
+      .eventType(EventType.GET_DIGITAL_ID_LIST)
+      .eventPayload(UUID.randomUUID().toString())
+      .replyTo("PROFILE_REQUEST_SAGA_TOPIC")
+      .sagaId(UUID.randomUUID())
+      .build();
+    eventHandlerDelegatorService.handleEvent(event);
+    verify(messagePublisher, atLeastOnce()).dispatchMessage(eq("PROFILE_REQUEST_SAGA_TOPIC"), eventCaptor.capture());
+    var natsResponse = new String(eventCaptor.getValue());
+    assertThat(natsResponse).contains(DIGITAL_ID_LIST_RETURNED.toString());
   }
 
   private String createDidUpdatePayload(String identityTypeCode) throws JsonProcessingException {

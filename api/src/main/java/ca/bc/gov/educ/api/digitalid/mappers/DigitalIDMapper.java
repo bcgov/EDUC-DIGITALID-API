@@ -12,11 +12,15 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 @Mapper(uses = {UUIDMapper.class, LocalDateTimeMapper.class})
 @DecoratedWith(DigitalIDDecorator.class)
 public interface DigitalIDMapper {
 
   DigitalIDMapper mapper = Mappers.getMapper(DigitalIDMapper.class);
+
+  List<DigitalID> toStructure(List<DigitalIDEntity> entity);
 
   DigitalID toStructure(DigitalIDEntity entity);
 
