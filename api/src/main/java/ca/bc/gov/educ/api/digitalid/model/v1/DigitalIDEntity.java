@@ -50,6 +50,9 @@ public class DigitalIDEntity {
   @Column(name = "last_access_channel_code", length = 10)
   String lastAccessChannelCode;
 
+  @Column(name = "auto_matched", length = 1)
+  String autoMatched;
+
   @Column(name = "create_user", updatable = false, length = 32)
   String createUser;
 
