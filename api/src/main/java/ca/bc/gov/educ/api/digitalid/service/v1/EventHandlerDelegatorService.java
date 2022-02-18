@@ -48,6 +48,13 @@ public class EventHandlerDelegatorService {
           log.info(RESPONDING_BACK, event.getReplyTo());
           this.messagePublisher.dispatchMessage(event.getReplyTo(), response);
           break;
+        case UPDATE_DIGITAL_ID_LIST:
+          log.info("received update digital id list event :: {}", event.getSagaId());
+          log.trace(PAYLOAD_LOG + event.getEventPayload());
+          response = this.eventHandlerService.handleUpdateDigitalIdListEvent(event);
+          log.info(RESPONDING_BACK, event.getReplyTo());
+          this.messagePublisher.dispatchMessage(event.getReplyTo(), response);
+          break;
         default:
           log.info("silently ignoring other events :: {}", event);
           break;

@@ -11,6 +11,8 @@ import ca.bc.gov.educ.api.digitalid.struct.v1.DigitalID;
 import ca.bc.gov.educ.api.digitalid.struct.v1.Event;
 import ca.bc.gov.educ.api.digitalid.utils.JsonUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -21,6 +23,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static ca.bc.gov.educ.api.digitalid.constants.EventStatus.MESSAGE_PUBLISHED;
@@ -39,6 +43,11 @@ public class EventHandlerService {
   private static final DigitalIDMapper mapper = DigitalIDMapper.mapper;
   @Getter(PRIVATE)
   private final DigitalIdEventRepository digitalIdEventRepository;
+
+  /**
+   * The Ob mapper.
+   */
+  private final ObjectMapper obMapper = new ObjectMapper();
 
   @Autowired
   public EventHandlerService(final DigitalIDRepository digitalIDRepository, final DigitalIdEventRepository digitalIdEventRepository) {
@@ -118,6 +127,38 @@ public class EventHandlerService {
       } else {
         event.setEventOutcome(EventOutcome.DIGITAL_ID_NOT_FOUND);
       }
+      digitalIdEvent = this.createDigitalIdEventRecord(event);
+    } else {
+      digitalIdEvent = this.getExistingDigitalIdEvent(event, digitalIdEventOptional.get());
+    }
+    this.getDigitalIdEventRepository().save(digitalIdEvent);
+    return this.createResponseEvent(digitalIdEvent);
+  }
+
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  public byte[] handleUpdateDigitalIdListEvent(final Event event) throws JsonProcessingException {
+    val digitalIdEventOptional = this.getDigitalIdEventRepository().findBySagaIdAndEventType(event.getSagaId(), event.getEventType().toString());
+    final DigitalIdEvent digitalIdEvent;
+    if (digitalIdEventOptional.isEmpty()) {
+      log.info(NO_RECORD_SAGA_ID_EVENT_TYPE);
+      log.trace(EVENT_LOG, event);
+      final List<DigitalID> digitalIDList = this.obMapper.readValue(event.getEventPayload(), new TypeReference<>() {
+      });
+      List<DigitalIDEntity> entities = new ArrayList<>(digitalIDList.size());
+
+      for(var entity : digitalIDList) {
+        val optionalDigitalIDEntity = this.getDigitalIDRepository().findById(UUID.fromString(entity.getDigitalID()));
+        if (optionalDigitalIDEntity.isPresent()) {
+          val attachedEntity = optionalDigitalIDEntity.get();
+          BeanUtils.copyProperties(entity, attachedEntity);
+          attachedEntity.setUpdateDate(LocalDateTime.now());
+          this.getDigitalIDRepository().save(attachedEntity);
+          entities.add(attachedEntity);
+        }
+      }
+
+      event.setEventPayload(JsonUtil.getJsonStringFromObject(mapper.toStructure(entities)));// need to convert to structure MANDATORY otherwise jackson will break.
+      event.setEventOutcome(EventOutcome.DIGITAL_ID_LIST_UPDATED);
       digitalIdEvent = this.createDigitalIdEventRecord(event);
     } else {
       digitalIdEvent = this.getExistingDigitalIdEvent(event, digitalIdEventOptional.get());

@@ -31,4 +31,14 @@ public abstract class DigitalIDDecorator implements DigitalIDMapper {
     }
     return structList;
   }
+
+  @Override
+  public List<DigitalIDEntity> toModel(List<DigitalID> struct) {
+    List<DigitalIDEntity> entities = new ArrayList<>(struct.size());
+    for(var structItem : struct) {
+      var structVal = this.delegate.toModel(structItem);
+      entities.add(structVal);
+    }
+    return entities;
+  }
 }
