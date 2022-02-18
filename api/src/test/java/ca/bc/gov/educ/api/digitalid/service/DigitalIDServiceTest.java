@@ -42,7 +42,6 @@ public class DigitalIDServiceTest {
 
   @Test
   public void testCreateDigitalID_WhenGivenValidPayload_ReturnsSavedObject() {
-
     DigitalIDEntity digitalID = new DigitalIDEntity();
     digitalID.setIdentityTypeCode("BCSC");
     digitalID.setIdentityValue("realValue123");
@@ -69,6 +68,46 @@ public class DigitalIDServiceTest {
     var digitalIDList = service.searchDigitalIds(guid.toString());
     assertEquals(1, digitalIDList.size());
     assertEquals(guid, digitalIDList.get(0).getStudentID());
+  }
+
+  @Test
+  public void testSearchDigitalID_WhenGivenPathParamsMatchAndAutoMatchFalse_ShouldReturnTheMatchedStudentIDObject() {
+    final DigitalIDEntity digitalID = new DigitalIDEntity();
+    var guid = UUID.randomUUID();
+    digitalID.setIdentityTypeCode("BCSC");
+    digitalID.setIdentityValue("REALVALUE123");
+    digitalID.setIdentityValue("REALVALUE123");
+    digitalID.setLastAccessChannelCode("OSPR");
+    digitalID.setStudentID(guid);
+    digitalID.setAutoMatched("N");
+    digitalID.setCreateUser("UNIT-TEST");
+    digitalID.setUpdateUser("UNIT-TEST");
+    digitalID.setLastAccessDate(LocalDateTime.now());
+    service.createDigitalID(digitalID);
+    var digitalIDList = service.searchDigitalIds(guid.toString());
+    assertEquals(1, digitalIDList.size());
+    assertEquals(guid, digitalIDList.get(0).getStudentID());
+    assertEquals("N", digitalIDList.get(0).getAutoMatched());
+  }
+
+  @Test
+  public void testSearchDigitalID_WhenGivenPathParamsMatchAndAutoMatchTrue_ShouldReturnTheMatchedStudentIDObject() {
+    final DigitalIDEntity digitalID = new DigitalIDEntity();
+    var guid = UUID.randomUUID();
+    digitalID.setIdentityTypeCode("BCSC");
+    digitalID.setIdentityValue("REALVALUE123");
+    digitalID.setIdentityValue("REALVALUE123");
+    digitalID.setLastAccessChannelCode("OSPR");
+    digitalID.setStudentID(guid);
+    digitalID.setAutoMatched("Y");
+    digitalID.setCreateUser("UNIT-TEST");
+    digitalID.setUpdateUser("UNIT-TEST");
+    digitalID.setLastAccessDate(LocalDateTime.now());
+    service.createDigitalID(digitalID);
+    var digitalIDList = service.searchDigitalIds(guid.toString());
+    assertEquals(1, digitalIDList.size());
+    assertEquals(guid, digitalIDList.get(0).getStudentID());
+    assertEquals("Y", digitalIDList.get(0).getAutoMatched());
   }
 
   @Test
