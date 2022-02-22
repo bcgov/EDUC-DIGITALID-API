@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Data
@@ -30,9 +29,7 @@ public class DigitalID {
   @NotNull(message = "lastAccessChannelCode cannot be null")
   @Size(max = 10)
   private String lastAccessChannelCode;
-  @Size(max = 1)
-  @Pattern(regexp = "[YN]")
-  private String autoMatched;
+  private String autoMatchedDate;
   @Size(max = 32)
   private String createUser;
   @Null

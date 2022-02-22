@@ -26,7 +26,6 @@ public interface DigitalIDMapper {
 
   DigitalID toStructure(DigitalIDEntity entity);
 
-  @Mapping(target = "autoMatched", source="autoMatched", defaultValue = "N")
   DigitalIDEntity toModel(DigitalID struct);
 
   @Mapping(target = "updateUser", ignore = true)

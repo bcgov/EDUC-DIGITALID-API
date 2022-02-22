@@ -117,23 +117,24 @@ public class DigitalIDControllerTest {
 
   @Test
   public void testCreateDigitalIdWithAutoMatch_GivenValidPayload_ShouldReturnStatusCreated() throws Exception {
+    var date = LocalDateTime.now().toString();
     this.mockMvc.perform(post(BASE_URL).with(jwt().jwt((jwt) -> jwt.claim("scope", "WRITE_DIGITALID"))).contentType(MediaType.APPLICATION_JSON)
-      .accept(MediaType.APPLICATION_JSON).content(asJsonString(DigitalID.builder().identityTypeCode("BCSC").lastAccessChannelCode("AC").autoMatched("Y")
-        .createUser("TEST").updateUser("TEST").identityValue("Test1").lastAccessDate(LocalDateTime.now().toString()).build()))).andDo(print()).andExpect(status().isCreated()).andExpect(MockMvcResultMatchers.jsonPath("$.autoMatched").value("Y"));;
+      .accept(MediaType.APPLICATION_JSON).content(asJsonString(DigitalID.builder().identityTypeCode("BCSC").lastAccessChannelCode("AC").autoMatchedDate(date)
+        .createUser("TEST").updateUser("TEST").identityValue("Test1").lastAccessDate(LocalDateTime.now().toString()).build()))).andDo(print()).andExpect(status().isCreated()).andExpect(MockMvcResultMatchers.jsonPath("$.autoMatchedDate").isNotEmpty());
   }
 
   @Test
   public void testCreateDigitalIdWithAutoMatchFalse_GivenValidPayload_ShouldReturnStatusCreated() throws Exception {
     this.mockMvc.perform(post(BASE_URL).with(jwt().jwt((jwt) -> jwt.claim("scope", "WRITE_DIGITALID"))).contentType(MediaType.APPLICATION_JSON)
-      .accept(MediaType.APPLICATION_JSON).content(asJsonString(DigitalID.builder().identityTypeCode("BCSC").lastAccessChannelCode("AC").autoMatched("N")
-        .createUser("TEST").updateUser("TEST").identityValue("Test1").lastAccessDate(LocalDateTime.now().toString()).build()))).andDo(print()).andExpect(status().isCreated()).andExpect(MockMvcResultMatchers.jsonPath("$.autoMatched").value("N"));;
+      .accept(MediaType.APPLICATION_JSON).content(asJsonString(DigitalID.builder().identityTypeCode("BCSC").lastAccessChannelCode("AC").autoMatchedDate(null)
+        .createUser("TEST").updateUser("TEST").identityValue("Test1").lastAccessDate(LocalDateTime.now().toString()).build()))).andDo(print()).andExpect(status().isCreated()).andExpect(MockMvcResultMatchers.jsonPath("$.autoMatchedDate").isEmpty());
   }
 
   @Test
   public void testCreateDigitalIdWithNoAutoMatch_GivenValidPayload_ShouldReturnStatusCreated() throws Exception {
     this.mockMvc.perform(post(BASE_URL).with(jwt().jwt((jwt) -> jwt.claim("scope", "WRITE_DIGITALID"))).contentType(MediaType.APPLICATION_JSON)
       .accept(MediaType.APPLICATION_JSON).content(asJsonString(DigitalID.builder().identityTypeCode("BCSC").lastAccessChannelCode("AC")
-        .createUser("TEST").updateUser("TEST").identityValue("Test1").lastAccessDate(LocalDateTime.now().toString()).build()))).andDo(print()).andExpect(status().isCreated()).andExpect(MockMvcResultMatchers.jsonPath("$.autoMatched").value("N"));;
+        .createUser("TEST").updateUser("TEST").identityValue("Test1").lastAccessDate(LocalDateTime.now().toString()).build()))).andDo(print()).andExpect(status().isCreated()).andExpect(MockMvcResultMatchers.jsonPath("$.autoMatchedDate").isEmpty());
   }
 
   @Test
