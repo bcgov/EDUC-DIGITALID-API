@@ -79,7 +79,7 @@ public class DigitalIDServiceTest {
     digitalID.setIdentityValue("REALVALUE123");
     digitalID.setLastAccessChannelCode("OSPR");
     digitalID.setStudentID(guid);
-    digitalID.setAutoMatched("N");
+    digitalID.setAutoMatchedDate(null);
     digitalID.setCreateUser("UNIT-TEST");
     digitalID.setUpdateUser("UNIT-TEST");
     digitalID.setLastAccessDate(LocalDateTime.now());
@@ -87,11 +87,12 @@ public class DigitalIDServiceTest {
     var digitalIDList = service.searchDigitalIds(guid.toString());
     assertEquals(1, digitalIDList.size());
     assertEquals(guid, digitalIDList.get(0).getStudentID());
-    assertEquals("N", digitalIDList.get(0).getAutoMatched());
+    assertEquals(null, digitalIDList.get(0).getAutoMatchedDate());
   }
 
   @Test
   public void testSearchDigitalID_WhenGivenPathParamsMatchAndAutoMatchTrue_ShouldReturnTheMatchedStudentIDObject() {
+    var date = LocalDateTime.now();
     final DigitalIDEntity digitalID = new DigitalIDEntity();
     var guid = UUID.randomUUID();
     digitalID.setIdentityTypeCode("BCSC");
@@ -99,7 +100,7 @@ public class DigitalIDServiceTest {
     digitalID.setIdentityValue("REALVALUE123");
     digitalID.setLastAccessChannelCode("OSPR");
     digitalID.setStudentID(guid);
-    digitalID.setAutoMatched("Y");
+    digitalID.setAutoMatchedDate(date);
     digitalID.setCreateUser("UNIT-TEST");
     digitalID.setUpdateUser("UNIT-TEST");
     digitalID.setLastAccessDate(LocalDateTime.now());
@@ -107,7 +108,7 @@ public class DigitalIDServiceTest {
     var digitalIDList = service.searchDigitalIds(guid.toString());
     assertEquals(1, digitalIDList.size());
     assertEquals(guid, digitalIDList.get(0).getStudentID());
-    assertEquals("Y", digitalIDList.get(0).getAutoMatched());
+    assertEquals(date, digitalIDList.get(0).getAutoMatchedDate());
   }
 
   @Test
