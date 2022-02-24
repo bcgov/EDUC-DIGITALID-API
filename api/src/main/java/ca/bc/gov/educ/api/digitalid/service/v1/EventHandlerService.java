@@ -152,6 +152,9 @@ public class EventHandlerService {
           val attachedEntity = optionalDigitalIDEntity.get();
           BeanUtils.copyProperties(entity, attachedEntity);
           attachedEntity.setUpdateDate(LocalDateTime.now());
+          if(log.isDebugEnabled()) {
+            log.debug("About to save digital ID with payload {}", JsonUtil.getJsonStringFromObject(attachedEntity));
+          }
           this.getDigitalIDRepository().save(attachedEntity);
           entities.add(attachedEntity);
         }
