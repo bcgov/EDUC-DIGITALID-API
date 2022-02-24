@@ -13,6 +13,8 @@ import ca.bc.gov.educ.api.digitalid.utils.JsonUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.micrometer.core.instrument.util.StringUtils;
+import io.netty.util.internal.StringUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -152,6 +154,9 @@ public class EventHandlerService {
           val attachedEntity = optionalDigitalIDEntity.get();
           BeanUtils.copyProperties(entity, attachedEntity);
           attachedEntity.setUpdateDate(LocalDateTime.now());
+          attachedEntity.setDigitalID(getUUIDValue(entity.getDigitalID()));
+          attachedEntity.setStudentID(getUUIDValue(entity.getStudentID()));
+
           if(log.isDebugEnabled()) {
             log.debug("About to save digital ID with payload {}", JsonUtil.getJsonStringFromObject(attachedEntity));
           }
@@ -170,6 +175,13 @@ public class EventHandlerService {
     return this.createResponseEvent(digitalIdEvent);
   }
 
+  private UUID getUUIDValue(String value) {
+    if(StringUtils.isEmpty(value)) {
+      return null;
+    }
+    return UUID.fromString(value);
+  }
+
   private byte[] createResponseEvent(final DigitalIdEvent digitalIdEvent) throws JsonProcessingException {
     val responseEvent = Event.builder()
       .sagaId(digitalIdEvent.getSagaId())
@@ -178,7 +190,6 @@ public class EventHandlerService {
       .eventPayload(digitalIdEvent.getEventPayload()).build();
     return JsonUtil.getJsonSBytesFromObject(responseEvent);
   }
-
 
   private DigitalIdEvent createDigitalIdEventRecord(final Event event) {
     return DigitalIdEvent.builder()
