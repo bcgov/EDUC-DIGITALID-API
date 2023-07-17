@@ -50,7 +50,6 @@ public class DigitalIDServiceTest {
 
   @After
   public void after() {
-    System.out.println("deleting");
     this.digitalIDRepository.deleteAll();
     this.accessChannelCodeRepository.deleteAll();
     this.identityTypeCodeRepository.deleteAll();
