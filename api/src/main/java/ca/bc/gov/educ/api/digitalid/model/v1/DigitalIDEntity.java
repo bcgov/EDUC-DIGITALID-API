@@ -8,8 +8,8 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.*;
-import javax.validation.constraints.PastOrPresent;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.PastOrPresent;
 import java.time.LocalDateTime;
 import java.util.UUID;
 

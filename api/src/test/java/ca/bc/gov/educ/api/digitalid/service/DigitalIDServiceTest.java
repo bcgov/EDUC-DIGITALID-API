@@ -1,29 +1,37 @@
 package ca.bc.gov.educ.api.digitalid.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import ca.bc.gov.educ.api.digitalid.exception.EntityNotFoundException;
 import ca.bc.gov.educ.api.digitalid.model.v1.DigitalIDEntity;
 import ca.bc.gov.educ.api.digitalid.repository.AccessChannelCodeTableRepository;
 import ca.bc.gov.educ.api.digitalid.repository.DigitalIDRepository;
 import ca.bc.gov.educ.api.digitalid.repository.IdentityTypeCodeTableRepository;
 import ca.bc.gov.educ.api.digitalid.service.v1.DigitalIDService;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @RunWith(SpringRunner.class)
-@DataJpaTest
+@ActiveProfiles("test")
+@SpringBootTest
+@Slf4j
 public class DigitalIDServiceTest {
 
   @Autowired
@@ -38,6 +46,14 @@ public class DigitalIDServiceTest {
   @Before
   public void before() {
     service = new DigitalIDService(digitalIDRepository, accessChannelCodeRepository, identityTypeCodeRepository);
+  }
+
+  @After
+  public void after() {
+    System.out.println("deleting");
+    this.digitalIDRepository.deleteAll();
+    this.accessChannelCodeRepository.deleteAll();
+    this.identityTypeCodeRepository.deleteAll();
   }
 
   @Test
@@ -87,12 +103,12 @@ public class DigitalIDServiceTest {
     var digitalIDList = service.searchDigitalIds(guid.toString());
     assertEquals(1, digitalIDList.size());
     assertEquals(guid, digitalIDList.get(0).getStudentID());
-    assertEquals(null, digitalIDList.get(0).getAutoMatchedDate());
+    assertNull(digitalIDList.get(0).getAutoMatchedDate());
   }
 
   @Test
   public void testSearchDigitalID_WhenGivenPathParamsMatchAndAutoMatchTrue_ShouldReturnTheMatchedStudentIDObject() {
-    var date = LocalDateTime.now();
+    var date = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS);
     final DigitalIDEntity digitalID = new DigitalIDEntity();
     var guid = UUID.randomUUID();
     digitalID.setIdentityTypeCode("BCSC");

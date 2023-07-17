@@ -4,19 +4,19 @@ kind: Template
 labels:
     template: "${REPO_NAME}-template"
 metadata:
-    name: "${REPO_NAME}-${JOB_NAME}-dc"
+    name: "${REPO_NAME}-${BRANCH}-dc"
 objects:
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
     labels:
-      app: "${APP_NAME}-${JOB_NAME}"
-    name: "${APP_NAME}-${JOB_NAME}"
+      app: "${APP_NAME}-${BRANCH}"
+    name: "${APP_NAME}-${BRANCH}"
   spec:
     replicas: ${{MIN_REPLICAS}}
     selector:
-      app: "${APP_NAME}-${JOB_NAME}"
-      deploymentConfig: "${APP_NAME}-${JOB_NAME}"
+      app: "${APP_NAME}-${BRANCH}"
+      deploymentConfig: "${APP_NAME}-${BRANCH}"
     strategy:
       resources: {}
       type: Rolling
@@ -28,11 +28,11 @@ objects:
           prometheus.io/port: '8080'
           prometheus.io/scrape: 'true'
         labels:
-          app: "${APP_NAME}-${JOB_NAME}"
-          deploymentConfig: "${APP_NAME}-${JOB_NAME}"
+          app: "${APP_NAME}-${BRANCH}"
+          deploymentConfig: "${APP_NAME}-${BRANCH}"
       spec:
         containers:
-        - image: docker-registry.default.svc:5000/${NAMESPACE}/${REPO_NAME}-${JOB_NAME}:${TAG}
+        - image: docker-registry.default.svc:5000/${NAMESPACE}/${REPO_NAME}-${BRANCH}:${TAG}
           imagePullPolicy: Always
           volumeMounts:
             - name: tls-certs
@@ -57,7 +57,7 @@ objects:
             timeoutSeconds: 5
             failureThreshold: 3
             successThreshold: 1
-          name: "${APP_NAME}-${JOB_NAME}"
+          name: "${APP_NAME}-${BRANCH}"
           ports:
           - containerPort: ${{CONTAINER_PORT}}
             protocol: TCP
@@ -69,7 +69,7 @@ objects:
               cpu: "${MAX_CPU}"
               memory: "${MAX_MEM}"
         - image: fluent/fluent-bit
-          name: "${APP_NAME}-${JOB_NAME}-fluent-bit-sidecar"
+          name: "${APP_NAME}-${BRANCH}-fluent-bit-sidecar"
           imagePullPolicy: Always
           volumeMounts:
             - name: log-storage
@@ -120,25 +120,25 @@ objects:
     annotations:
       service.alpha.openshift.io/serving-cert-secret-name: "digitalid-api-cert"
     labels:
-      app: "${APP_NAME}-${JOB_NAME}"
-    name: "${APP_NAME}-${JOB_NAME}"
+      app: "${APP_NAME}-${BRANCH}"
+    name: "${APP_NAME}-${BRANCH}"
   spec:
     ports:
     - name: ${CONTAINER_PORT}-tcp
       port: ${{CONTAINER_PORT}}
       protocol: TCP
     selector:
-      app: "${APP_NAME}-${JOB_NAME}"
-      deploymentconfig: "${APP_NAME}-${JOB_NAME}"
+      app: "${APP_NAME}-${BRANCH}"
+      deploymentconfig: "${APP_NAME}-${BRANCH}"
 - apiVersion: autoscaling/v2
   kind: HorizontalPodAutoscaler
   metadata:
-    name: "${APP_NAME}-${JOB_NAME}-cpu-autoscaler"
+    name: "${APP_NAME}-${BRANCH}-cpu-autoscaler"
   spec:
     scaleTargetRef:
       apiVersion: apps.openshift.io/v1
       kind: DeploymentConfig
-      name: "${APP_NAME}-${JOB_NAME}"
+      name: "${APP_NAME}-${BRANCH}"
       subresource: scale
     minReplicas: ${{MIN_REPLICAS}}
     maxReplicas: ${{MAX_REPLICAS}}
@@ -153,7 +153,7 @@ parameters:
 - name: REPO_NAME
   description: Application repository name
   required: true
-- name: JOB_NAME
+- name: BRANCH
   description: Job identifier (i.e. 'backend' OR 'frontend')
   required: true
 - name: NAMESPACE
