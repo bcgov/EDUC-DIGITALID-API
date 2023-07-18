@@ -162,9 +162,6 @@ parameters:
 - name: APP_NAME
   description: Application name
   required: true
-- name: HOST_ROUTE
-  description: The host the route will use to expose service outside cluster
-  required: true
 - name: CONTAINER_PORT
   description: The port on which the application will be accessible
   value: "8080"
@@ -172,10 +169,6 @@ parameters:
 - name: TAG
   description: The identifying tag for this specific deployment
   required: true
-- name: HOST_PATH
-  description: The path appended to the HOST_ROUTE where the root of this project will be served
-  value: "/"
-  required: false
 - name: MIN_REPLICAS
   description: The minimum amount of replicas
   required: true
