@@ -1,4 +1,4 @@
-FROM artifacts.developer.gov.bc.ca/docker-remote/maven:3-jdk-11 as build
+FROM artifacts.developer.gov.bc.ca/docker-remote/maven:3.8.5-openjdk-17 as build
 WORKDIR /workspace/app
 
 COPY api/pom.xml .
@@ -6,7 +6,7 @@ COPY api/src src
 RUN mvn clean package -DskipTests
 RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
-FROM artifacts.developer.gov.bc.ca/docker-remote/openjdk:11-jdk
+FROM artifacts.developer.gov.bc.ca/docker-remote/openjdk:17.0.2-jdk-oracle
 RUN useradd -ms /bin/bash spring
 RUN mkdir -p /logs
 RUN chown -R spring:spring /logs

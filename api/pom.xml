@@ -23,16 +23,16 @@
       src/main/java/ca/bc/gov/educ/api/digitalid/helpers/LogHelper.java,
       src/test/**
     </sonar.exclusions>
-    <java.version>11</java.version>
-    <maven.compiler.version>3.8.0</maven.compiler.version>
+    <java.version>17</java.version>
+    <maven.compiler.version>3.10.1</maven.compiler.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
-    <org.mapstruct.version>1.4.1.Final</org.mapstruct.version>
-    <shedlock.version>4.15.1</shedlock.version>
-    <springdoc.version>1.4.8</springdoc.version>
-    <lombok.version>1.18.12</lombok.version>
+    <org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
+    <shedlock.version>4.20.1</shedlock.version>
+    <springdoc.version>1.6.8</springdoc.version>
+    <lombok.version>1.18.24</lombok.version>
     <nats.version>2.11.0</nats.version>
-    <ojdbc.version>12.2.0.1</ojdbc.version>
+    <ojdbc.version>21.3.0.0</ojdbc.version>
     <guava.version>30.1.1-jre</guava.version>
     <log4j2.version>2.17.1</log4j2.version>
   </properties>
@@ -40,7 +40,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.4.3</version>
+    <version>3.0.2</version>
   </parent>
 
   <dependencies>
@@ -83,8 +83,8 @@
       <artifactId>flyway-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.oracle.jdbc</groupId>
-      <artifactId>ojdbc8</artifactId>
+      <groupId>com.oracle.database.jdbc</groupId>
+      <artifactId>ojdbc11</artifactId>
       <version>${ojdbc.version}</version>
     </dependency>
     <dependency>
@@ -100,8 +100,8 @@
       <artifactId>commons-lang3</artifactId>
     </dependency>
     <dependency>
-      <groupId>javax.persistence</groupId>
-      <artifactId>javax.persistence-api</artifactId>
+      <groupId>jakarta.persistence</groupId>
+      <artifactId>jakarta.persistence-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -116,13 +116,8 @@
     </dependency>
     <dependency>
       <groupId>org.springdoc</groupId>
-      <artifactId>springdoc-openapi-webmvc-core</artifactId>
-      <version>${springdoc.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springdoc</groupId>
-      <artifactId>springdoc-openapi-ui</artifactId>
-      <version>${springdoc.version}</version>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+      <version>2.0.4</version>
     </dependency>
     <dependency>
       <groupId>org.mapstruct</groupId>
@@ -212,7 +207,7 @@
         <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
-          <version>0.8.4</version>
+          <version>0.8.8</version>
         </plugin>
         <plugin>
           <groupId>org.hibernate.orm.tooling</groupId>
@@ -268,14 +263,14 @@
               <target>${java.version}</target>
               <annotationProcessorPaths>
                 <path>
-                  <groupId>org.mapstruct</groupId>
-                  <artifactId>mapstruct-processor</artifactId>
-                  <version>${org.mapstruct.version}</version>
-                </path>
-                <path>
                   <groupId>org.projectlombok</groupId>
                   <artifactId>lombok</artifactId>
                   <version>${lombok.version}</version>
+                </path>
+                <path>
+                  <groupId>org.mapstruct</groupId>
+                  <artifactId>mapstruct-processor</artifactId>
+                  <version>${org.mapstruct.version}</version>
                 </path>
                 <path>
                   <groupId>org.springframework</groupId>
