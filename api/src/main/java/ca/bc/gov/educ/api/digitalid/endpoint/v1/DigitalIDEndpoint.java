@@ -4,6 +4,7 @@ import ca.bc.gov.educ.api.digitalid.constants.v1.URL;
 import ca.bc.gov.educ.api.digitalid.struct.v1.AccessChannelCode;
 import ca.bc.gov.educ.api.digitalid.struct.v1.DigitalID;
 import ca.bc.gov.educ.api.digitalid.struct.v1.IdentityTypeCode;
+import ca.bc.gov.educ.api.digitalid.struct.v1.TenantAccess;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -65,5 +66,9 @@ public interface DigitalIDEndpoint {
   @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
   List<IdentityTypeCode> retrieveIdentityTypeCodes();
 
+  @GetMapping(URL.TENANT_ACCESS)
+  @PreAuthorize("hasAuthority('SCOPE_READ_TENANT_ACCESS')")
+  @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "NOT FOUND.")})
+  TenantAccess determineTenantAccess(@RequestParam("clientID") String clientID, @RequestParam("tenantID") String tenantID);
 
 }

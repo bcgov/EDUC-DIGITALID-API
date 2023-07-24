@@ -6,9 +6,11 @@ import ca.bc.gov.educ.api.digitalid.exception.errors.ApiError;
 import ca.bc.gov.educ.api.digitalid.mappers.DigitalIDMapper;
 import ca.bc.gov.educ.api.digitalid.properties.ApplicationProperties;
 import ca.bc.gov.educ.api.digitalid.service.v1.DigitalIDService;
+import ca.bc.gov.educ.api.digitalid.service.v1.TenantAccessService;
 import ca.bc.gov.educ.api.digitalid.struct.v1.AccessChannelCode;
 import ca.bc.gov.educ.api.digitalid.struct.v1.DigitalID;
 import ca.bc.gov.educ.api.digitalid.struct.v1.IdentityTypeCode;
+import ca.bc.gov.educ.api.digitalid.struct.v1.TenantAccess;
 import ca.bc.gov.educ.api.digitalid.validator.DigitalIDPayloadValidator;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -43,11 +45,13 @@ public class DigitalIDController implements DigitalIDEndpoint {
   @Getter(AccessLevel.PRIVATE)
   private final DigitalIDPayloadValidator payloadValidator;
 
+  private final TenantAccessService tenantAccessService;
 
   @Autowired
-  public DigitalIDController(final DigitalIDService digitalIDService, final DigitalIDPayloadValidator payloadValidator) {
+  public DigitalIDController(final DigitalIDService digitalIDService, final DigitalIDPayloadValidator payloadValidator, TenantAccessService tenantAccessService) {
     this.payloadValidator = payloadValidator;
     this.service = digitalIDService;
+    this.tenantAccessService = tenantAccessService;
   }
 
   @Override
@@ -77,6 +81,11 @@ public class DigitalIDController implements DigitalIDEndpoint {
   @Override
   public List<IdentityTypeCode> retrieveIdentityTypeCodes() {
     return this.service.getIdentityTypeCodesList().stream().map(mapper::toStructure).collect(Collectors.toList());
+  }
+
+  @Override
+  public TenantAccess determineTenantAccess(String clientID, String tenantID) {
+    return this.tenantAccessService.searchTenantAccess(clientID, tenantID);
   }
 
   @Override

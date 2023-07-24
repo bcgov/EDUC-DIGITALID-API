@@ -4,9 +4,11 @@ import ca.bc.gov.educ.api.digitalid.controller.v1.DigitalIDController;
 import ca.bc.gov.educ.api.digitalid.model.v1.AccessChannelCodeEntity;
 import ca.bc.gov.educ.api.digitalid.model.v1.DigitalIDEntity;
 import ca.bc.gov.educ.api.digitalid.model.v1.IdentityTypeCodeEntity;
+import ca.bc.gov.educ.api.digitalid.model.v1.TenantAccessEntity;
 import ca.bc.gov.educ.api.digitalid.repository.AccessChannelCodeTableRepository;
 import ca.bc.gov.educ.api.digitalid.repository.DigitalIDRepository;
 import ca.bc.gov.educ.api.digitalid.repository.IdentityTypeCodeTableRepository;
+import ca.bc.gov.educ.api.digitalid.repository.TenantAccessRepository;
 import ca.bc.gov.educ.api.digitalid.service.v1.DigitalIDService;
 import ca.bc.gov.educ.api.digitalid.struct.v1.DigitalID;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,6 +48,9 @@ public class DigitalIDControllerTest {
   IdentityTypeCodeTableRepository identityTypeCodeTableRepository;
 
   @Autowired
+  TenantAccessRepository tenantAccessRepository;
+
+  @Autowired
   DigitalIDRepository repository;
 
   @Autowired
@@ -71,6 +76,12 @@ public class DigitalIDControllerTest {
     this.identityTypeCodeTableRepository.deleteAll();
     this.accessChannelCodeTableRepository.deleteAll();
     this.repository.deleteAll();
+    this.tenantAccessRepository.deleteAll();
+  }
+
+  private TenantAccessEntity createTenantAccessData(String clientID, String tenantID) {
+    return TenantAccessEntity.builder().tenantID(tenantID.toUpperCase()).clientID(clientID.toUpperCase()).createDate(LocalDateTime.now())
+            .updateDate(LocalDateTime.now()).createUser("TEST").updateUser("TEST").build();
   }
 
   private AccessChannelCodeEntity createAccessChannelCodeData() {
@@ -220,6 +231,23 @@ public class DigitalIDControllerTest {
     final DigitalIDEntity entity = this.service.createDigitalID(this.createDigitalIDMockData());
     this.mockMvc.perform(get(BASE_URL).with(jwt().jwt((jwt) -> jwt.claim("scope", "READ_DIGITALID"))).param("identitytype", entity.getIdentityTypeCode()).param("identityvalue", entity.getIdentityValue()).contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$.identityValue").value("123"));
+  }
+
+  @Test
+  public void testSearchTenantAccess_GivenClienIDAndTenantIDValueExistInDB_ShouldReturnStatusOKWithTrue() throws Exception {
+    String clientID = "fakeClientID";
+    String tenantIDGuid = UUID.randomUUID().toString();
+    this.tenantAccessRepository.save(createTenantAccessData(clientID, tenantIDGuid));
+    this.mockMvc.perform(get(BASE_URL + TENANT_ACCESS).with(jwt().jwt((jwt) -> jwt.claim("scope", "READ_TENANT_ACCESS"))).param("clientID", clientID).param("tenantID", tenantIDGuid).contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$.isValid").value("true"));
+  }
+
+  @Test
+  public void testSearchTenantAccess_GivenClienIDAndTenantIDValueExistInDB_ShouldReturnStatusOKWithFalse() throws Exception {
+    String clientID = "fakeClientID";
+    String tenantIDGuid = UUID.randomUUID().toString();
+    this.mockMvc.perform(get(BASE_URL + TENANT_ACCESS).with(jwt().jwt((jwt) -> jwt.claim("scope", "READ_TENANT_ACCESS"))).param("clientID", clientID).param("tenantID", tenantIDGuid).contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$.isValid").value("false"));
   }
 
   @Test
