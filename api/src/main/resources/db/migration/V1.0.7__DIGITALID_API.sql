@@ -1,8 +1,8 @@
 CREATE TABLE TENANT_INFO
 (
     TENANT_INFO_ID           RAW(16)              NOT NULL,
-    TENANT_ID                RAW(16)              NOT NULL,
-    TENANT_NAME              VARCHAR2(255)        NOT NULL,
+    TENANT_ID                VARCHAR2(255)        NOT NULL,
+    NAME                     VARCHAR2(255)        NOT NULL,
     CREATE_USER              VARCHAR2(32)         NOT NULL,
     CREATE_DATE              DATE DEFAULT SYSDATE NOT NULL,
     UPDATE_USER              VARCHAR2(32)         NOT NULL,
