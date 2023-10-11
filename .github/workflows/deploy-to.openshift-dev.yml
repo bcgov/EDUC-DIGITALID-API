@@ -165,6 +165,6 @@ jobs:
           # Get status, returns 0 if rollout is successful
           oc rollout status dc/${{ env.SPRING_BOOT_IMAGE_NAME }}
       - name: ZAP Scan
-        uses: zaproxy/action-api-scan@v0.1.1
+        uses: zaproxy/action-api-scan@v0.2.0
         with:
           target: 'https://${{ env.APP_NAME }}-${{ env.OPENSHIFT_NAMESPACE_DEV }}.apps.silver.devops.gov.bc.ca/v3/api-docs'

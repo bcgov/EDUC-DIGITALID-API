@@ -32,7 +32,7 @@ env:
   APP_NAME_FULL: "digitalid-api-master"
   NAMESPACE: ${{ secrets.COMMON_NAMESPACE_NO_ENV }}
   COMMON_NAMESPACE: ${{ secrets.COMMON_NAMESPACE_NO_ENV }}
-  TAG: "latest"
+  TAG: ${{ github.event.inputs.tag }}
   MIN_REPLICAS_TEST: "2"
   MAX_REPLICAS_TEST: "2"
   MIN_CPU: "25m"
@@ -42,6 +42,12 @@ env:
 
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Please input the tag, latest or release ex. 1.2.3'
+        type: string
+        required: true
+        default: "latest"
 
 jobs:
 
@@ -127,6 +133,6 @@ jobs:
           oc rollout status dc/${{ env.SPRING_BOOT_IMAGE_NAME }}
 
       - name: ZAP Scan
-        uses: zaproxy/action-api-scan@v0.1.1
+        uses: zaproxy/action-api-scan@v0.2.0
         with:
           target: 'https://${{ env.APP_NAME }}-${{ env.OPENSHIFT_NAMESPACE_TEST }}.apps.silver.devops.gov.bc.ca/v3/api-docs'

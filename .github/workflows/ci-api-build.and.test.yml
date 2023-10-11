@@ -35,13 +35,13 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-5Jun-${{ hashFiles('**/pom.xml') }}
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
-            ${{ runner.os }}-maven-5Jun-
+            ${{ runner.os }}-maven-
       - name: Run unit tests
         run: mvn -f pom.xml clean package
       - name: Run Trivy vulnerability scanner in repo mode
-        uses: aquasecurity/trivy-action@0.2.5
+        uses: aquasecurity/trivy-action@0.12.0
         with:
           scan-type: 'fs'
           ignore-unfixed: true
@@ -54,7 +54,7 @@ jobs:
         with:
           sarif_file: 'trivy-results.sarif'
       - name: Cache SonarCloud packages
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
