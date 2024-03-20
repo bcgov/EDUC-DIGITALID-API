@@ -34,7 +34,7 @@ env:
   COMMON_NAMESPACE: ${{ secrets.COMMON_NAMESPACE_NO_ENV }}
   TAG: "latest"
   MIN_REPLICAS_DEV: "1"
-  MAX_REPLICAS_DEV: "1"
+  MAX_REPLICAS_DEV: "2"
   MIN_CPU: "15m"
   MAX_CPU: "300m"
   MIN_MEM: "650Mi"

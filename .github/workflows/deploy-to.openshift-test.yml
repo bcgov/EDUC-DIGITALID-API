@@ -34,7 +34,7 @@ env:
   COMMON_NAMESPACE: ${{ secrets.COMMON_NAMESPACE_NO_ENV }}
   TAG: ${{ github.event.inputs.tag }}
   MIN_REPLICAS_TEST: "2"
-  MAX_REPLICAS_TEST: "2"
+  MAX_REPLICAS_TEST: "3"
   MIN_CPU: "25m"
   MAX_CPU: "150m"
   MIN_MEM: "650Mi"
