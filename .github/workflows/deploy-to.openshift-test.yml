@@ -133,6 +133,6 @@ jobs:
           oc rollout status dc/${{ env.SPRING_BOOT_IMAGE_NAME }}
 
       - name: ZAP Scan
-        uses: zaproxy/action-api-scan@v0.2.0
+        uses: zaproxy/action-api-scan@v0.7.0
         with:
           target: 'https://${{ env.APP_NAME }}-${{ env.OPENSHIFT_NAMESPACE_TEST }}.apps.silver.devops.gov.bc.ca/v3/api-docs'
