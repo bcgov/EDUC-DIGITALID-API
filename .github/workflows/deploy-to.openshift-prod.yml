@@ -24,7 +24,7 @@ env:
 
   APP_NAME: 'digitalid-api'
   REPO_NAME: "educ-digitalid-api"
-  BRANCH: "master"
+  BRANCH: ${{ github.ref_name }}
   NAMESPACE: ${{ secrets.COMMON_NAMESPACE_NO_ENV }}
   COMMON_NAMESPACE: ${{ secrets.COMMON_NAMESPACE_NO_ENV }}
   TAG: "latest"
@@ -113,7 +113,7 @@ jobs:
           oc project ${{ env.OPENSHIFT_NAMESPACE }}
 
           # Cancel any rollouts in progress
-          oc rollout cancel dc/${{ env.SPRING_BOOT_IMAGE_NAME }} 2> /dev/null \
+          oc rollout cancel deployment/${{ env.SPRING_BOOT_IMAGE_NAME }} 2> /dev/null \
             || true && echo "No rollout in progress"
 
           oc tag \
@@ -121,7 +121,7 @@ jobs:
             ${{ env.NAMESPACE }}-prod/${{ env.REPO_NAME }}-${{ env.BRANCH }}:${{ steps.get-latest-tag.outputs.tag }}
 
           # Process and apply deployment template
-          oc process -f tools/openshift/api.dc.yaml \
+          oc process -f tools/openshift/api.deployment.yaml \
             -p APP_NAME=${{ env.APP_NAME }} \
             -p REPO_NAME=${{ env.REPO_NAME }} \
             -p BRANCH=${{ env.BRANCH }} \
@@ -143,13 +143,14 @@ jobs:
             ${{ env.DB_JDBC_CONNECT_STRING }} \
             ${{ env.DB_PWD }} \
             ${{ env.DB_USER }} \
-            ${{ env.SPLUNK_TOKEN }}
+            ${{ env.SPLUNK_TOKEN }} \
+            ${{ env.BRANCH }}
 
           # Start rollout (if necessary) and follow it
-          oc rollout latest dc/${{ env.SPRING_BOOT_IMAGE_NAME }} 2> /dev/null \
+          oc rollout restart deployment/${{ env.SPRING_BOOT_IMAGE_NAME }} 2> /dev/null \
             || true && echo "Rollout in progress"
 
-          oc logs -f dc/${{ env.SPRING_BOOT_IMAGE_NAME }}
+          oc logs -f deployment/${{ env.SPRING_BOOT_IMAGE_NAME }}
 
           # Get status, returns 0 if rollout is successful
-          oc rollout status dc/${{ env.SPRING_BOOT_IMAGE_NAME }}
+          oc rollout status deployment/${{ env.SPRING_BOOT_IMAGE_NAME }}

@@ -5,6 +5,7 @@ DB_JDBC_CONNECT_STRING=$4
 DB_PWD=$5
 DB_USER=$6
 SPLUNK_TOKEN=$7
+BRANCH=$8
 
 TZVALUE="America/Vancouver"
 SOAM_KC_REALM_ID="master"
@@ -115,9 +116,9 @@ oc create -n "$OPENSHIFT_NAMESPACE-$envValue" configmap "$APP_NAME-config-map" \
   --dry-run -o yaml | oc apply -f -
 echo
 
-echo Setting environment variables for "$APP_NAME"-$SOAM_KC_REALM_ID application
+echo Setting environment variables for "$APP_NAME-$BRANCH" application
 oc -n "$OPENSHIFT_NAMESPACE"-"$envValue" set env \
-  --from="configmap/$APP_NAME-config-map" "dc/$APP_NAME-$SOAM_KC_REALM_ID"
+  --from="configmap/$APP_NAME-config-map" "deployment/$APP_NAME-$BRANCH"
 
 echo Creating config map "$APP_NAME-flb-sc-config-map"
 oc create -n "$OPENSHIFT_NAMESPACE-$envValue" configmap "$APP_NAME"-flb-sc-config-map \
@@ -127,4 +128,4 @@ oc create -n "$OPENSHIFT_NAMESPACE-$envValue" configmap "$APP_NAME"-flb-sc-confi
 
 echo Removing un-needed config entries
 oc -n "$OPENSHIFT_NAMESPACE-$envValue" set env \
-  dc/"$APP_NAME"-$SOAM_KC_REALM_ID KEYCLOAK_PUBLIC_KEY-
+  "deployment/$APP_NAME-$SOAM_KC_REALM_ID" KEYCLOAK_PUBLIC_KEY-
