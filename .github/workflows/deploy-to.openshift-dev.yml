@@ -1,7 +1,7 @@
 name: Build & Deploy to DEV
 
 env:
-  # 🖊️ EDIT your repository secrets to log into your OpenShift cluster and set up the context.
+  # EDIT your repository secrets to log into your OpenShift cluster and set up the context.
   # See https://github.com/redhat-actions/oc-login#readme for how to retrieve these values.
   # To get a permanent token, refer to https://github.com/redhat-actions/oc-login/wiki/Using-a-Service-Account-for-GitHub-Actions
   OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
@@ -13,13 +13,13 @@ env:
   DB_USER: ${{ secrets.DB_USER }}
   SPLUNK_TOKEN: ${{ secrets.SPLUNK_TOKEN }}
 
-  # 🖊️ EDIT to change the image registry settings.
+  # EDIT to change the image registry settings.
   # Registries such as GHCR, Quay.io, and Docker Hub are supported.
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
   IMAGE_REGISTRY_USER: ${{ github.actor }}
   IMAGE_REGISTRY_PASSWORD: ${{ github.token }}
 
-  # 🖊️ EDIT to specify custom tags for the container image, or default tags will be generated below.
+  # EDIT to specify custom tags for the container image, or default tags will be generated below.
   IMAGE_TAGS: ""
 
   SPRING_BOOT_IMAGE_NAME: digitalid-api-master
@@ -78,18 +78,18 @@ jobs:
                 core.error(`Secret "${name}" is not set`);
                 return true;
               }
-              core.info(`✔️ Secret "${name}" is set`);
+              core.info(`Secret "${name}" is set`);
               return false;
             });
             if (missingSecrets.length > 0) {
-              core.setFailed(`❌ At least one required secret is not set in the repository. \n` +
+              core.setFailed(`At least one required secret is not set in the repository. \n` +
                 "You can add it using:\n" +
                 "GitHub UI: https://docs.github.com/en/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository \n" +
                 "GitHub CLI: https://cli.github.com/manual/gh_secret_set \n" +
                 "Also, refer to https://github.com/redhat-actions/oc-login#getting-started-with-the-action-or-see-example");
             }
             else {
-              core.info(`✅ All the required secrets are set`);
+              core.info(`All the required secrets are set`);
             }
       - name: Check out repository
         uses: actions/checkout@v4
@@ -142,25 +142,48 @@ jobs:
       - name: Deploy API
         run: |
           set -eu
+
           # Login to OpenShift and select project
           oc login --token=${{ env.OPENSHIFT_TOKEN }} --server=${{ env.OPENSHIFT_SERVER }}
           oc project ${{ env.OPENSHIFT_NAMESPACE_DEV }}
+
           # Cancel any rollouts in progress
           oc rollout cancel dc/${{ env.SPRING_BOOT_IMAGE_NAME }} 2> /dev/null \
-          || true && echo "No rollout in progress"
-          
-          oc tag ${{ steps.push-image.outputs.registry-path }} ${{ env.REPO_NAME }}-${{ env.BRANCH }}:${{ env.TAG }}
-          
+            || true && echo "No rollout in progress"
+
+          oc tag ${{ steps.push-image.outputs.registry-path }} \
+            ${{ env.REPO_NAME }}-${{ env.BRANCH }}:${{ env.TAG }}
+
           # Process and apply deployment template
-          oc process -f tools/openshift/api.dc.yaml -p APP_NAME=${{ env.APP_NAME }} -p REPO_NAME=${{ env.REPO_NAME }} -p BRANCH=${{ env.BRANCH }} -p NAMESPACE=${{ env.OPENSHIFT_NAMESPACE_DEV }} -p TAG=${{ env.TAG }} -p MIN_REPLICAS=${{ env.MIN_REPLICAS_DEV }} -p MAX_REPLICAS=${{ env.MAX_REPLICAS_DEV }} -p MIN_CPU=${{ env.MIN_CPU }} -p MAX_CPU=${{ env.MAX_CPU }} -p MIN_MEM=${{ env.MIN_MEM }} -p MAX_MEM=${{ env.MAX_MEM }} \
-          | oc apply -f -
-          
-          curl -s https://raw.githubusercontent.com/bcgov/${{ env.REPO_NAME }}/master/tools/config/update-configmap.sh | bash /dev/stdin dev ${{ env.APP_NAME }} ${{ env.NAMESPACE }} ${{ env.COMMON_NAMESPACE }} ${{ env.DB_JDBC_CONNECT_STRING }} ${{ env.DB_PWD }} ${{ env.DB_USER }} ${{ env.SPLUNK_TOKEN }}
-          
+          oc process -f tools/openshift/api.dc.yaml \
+            -p APP_NAME=${{ env.APP_NAME }} \
+            -p REPO_NAME=${{ env.REPO_NAME }} \
+            -p BRANCH=${{ env.BRANCH }} \
+            -p NAMESPACE=${{ env.OPENSHIFT_NAMESPACE_DEV }} \
+            -p TAG=${{ env.TAG }} \
+            -p MIN_REPLICAS=${{ env.MIN_REPLICAS_DEV }} \
+            -p MAX_REPLICAS=${{ env.MAX_REPLICAS_DEV }} \
+            -p MIN_CPU=${{ env.MIN_CPU }} \
+            -p MAX_CPU=${{ env.MAX_CPU }} \
+            -p MIN_MEM=${{ env.MIN_MEM }} \
+            -p MAX_MEM=${{ env.MAX_MEM }} \
+            | oc apply -f -
+
+          curl -s https://raw.githubusercontent.com/bcgov/\
+            ${{ env.REPO_NAME }}/master/tools/config/update-configmap.sh | bash /dev/stdin dev \
+            ${{ env.APP_NAME }} \
+            ${{ env.NAMESPACE }} \
+            ${{ env.DB_JDBC_CONNECT_STRING }} \
+            ${{ env.DB_PWD }} \
+            ${{ env.DB_USER }} \
+            ${{ env.SPLUNK_TOKEN }}
+
           # Start rollout (if necessary) and follow it
           oc rollout latest dc/${{ env.SPRING_BOOT_IMAGE_NAME }} 2> /dev/null \
-          || true && echo "Rollout in progress"
+            || true && echo "Rollout in progress"
+
           oc logs -f dc/${{ env.SPRING_BOOT_IMAGE_NAME }}
+
           # Get status, returns 0 if rollout is successful
           oc rollout status dc/${{ env.SPRING_BOOT_IMAGE_NAME }}
       - name: ZAP Scan
