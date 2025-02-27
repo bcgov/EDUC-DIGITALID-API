@@ -34,8 +34,8 @@ env:
   COMMON_NAMESPACE: ${{ secrets.COMMON_NAMESPACE_NO_ENV }}
   TAG: "latest"
   MIN_REPLICAS_DEV: "1"
-  MAX_REPLICAS_DEV: "2"
-  MIN_CPU: "15m"
+  MAX_REPLICAS_DEV: "3"
+  MIN_CPU: "50m"
   MAX_CPU: "300m"
   MIN_MEM: "650Mi"
   MAX_MEM: "750Mi"
@@ -187,6 +187,6 @@ jobs:
           # Get status, returns 0 if rollout is successful
           oc rollout status deployment/${{ env.SPRING_BOOT_IMAGE_NAME }}
       - name: ZAP Scan
-        uses: zaproxy/action-api-scan@v0.8.0
+        uses: zaproxy/action-api-scan@v0.9.0
         with:
           target: 'https://${{ env.APP_NAME }}-${{ env.OPENSHIFT_NAMESPACE_DEV }}.apps.silver.devops.gov.bc.ca/v3/api-docs'

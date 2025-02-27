@@ -35,7 +35,7 @@ env:
   TAG: ${{ github.event.inputs.tag }}
   MIN_REPLICAS_TEST: "2"
   MAX_REPLICAS_TEST: "3"
-  MIN_CPU: "25m"
+  MIN_CPU: "50m"
   MAX_CPU: "150m"
   MIN_MEM: "650Mi"
   MAX_MEM: "750Mi"
