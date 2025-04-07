@@ -33,6 +33,7 @@ env:
   NAMESPACE: ${{ secrets.COMMON_NAMESPACE_NO_ENV }}
   COMMON_NAMESPACE: ${{ secrets.COMMON_NAMESPACE_NO_ENV }}
   TAG: "latest"
+  TARGET_ENV: "dev"
   MIN_REPLICAS_DEV: "1"
   MAX_REPLICAS_DEV: "3"
   MIN_CPU: "50m"
@@ -169,7 +170,9 @@ jobs:
             -p MAX_MEM=${{ env.MAX_MEM }} \
             | oc apply -f -
 
-          curl -s https://raw.githubusercontent.com/bcgov/${{ env.REPO_NAME }}/${{ env.BRANCH }}/tools/config/update-configmap.sh | bash /dev/stdin dev \
+          curl -s https://raw.githubusercontent.com/bcgov/${{ env.REPO_NAME }}/${{ env.BRANCH }}/tools/config/update-configmap.sh \
+            | bash /dev/stdin \
+            ${{ env.TARGET_ENV }} \
             ${{ env.APP_NAME }} \
             ${{ env.NAMESPACE }} \
             ${{ env.DB_JDBC_CONNECT_STRING }} \
