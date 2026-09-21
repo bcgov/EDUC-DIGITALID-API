@@ -47,6 +47,11 @@ jobs:
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
+      - name: setup java 21 for sonar analysis
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
       - name: Run Sonar Analysis
         run: mvn sonar:sonar
           -Dsonar.token=${{ secrets.SONAR_TOKEN }}
