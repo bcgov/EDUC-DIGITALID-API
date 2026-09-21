@@ -133,7 +133,7 @@ jobs:
       # The path the image was pushed to is now stored in ${{ steps.push-image.outputs.registry-path }}
 
       - name: Install oc
-        uses: redhat-actions/openshift-tools-installer@v1
+        uses: redhat-actions/openshift-tools-installer@v3
         with:
           oc: 4
 
