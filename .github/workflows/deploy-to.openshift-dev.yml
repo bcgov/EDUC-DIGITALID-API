@@ -109,7 +109,7 @@ jobs:
       # https://github.com/redhat-actions/buildah-build#readme
       - name: Build from Dockerfile
         id: build-image
-        uses: redhat-actions/buildah-build@v2
+        uses: redhat-actions/buildah-build@v3
         with:
           image: ${{ env.APP_NAME_FULL }}
           tags: ${{ env.IMAGE_TAGS }}
