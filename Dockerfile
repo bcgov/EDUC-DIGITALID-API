@@ -7,7 +7,7 @@ RUN mvn clean package -DskipTests
 RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
 FROM artifacts.developer.gov.bc.ca/docker-remote/amazoncorretto:17.0.20-alpine3.23
-RUN apk upgrade --no-cache && apk add --no-cache tzdata
+RUN apk upgrade --no-cache
 RUN addgroup -S spring && adduser -S -G spring -s /bin/sh spring
 RUN mkdir -p /logs
 RUN chown -R spring:spring /logs
