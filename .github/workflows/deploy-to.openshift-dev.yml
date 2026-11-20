@@ -47,8 +47,15 @@ on:
       - master
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   build-and-deploy-dev:
+    permissions:
+      contents: read
+      packages: write
+      issues: write
     name: Build and deploy to OpenShift DEV
     runs-on: ubuntu-22.04
     environment: dev
